@@ -1,0 +1,262 @@
+<?php
+session_start();
+require '../config.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Prepare SQL statement with placeholders
+    $sql = "SELECT id, username, fullname, password, role FROM Users WHERE username = ?";
+    $stmt = $pdo->prepare($sql);
+
+    try {
+        $stmt->execute([$username]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user) {
+            // Verify password
+            if (password_verify($password, $user['password'])) {
+                // Password is correct, set session variables
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['fullname'] = $user['fullname'];
+                $_SESSION['role'] = $user['role'];
+                // Redirect based on user role
+                switch ($user['role']) {
+                    case 'student':
+                        header("Location: student_dashboard.php");
+                        exit();
+                    case 'lecturer':
+                        header("Location: lecturer_dashboard.php");
+                        exit();
+                    case 'hod':
+                        header("Location: hod_dashboard.php");
+                        exit();
+                    case 'dean':
+                        header("Location: dean_dashboard.php");
+                        exit();
+                    case 'admin':
+                         header("Location: ./index.php");
+                        // header("refresh:5;url=./index.php");
+                        exit();
+                }
+            } else {
+            ?>
+            <script>
+                swal("Thesis Tracking System.", "Login Successfully !!", "success");
+            </script>
+            <?php
+            }
+        } else {
+             ?>
+            <script>
+                swal("Thesis Tracking System.", "No user found with this username. !!", "success");
+            </script>
+            <?php
+            
+        }
+    } catch (PDOException $e) {
+       ?>
+        <script>
+            swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+        </script>
+        <?php
+    }
+}
+
+// Close database connection
+$pdo = null;
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
+    <meta content="BlackCode" name="author" />
+    <title>Thesis Tracking System</title>
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico"/>
+    <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
+    <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
+    <script src="../layouts/vertical-dark-menu/loader.js"></script>
+    <script src="../dist/js/sweetalert.min.js"></script>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/light/authentication/auth-cover.css" rel="stylesheet" type="text/css" />
+    
+    <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <link href="../src/assets/css/dark/authentication/auth-cover.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" 
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    
+</head>
+<body class="form">
+
+    <!-- BEGIN LOADER -->
+    <div id="load_screen"> <div class="loader"> <div class="loader-content">
+        <div class="spinner-grow align-self-center"></div>
+    </div></div></div>
+    <!--  END LOADER -->
+
+    <div class="auth-container d-flex">
+
+        <div class="container mx-auto align-self-center">
+    
+            <div class="row">
+    
+                <div class="col-6 d-lg-flex d-none h-100 my-auto top-0 start-0 text-center justify-content-center flex-column">
+                    <div class="auth-cover-bg-image"></div>
+                    <div class="auth-overlay"></div>
+                        
+                    <div class="auth-cover">
+    
+                        <div class="position-relative">
+    
+                            <img src="../src/assets/img/auth-cover.svg" alt="auth-img">
+    
+                            <h2 class="mt-5 text-white font-weight-bolder px-2">Join the community of expert developers</h2>
+                            <p class="text-white px-2">It is easy to setup with great customer experience. Start your 7-day free trial</p>
+                        </div>
+                        
+                    </div>
+
+                </div>
+
+                <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-8 col-12 d-flex flex-column align-self-center ms-lg-auto me-lg-0 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+    
+                           <form action="" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        
+                                        <h2>Sign In</h2>
+                                        <p>Enter your Username and Password to Login</p>
+                                        
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="username">Username</label>
+                                            <input type="text" id="username" name="username" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="mb-4">
+                                            <label class="form-label" for="password">Password</label>
+                                            <input type="password" id="password" name="password" class="form-control">
+                                            <style>
+                                                 form i {
+                                               
+                                                cursor: pointer;
+                                                color: white;
+                                                font-size: 20px;
+                                                position: relative;
+                                                top: -40px;
+                                                float: right;
+                                                right: 20px;
+                                                
+                                               }
+                                            </style>
+                                            <i class="bi bi-eye-slash" id="togglePassword"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <div class="form-check form-check-primary form-check-inline">
+                                                <input class="form-check-input me-3" type="checkbox" id="form-check-default">
+                                                <label class="form-check-label" for="form-check-default">
+                                                    Remember me
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12">
+                                        <div class="mb-4">
+                                            <button type="submit" class="btn btn-secondary w-100">SIGN IN</button>
+                                            
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-12 mb-4">
+                                        <div class="">
+                                            <div class="seperator">
+                                                <hr>
+                                                <div class="seperator-text"> <span>Or continue with</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-sm-4 col-12">
+                                        <div class="mb-4">
+                                            <button class="btn  btn-social-login w-100 ">
+                                                <img src="../src/assets/img/google-gmail.svg" alt="" class="img-fluid">
+                                                <span class="btn-text-inner">Google</span>
+                                            </button>
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-sm-4 col-12">
+                                        <div class="mb-4">
+                                            <button class="btn  btn-social-login w-100">
+                                                <img src="../src/assets/img/github-icon.svg" alt="" class="img-fluid">
+                                                <span class="btn-text-inner">Github</span>
+                                            </button>
+                                        </div>
+                                    </div>
+        
+                                    <div class="col-sm-4 col-12">
+                                        <div class="mb-4">
+                                            <button class="btn  btn-social-login w-100">
+                                                <img src="../src/assets/img/twitter.svg" alt="" class="img-fluid">
+                                                <span class="btn-text-inner">Twitter</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="text-center">
+                                            <p class="mb-0">Dont't have an account ?   Please contact your  <a href="" class="text-warning">Administrator.</a></p>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                           </form>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+        </div>
+
+    </div>
+    
+    <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
+    <script src="../src/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const togglePassword = document
+            .querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        togglePassword.addEventListener('click', () => {
+            // Toggle the type attribute using
+            // getAttribure() method
+            const type = password
+                .getAttribute('type') === 'password' ?
+                'text' : 'password';
+            password.setAttribute('type', type);
+            // Toggle the eye and bi-eye icon
+            this.classList.toggle('bi-eye');
+        });
+    </script>
+    <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+
+</body>
+</html>
