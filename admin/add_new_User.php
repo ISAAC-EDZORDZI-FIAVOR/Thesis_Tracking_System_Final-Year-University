@@ -8,8 +8,6 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
 
 require '../config.php';
 
-
-
 // Function to fetch all users from the database
 function getAllUsers($pdo)
 {
@@ -99,7 +97,9 @@ function displayUsersTable($pdo)
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
     
     <script src="../dist/js/jquery.min.js"></script>
-    <script src="../dist/js/sweetalert.min.js"></script>
+    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
+    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
@@ -281,8 +281,11 @@ function displayUsersTable($pdo)
                     <li class="menu active">
                         <a href="./add_new_User.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Add New User</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                               <span>Add New User</span>
                             </div>
                         </a>
                     </li>
@@ -290,7 +293,10 @@ function displayUsersTable($pdo)
                     <li class="menu">
                         <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
                                 <span>Add New Department</span>
                             </div>
                         </a>
@@ -299,8 +305,27 @@ function displayUsersTable($pdo)
                     <li class="menu">
                         <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+
                                 <span>Thesis Chapter</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+                    <li class="menu">
+                        <a href="./assign_supervisor.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <polyline points="17 11 19 13 23 9"></polyline>
+                                </svg>
+
+                                <span>Assign Student</span>
                             </div>
                         </a>
                     </li>
@@ -407,7 +432,7 @@ function displayUsersTable($pdo)
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="role">Role</label>
-                                                    <select id="role" name="role" class="form-control custom-select" required >
+                                                    <select id="role1" name="role" class="form-control custom-select" required >
                                                                     <option >Select The Role</option>
                                                                     <option value="student">Student</option>
                                                                     <option value="lecturer">Lecturer</option>
@@ -512,6 +537,18 @@ function displayUsersTable($pdo)
                                                         </div>
 
 
+                                                        <div class="form-group" id="studentLevelGroup" style="display: none;">
+                                                            <label for="student_level">Student Level</label>
+                                                            <select class="form-control" id="student_level" name="student_level">
+                                                                <option value="">Select Level</option>
+                                                                <option value="Undergraduate">Undergraduate</option>
+                                                                <option value="Masters">Masters</option>
+                                                                <option value="PhD">PhD</option>
+                                                            </select>
+                                                        </div>
+
+
+
 
                                                         <div class="col-md-12">
                                                             <div class="mb-3">
@@ -573,6 +610,24 @@ function displayUsersTable($pdo)
             this.classList.toggle('bi-eye');
         });
     </script>
+
+
+
+    <!-- Show or hide Level of Student JavaScript -->
+    <script>
+    $(document).ready(function() {
+        $('#role').change(function() {
+            if ($(this).val() === 'student') {
+                $('#studentLevelGroup').show();
+            } else {
+                $('#studentLevelGroup').hide();
+            }
+        });
+    });
+    </script>
+
+
+
 
 
 
@@ -726,7 +781,28 @@ if (isset($_GET['delete_id'])) {
     $stmt->execute([$delete_id]);
 
     if ($stmt->rowCount() > 0) {
-        echo "<script>swal('Success', 'User deleted successfully', 'success');</script>";
+        ?>
+            <script>
+                swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this User Data!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, Delete it!",
+                closeOnConfirm: false
+                },
+                function(){
+                swal("Thesis Tracking System.", "User Deleted successfully !!", "success");
+                });
+                
+                 setTimeout(function() {
+                window.location.href = "add_new_User.php";
+                }, 3000);
+            </script>
+        <?php
+        
+        
     } else {
         echo "<script>swal('Error', 'Failed to delete user', 'error');</script>";
     }
@@ -748,7 +824,28 @@ if (isset($_POST['edit_user'])) {
     $stmt->execute([$username, $fullname, $password, $role, $department_id, $edit_id]);
 
     if ($stmt->rowCount() > 0) {
-        echo "<script>swal('Success', 'User updated successfully', 'success');</script>";
+        ?>
+            <script>
+
+                swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this User Data!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#4912E1",
+                confirmButtonText: "Yes, Update it!",
+                closeOnConfirm: false
+                },
+                function(){
+                    swal("Thesis Tracking System.", "User Updated successfully !!", "success");
+                    setTimeout(function() {
+                window.location.href = "add_new_User.php";
+                }, 3000);
+                });
+
+            </script>
+        <?php
+       
     } else {
         echo "<script>swal('Error', 'Failed to update user', 'error');</script>";
     }
@@ -760,8 +857,9 @@ if (isset($_POST['add_user'])) {
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
     $role = $_POST['role'];
     $department_id = $_POST['department_id'];
+    $student_level = ($role === 'student') ? $_POST['student_level'] : null;
 
-    $sql = 'INSERT INTO Users (username,fullname, password, role, department_id) VALUES (?, ?, ?, ?,?)';
+    $sql = 'INSERT INTO Users (username, fullname, password, role, department_id, student_level) VALUES (?, ?, ?, ?, ?, ?)';
     $stmt = $pdo->prepare($sql);
 
     try {
@@ -771,7 +869,9 @@ if (isset($_POST['add_user'])) {
             ?>
             <script>
                 swal("Thesis Tracking System.", "Data Saved Successfully !!", "success");
-                
+                            setTimeout(function() {
+                window.location.href = "add_new_User.php";
+            }, 2000);
             </script>
             <?php
             
@@ -812,18 +912,25 @@ if (isset($_POST['import_users'])) {
         $password = password_hash($row['2'], PASSWORD_DEFAULT);
         $role = $row['3'];
         $department_id = $row['4'];
+        $student_level = $row['5'];
 
-        $sql = 'INSERT INTO Users (username, fullname, password, role, department_id) VALUES (?, ?, ?, ?, ?)';
+        $sql = 'INSERT INTO Users (username, fullname, password, role, department_id,student_level) VALUES (?, ?, ?, ?, ?,?)';
         $stmt = $pdo->prepare($sql);
 
         try {
-            if ($stmt->execute([$username, $fullname, $password, $role, $department_id])) {
+            if ($stmt->execute([$username, $fullname, $password, $role, $department_id,$student_level])) {
                 // User added successfully
                 ?>
                 <script>
-                    swal("Thesis Tracking System.", "User Imported Successfully!", "success");
+                    swal("Thesis Tracking System.", "User Imported Successfully !!", "success");
+                            setTimeout(function() {
+                        window.location.href = "add_new_User.php";
+                    }, 2000);
                 </script>
                 <?php
+                
+
+                header("Location: add_new_User.php");
             } else {
                 $error = $stmt->errorInfo()[2];
                 ?>

@@ -85,8 +85,11 @@ function displayDepartmentTable($pdo)
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
-    <script src="../dist/js/sweetalert.min.js"></script>
+    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
     <script src="../dist/js/jquery.min.js"></script>
+    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
@@ -265,11 +268,14 @@ function displayDepartmentTable($pdo)
                     </li>
 
 
-                    <li class="menu ">
+                    <li class="menu">
                         <a href="./add_new_User.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Add New User</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                               <span>Add New User</span>
                             </div>
                         </a>
                     </li>
@@ -277,8 +283,11 @@ function displayDepartmentTable($pdo)
                     <li class="menu active">
                         <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Add Department</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Add New Department</span>
                             </div>
                         </a>
                     </li>
@@ -286,8 +295,27 @@ function displayDepartmentTable($pdo)
                     <li class="menu">
                         <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+
                                 <span>Thesis Chapter</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+                    <li class="menu">
+                        <a href="./assign_supervisor.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <polyline points="17 11 19 13 23 9"></polyline>
+                                </svg>
+
+                                <span>Assign Student</span>
                             </div>
                         </a>
                     </li>
@@ -598,8 +626,10 @@ if (isset($_POST['add_department'])) {
             
             ?>
             <script>
-                swal("Thesis Tracking System.", "Data Saved Successfully !!", "success");
-                
+                swal("Thesis Tracking System.", "Department Saved Successfully !!", "success");
+                            setTimeout(function() {
+                window.location.href = "add_new_Department.php";
+            }, 1000);
             </script>
             <?php
             
@@ -630,7 +660,26 @@ if (isset($_GET['delete_id'])) {
     $stmt->execute([$delete_id]);
 
     if ($stmt->rowCount() > 0) {
-        echo "<script>swal('Success', 'Department Deleted Successfully', 'success');</script>";
+        ?>
+        <script>
+            swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this Department Data!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, Delete it!",
+            closeOnConfirm: false
+            },
+            function(){
+            swal("Thesis Tracking System.", "Department Deleted Successfully !!", "success");
+            });
+            
+             setTimeout(function() {
+            window.location.href = "add_new_Department.php";
+            }, 3000);
+        </script>
+    <?php
     } else {
         echo "<script>swal('Error', 'Failed to delete user', 'error');</script>";
     }
@@ -650,7 +699,27 @@ if (isset($_POST['edit_department'])) {
     $stmt->execute([$name, $edit_id]);
 
     if ($stmt->rowCount() > 0) {
-        echo "<script>swal('Success', 'Department Updated Successfully', 'success');</script>";
+        ?>
+            <script>
+
+                swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this Department Data!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#4912E1",
+                confirmButtonText: "Yes, Update it!",
+                closeOnConfirm: false
+                },
+                function(){
+                    swal("Thesis Tracking System.", "Department Updated Successfully !!", "success");
+                    setTimeout(function() {
+                window.location.href = "add_new_Department.php";
+                }, 3000);
+                });
+
+            </script>
+        <?php
     } else {
         echo "<script>swal('Error', 'Failed to Update User', 'error');</script>";
     }

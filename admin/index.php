@@ -284,7 +284,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                 <a href="./index.php"> Analytics </a>
                             </li>
                             <li>
-                                <a href="./index2.html"> Sales </a>
+                                <!-- <a href="./index2.html"> Sales </a> -->
                             </li>
                         </ul>
                     </li>
@@ -298,8 +298,11 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                     <li class="menu">
                         <a href="./add_new_User.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Add New User</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                               <span>Add New User</span>
                             </div>
                         </a>
                     </li>
@@ -307,7 +310,10 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                     <li class="menu">
                         <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
                                 <span>Add New Department</span>
                             </div>
                         </a>
@@ -316,11 +322,31 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                     <li class="menu">
                         <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+
                                 <span>Thesis Chapter</span>
                             </div>
                         </a>
                     </li>
+
+
+                    <li class="menu">
+                        <a href="./assign_supervisor.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <polyline points="17 11 19 13 23 9"></polyline>
+                                </svg>
+
+                                <span>Assign Student</span>
+                            </div>
+                        </a>
+                    </li>
+
 
                     <li class="menu">
                         <a href="./app-todoList.html" aria-expanded="false" class="dropdown-toggle">
@@ -383,8 +409,8 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-activity"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                                     </div>
                                     <div class="media-body">
-                                        <p class="widget-text">Organic</p>
-                                        <p class="widget-numeric-value">1,700</p>
+                                        <p class="widget-text">Total Number Of Department</p>
+                                        <p class="widget-numeric-value">8</p>
                                     </div>
                                 </div>
                                 <div class="d-flex w-bottom">
@@ -414,8 +440,8 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                                     </div>
                                     <div class="media-body">
-                                        <p class="widget-text">Direct</p>
-                                        <p class="widget-numeric-value">1,560</p>
+                                        <p class="widget-text">Total Number of Lecturer</p>
+                                        <p class="widget-numeric-value">60</p>
                                     </div>
                                 </div>
                                 <div class="d-flex w-bottom">
@@ -445,8 +471,8 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
                                     </div>
                                     <div class="media-body">
-                                        <p class="widget-text">Referral</p>
-                                        <p class="widget-numeric-value">1,900</p>
+                                        <p class="widget-text">Total Number of Student</p>
+                                        <p class="widget-numeric-value">100</p>
                                     </div>
                                 </div>
                                 <div class="d-flex w-bottom">
@@ -476,8 +502,8 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smartphone"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                                     </div>
                                     <div class="media-body">
-                                        <p class="widget-text">Social</p>
-                                        <p class="widget-numeric-value">1,390</p>
+                                        <p class="widget-text">Registered Students</p>
+                                        <p class="widget-numeric-value">40</p>
                                     </div>
                                 </div>
                                 <div class="d-flex w-bottom">
@@ -504,7 +530,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                         <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
                             <div class="widget widget-six">
                                 <div class="widget-heading">
-                                    <h6 class="">Statistics</h6>
+                                    <h6 class="">UnRegistered Students</h6>
                                     <div class="task-action">
                                         <div class="dropdown">
                                             <a class="dropdown-toggle" href="#" role="button" id="statistics" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -521,15 +547,15 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                 <div class="w-chart">
                                     <div class="w-chart-section">
                                         <div class="w-detail">
-                                            <p class="w-title">Total Visits</p>
-                                            <p class="w-stats">423,964</p>
+                                            <p class="w-title">Total Number</p>
+                                            <p class="w-stats">64</p>
                                         </div>
                                         <div class="w-chart-render-one">
                                             <div id="total-users"></div>
                                         </div>
                                     </div>
 
-                                    <div class="w-chart-section">
+                                    <!-- <div class="w-chart-section">
                                         <div class="w-detail">
                                             <p class="w-title">Paid Visits</p>
                                             <p class="w-stats">7,929</p>
@@ -537,7 +563,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                         <div class="w-chart-render-one">
                                             <div id="paid-visits"></div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             
@@ -568,28 +594,31 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                             </div>
                                         </div>
                                         <div class="w-detail">
-                                            <p class="w-title">Total Visits</p>
-                                            <p class="w-stats">423,964</p>
+                                            <p class="w-title">Total Approved Students</p>
+                                            <p class="w-stats">4</p>
                                         </div>
                                     </div>
 
-                                    <div class="w-chart-section p-visits">
+                                    <!-- <div class="w-chart-section p-visits">
                                         <div class="w-chart-render-one">
                                             <div class="icon">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-dollar-sign"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                                             </div>
                                         </div>
                                         <div class="w-detail">
-                                            <p class="w-title">Paid Visits</p>
-                                            <p class="w-stats">7,929</p>
+                                            <p class="w-title">Total Unapproved Students</p>
+                                            <p class="w-stats">69</p>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
+                                
+
+                                
                             </div>
                             
                         </div>
                         
-                        <div class="col-xl-5 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
+                        <!-- <div class="col-xl-5 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
                             <div class="widget widget-card-four">
                                 <div class="widget-content">
                                     <div class="w-header">
@@ -633,9 +662,9 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                     </div>
                                 </div>
                             </div>
-                        </div>  
+                        </div>   -->
 
-                        <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+                        <!-- <div class="col-xl-4 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
                             <div class="widget widget-card-five">
                                 <div class="widget-content">
                                     <div class="account-box">
@@ -661,10 +690,10 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                 </div>
                             </div>
                         </div>
-                        
+                         -->
                         
 
-                        <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
+                        <!-- <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
                             <div class="widget widget-chart-three">
                                 <div class="widget-heading">
                                     <div class="">
@@ -690,9 +719,9 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                     <div id="uniqueVisits"></div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+                        <!-- <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
                             <div class="widget widget-activity-five">
 
                                 <div class="widget-heading">
@@ -798,9 +827,9 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                     <div class="w-shadow-bottom"></div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
-                        <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
+                        <!-- <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
                             <div class="widget-four">
                                 <div class="widget-heading">
                                     <h5 class="">Visitors by Browser</h5>
@@ -1080,7 +1109,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
                     </div>
 

@@ -7,55 +7,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // Prepare SQL statement with placeholders
-    $sql = "SELECT id, username, fullname, password, role FROM Users WHERE username = ?";
+    $sql = "SELECT id, username, fullname, password, role,department_id ,email,dateRegistered FROM Users WHERE username = ?";
     $stmt = $pdo->prepare($sql);
 
     try {
         $stmt->execute([$username]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user) {
-            // Verify password
-            if (password_verify($password, $user['password'])) {
-                // Password is correct, set session variables
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['username'] = $user['username'];
-                $_SESSION['fullname'] = $user['fullname'];
-                $_SESSION['role'] = $user['role'];
-                // Redirect based on user role
-                switch ($user['role']) {
-                    case 'student':
-                        header("Location: student_dashboard.php");
-                        exit();
-                    case 'lecturer':
-                        header("Location: lecturer_dashboard.php");
-                        exit();
-                    case 'hod':
-                        header("Location: hod_dashboard.php");
-                        exit();
-                    case 'dean':
-                        header("Location: dean_dashboard.php");
-                        exit();
-                    case 'admin':
-                         header("Location: ./index.php");
-                        // header("refresh:5;url=./index.php");
-                        exit();
-                }
-            } else {
-            ?>
-            <script>
-                swal("Thesis Tracking System.", "Login Successfully !!", "success");
-            </script>
-            <?php
+        if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['fullname'] = $user['fullname'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['department_id']= $user['department_id'];
+            $_SESSION['dateRegistered'] =  $user['dateRegistered'];
+        
+            $redirect_url = '';
+            switch ($user['role']) {
+                case 'student':
+                    $redirect_url = '../student/student_dashboard.php';
+                    break;
+                case 'lecturer':
+                    $redirect_url = '../faculty/faculty_dashboard.php';
+                    break;
+                case 'hod':
+                    $redirect_url = '../hod/hod_dashboard.php';
+                    break;
+                case 'dean':
+                    $redirect_url = '../dean/dean_dashboard.php';
+                    break;
+                case 'admin':
+                    $redirect_url = 'index.php';
+                    break;
             }
+        
+            echo json_encode(['success' => true, 'redirect_url' => $redirect_url]);
+            exit();
         } else {
-             ?>
-            <script>
-                swal("Thesis Tracking System.", "No user found with this username. !!", "success");
-            </script>
-            <?php
-            
+            echo json_encode(['success' => false, 'message' => 'Invalid username or password']);
+            exit();
         }
+       
     } catch (PDOException $e) {
        ?>
         <script>
@@ -76,6 +69,7 @@ $pdo = null;
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <meta content="BlackCode" name="author" />
     <title>Thesis Tracking System</title>
+    <link rel="stylesheet" href="../layouts/vertical-dark-menu/css/custom.css" />
     <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico"/>
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
@@ -117,10 +111,10 @@ $pdo = null;
     
                         <div class="position-relative">
     
-                            <img src="../src/assets/img/auth-cover.svg" alt="auth-img">
+                            <img src="../src/assets/img/Thesis_Page.png" class="fullLength" alt="auth-img">
     
-                            <h2 class="mt-5 text-white font-weight-bolder px-2">Join the community of expert developers</h2>
-                            <p class="text-white px-2">It is easy to setup with great customer experience. Start your 7-day free trial</p>
+                            <!-- <h2 class="mt-5 text-white font-weight-bolder px-2">Join the community of expert developers</h2>
+                            <p class="text-white px-2">It is easy to setup with great customer experience. Start your 7-day free trial</p> -->
                         </div>
                         
                     </div>
@@ -178,7 +172,11 @@ $pdo = null;
                                     
                                     <div class="col-12">
                                         <div class="mb-4">
-                                            <button type="submit" class="btn btn-secondary w-100">SIGN IN</button>
+                                            <!-- <button type="submit" class="btn btn-secondary w-100">SIGN IN</button> -->
+                                            <button type="submit" id="signInButton" class="btn btn-secondary w-100">
+                                                <span class="button-text">SIGN IN</span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                            </button>
                                             
                                         </div>
                                     </div>
@@ -256,6 +254,44 @@ $pdo = null;
         });
     </script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
+
+
+    <script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const button = document.getElementById('signInButton');
+    button.innerHTML = 'Authenticating... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+    button.disabled = true;
+
+    setTimeout(() => {
+        button.innerHTML = 'Verified! Redirecting...';
+        
+        // AJAX request
+        fetch(this.action, {
+            method: 'POST',
+            body: new FormData(this),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                swal("Error", data.message, "error");
+                button.innerHTML = 'Sign In';
+                button.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            swal("Error", "An unexpected error occurred", "error");
+            button.innerHTML = 'Sign In';
+            button.disabled = false;
+        });
+    }, 2000);
+});
+</script>
+
+
 
 
 </body>

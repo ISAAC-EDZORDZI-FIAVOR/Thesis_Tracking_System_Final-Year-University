@@ -19,9 +19,7 @@ function getAllChapter($pdo)
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    
-    
+   
 }
 
 
@@ -58,10 +56,11 @@ function displayChapterTable($pdo)
                                             <td class=""><?php echo $user['dateRegistered']; ?></td>
                                             <td class="text-center">
                                                 <ul class="table-controls">
-                                                    <li><a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
-                                                    <li><a href="javascript:void(0);" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
+                                                    <li><a href="javascript:void(0);" class="bs-tooltip edit-chapter" data-id="<?php echo $user['id']; ?>" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
+                                                    <li><a href="add_new_Chapter.php?delete_id=<?php echo $user['id']; ?>" class="bs-tooltip delete-chapter" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
                                                 </ul>
                                             </td>
+
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -86,7 +85,10 @@ function displayChapterTable($pdo)
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
-    <script src="../dist/js/sweetalert.min.js"></script>
+    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
+    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
@@ -265,20 +267,26 @@ function displayChapterTable($pdo)
                     </li>
 
 
-                    <li class="menu ">
+                    <li class="menu">
                         <a href="./add_new_User.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Add New User</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                               <span>Add New User</span>
                             </div>
                         </a>
                     </li>
 
-                    <li class="menu ">
+                    <li class="menu">
                         <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Add  Department</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Add New Department</span>
                             </div>
                         </a>
                     </li>
@@ -286,12 +294,30 @@ function displayChapterTable($pdo)
                     <li class="menu active">
                         <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Add Thesis Chapter</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+
+                                <span>Thesis Chapter</span>
                             </div>
                         </a>
                     </li>
 
+
+                    <li class="menu">
+                        <a href="./assign_supervisor.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <polyline points="17 11 19 13 23 9"></polyline>
+                                </svg>
+
+                                <span>Assign Student</span>
+                            </div>
+                        </a>
+                    </li>
                     
                     
                 </ul>
@@ -344,6 +370,43 @@ function displayChapterTable($pdo)
                                     ?>
                                 </div>
                             </div>
+
+
+
+
+
+
+                                                        <!-- Edit Chapter Modal -->
+                            <div class="modal fade" id="editChapterModal" tabindex="-1" role="dialog" aria-labelledby="editChapterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editChapterModalLabel">Edit Chapter</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="editChapterForm" method="post">
+                                                <input type="hidden" id="edit_chapter_id" name="edit_chapter_id">
+                                                <div class="mb-3">
+                                                    <label for="edit_chapter_name" class="form-label">Chapter Name</label>
+                                                    <input type="text" class="form-control" id="edit_chapter_name" name="edit_chapter_name" required>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary">Update Chapter</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
+
+
     
                             <!-- Modal -->
                             <div class="modal fade" id="notesMailModal" tabindex="-1" role="dialog" aria-labelledby="notesMailModalTitle" aria-hidden="true">
@@ -376,7 +439,7 @@ function displayChapterTable($pdo)
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button class="btn"  data-bs-dismiss="modal">Discard</button>
-                                                            <button type="submit" id="" class="btn btn-primary">Add</button>
+                                                            <button type="submit" id="" name="add_chapter" class="btn btn-primary">Add</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -501,6 +564,26 @@ function displayChapterTable($pdo)
     </script>
     <!-- END PAGE LEVEL SCRIPTS --> 
 
+    <script>
+        $(document).ready(function() {
+            $('.edit-chapter').click(function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: 'get_chapter.php',
+                    type: 'GET',
+                    data: {id: id},
+                    success: function(response) {
+                        var chapter = JSON.parse(response);
+                        $('#edit_chapter_id').val(chapter.id);
+                        $('#edit_chapter_name').val(chapter.chapter_name);
+                        $('#editChapterModal').modal('show');
+                    }
+                });
+            });
+        });
+    </script>
+
+
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
     <script src="../src/assets/js/apps/notes.js"></script>
     <!-- END PAGE LEVEL SCRIPTS -->
@@ -511,7 +594,7 @@ function displayChapterTable($pdo)
 <?php
 require '../config.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if (isset($_POST['add_chapter'])) {
     $chapter = $_POST['chapter'];
     $sql = 'INSERT INTO chapter_type (chapter_name) VALUES (?)';
     $stmt = $pdo->prepare($sql);
@@ -522,8 +605,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             ?>
             <script>
-                swal("Thesis Tracking System.", "Data Saved Successfully !!", "success");
-                
+                swal("Thesis Tracking System.", "Chapter Saved Successfully !!", "success");
+                            setTimeout(function() {
+                window.location.href = "add_new_Chapter.php";
+            }, 1000);
             </script>
             <?php
             
@@ -543,6 +628,86 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php
     }
 }
+
+
+
+
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+    $delete_sql = "DELETE FROM chapter_type WHERE id = ?";
+    $delete_stmt = $pdo->prepare($delete_sql);
+    if ($delete_stmt->execute([$delete_id])) {
+        ?>
+        <script>
+            swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this Chapter Data!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, Delete it!",
+            closeOnConfirm: false
+            },
+            function(){
+            swal("Thesis Tracking System.", "Chapter Deleted Successfully !!", "success");
+            });
+            
+             setTimeout(function() {
+            window.location.href = "add_new_Chapter.php";
+            }, 3000);
+        </script>
+    <?php
+    } else {
+        echo "<script>swal('Thesis Tracking System', 'Error deleting chapter!', 'error');</script>";
+    }
+}
+
+
+
+if (isset($_POST['edit_chapter_id'])) {
+    // Handle edit chapter
+    $chapter_id = $_POST['edit_chapter_id'];
+    $chapter_name = $_POST['edit_chapter_name'];
+
+    $sql = 'UPDATE chapter_type SET chapter_name = ? WHERE id = ?';
+    $stmt = $pdo->prepare($sql);
+
+    try {
+        $result = $stmt->execute([$chapter_name, $chapter_id]);
+        if ($result) {
+           
+            ?>
+            <script>
+
+                swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this Chapter Data!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#4912E1",
+                confirmButtonText: "Yes, Update it!",
+                closeOnConfirm: false
+                },
+                function(){
+                    swal("Thesis Tracking System.", "Chapter Updated Successfully !!", "success");
+                    setTimeout(function() {
+                window.location.href = "add_new_Chapter.php";
+                }, 3000);
+                });
+
+            </script>
+        <?php
+
+        } else {
+            $error = $stmt->errorInfo()[2];
+            echo "<script>swal('Thesis Tracking System', '$error', 'error');</script>";
+        }
+    } catch (PDOException $e) {
+        echo "<script>swal('Thesis Tracking System', '{$e->getMessage()}', 'error');</script>";
+    }
+} 
+
+
 ?>
 
 </html>
