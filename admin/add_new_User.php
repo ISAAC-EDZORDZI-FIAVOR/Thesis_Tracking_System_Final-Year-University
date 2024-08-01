@@ -297,7 +297,7 @@ function displayUsersTable($pdo)
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
                                 </svg>
-                                <span>Add New Department</span>
+                                <span>Add  Department</span>
                             </div>
                         </a>
                     </li>
@@ -541,9 +541,13 @@ function displayUsersTable($pdo)
                                                             <label for="student_level">Student Level</label>
                                                             <select class="form-control" id="student_level" name="student_level">
                                                                 <option value="">Select Level</option>
-                                                                <option value="Undergraduate">Undergraduate</option>
-                                                                <option value="Masters">Masters</option>
-                                                                <option value="PhD">PhD</option>
+                                                                <option value="1st Year">1st Year</option>
+                                                                <option value="2nd Years">2nd Years</option>
+                                                                <option value="3rd Years">3rd Years</option>
+                                                                <option value="4th Years">4th Years</option>
+                                                                <option value="5th Years">5th Years</option>
+                                                                <option value="6th Years">6th Years</option>
+                                                                
                                                             </select>
                                                         </div>
 
@@ -863,7 +867,7 @@ if (isset($_POST['add_user'])) {
     $stmt = $pdo->prepare($sql);
 
     try {
-        if ($stmt->execute([$username,$fullname, $password, $role, $department_id])) {
+        if ($stmt->execute([$username,$fullname, $password, $role, $department_id, $student_level])) {
             
             
             ?>

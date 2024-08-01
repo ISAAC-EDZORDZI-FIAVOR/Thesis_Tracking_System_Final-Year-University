@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // Prepare SQL statement with placeholders
-    $sql = "SELECT id, username, fullname, password, role,department_id ,email,dateRegistered FROM Users WHERE username = ?";
+    $sql = "SELECT id, username, fullname, password, role,department_id ,email,dateRegistered,student_level FROM Users WHERE username = ?";
     $stmt = $pdo->prepare($sql);
 
     try {
@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['email'] = $user['email'];
             $_SESSION['department_id']= $user['department_id'];
             $_SESSION['dateRegistered'] =  $user['dateRegistered'];
+            $_SESSION['StudentLevel'] =  $user['student_level'];
         
             $redirect_url = '';
             switch ($user['role']) {
@@ -111,7 +112,7 @@ $pdo = null;
     
                         <div class="position-relative">
     
-                            <img src="../src/assets/img/Thesis_Page.png" class="fullLength" alt="auth-img">
+                            <img src="../src/assets/img/Thesis_Page.png" class="fullLength" style="border-radius: 2rem" alt="auth-img">
     
                             <!-- <h2 class="mt-5 text-white font-weight-bolder px-2">Join the community of expert developers</h2>
                             <p class="text-white px-2">It is easy to setup with great customer experience. Start your 7-day free trial</p> -->

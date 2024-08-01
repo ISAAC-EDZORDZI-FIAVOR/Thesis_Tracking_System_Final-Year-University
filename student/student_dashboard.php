@@ -16,7 +16,7 @@ $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
 // Check if supervisor is assigned
-$stmt = $pdo->prepare("SELECT lecturer_id FROM assignments WHERE student_id = ?");
+$stmt = $pdo->prepare("SELECT primary_supervisor_id AND secondary_supervisor_id1 AND secondary_supervisor_id2   FROM assignments WHERE student_id = ?");
 $stmt->execute([$student_id]);
 $supervisor = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -27,10 +27,29 @@ $thesis_proposal = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
 
-$stmt = $pdo->prepare("SELECT u.fullname AS lecturer_name, u.email AS lecturer_email FROM Users u JOIN assignments sla ON u.id = sla.lecturer_id WHERE sla.student_id = ?
-");
+// $stmt = $pdo->prepare("SELECT u.fullname AS lecturer_name, u.email AS lecturer_email FROM Users u JOIN assignments sla ON u.id = sla.primary_supervisor_id  WHERE sla.student_id = ?
+// ");
+// $stmt->execute([$student_id]);
+// $assigned_lecturer = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$stmt = $pdo->prepare("SELECT u.fullname AS lecturer_name, u.email AS lecturer_email, 
+    CASE 
+        WHEN a.primary_supervisor_id = u.id THEN 'Primary'
+        WHEN a.secondary_supervisor_id1 = u.id THEN 'Secondary 1'
+        WHEN a.secondary_supervisor_id2 = u.id THEN 'Secondary 2'
+    END AS supervisor_type
+    FROM Users u 
+    JOIN assignments a ON (u.id = a.primary_supervisor_id OR u.id = a.secondary_supervisor_id1 OR u.id = a.secondary_supervisor_id2)
+    WHERE a.student_id = ?
+    ORDER BY CASE 
+        WHEN a.primary_supervisor_id = u.id THEN 1
+        WHEN a.secondary_supervisor_id1 = u.id THEN 2
+        WHEN a.secondary_supervisor_id2 = u.id THEN 3
+    END");
+
 $stmt->execute([$student_id]);
-$assigned_lecturer = $stmt->fetch(PDO::FETCH_ASSOC);
+$assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -256,7 +275,7 @@ $assigned_lecturer = $stmt->fetch(PDO::FETCH_ASSOC);
                             </a>
                         </div>
                         <div class="dropdown-item">
-                            <a href="auth-boxed-signin.html">
+                            <a href="../admin/logout.php">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>
                             </a>
                         </div>
@@ -959,6 +978,7 @@ $assigned_lecturer = $stmt->fetch(PDO::FETCH_ASSOC);
                                     <p>Department: <?php echo htmlspecialchars($student['name']); ?></p>
                                     <p>Username: <?php echo htmlspecialchars($_SESSION['username']); ?></p>
                                     <p>Role: <?php echo htmlspecialchars($_SESSION['role']); ?></p>
+                                    <p>Level: <?php echo htmlspecialchars($_SESSION['StudentLevel']); ?></p>
                                     <p>Email: <?php echo htmlspecialchars($_SESSION['email']); ?></p>
                                     <p>Date Registered: <?php echo htmlspecialchars($_SESSION['dateRegistered']); ?></p>
 
@@ -966,9 +986,13 @@ $assigned_lecturer = $stmt->fetch(PDO::FETCH_ASSOC);
                                         <p>You have not been assigned a supervisor yet. Contact the Administrator or Your HOD</p>
                                     <?php else: ?>
                                         <?php if (!$thesis_proposal): ?>
-                                            <h3>Assigned Lecturer</h3>
-                                            <p>Name:  <?php echo htmlspecialchars($assigned_lecturer['lecturer_name']); ?>. </p>
-                                            <p>Email:  <?php echo htmlspecialchars($assigned_lecturer['lecturer_email']); ?>. </p>
+                                           
+                                            <h3>Assigned Supervisors</h3>
+                                            <?php foreach ($assigned_supervisors as $supervisor): ?>
+                                                <p><?php echo htmlspecialchars($supervisor['supervisor_type']); ?> Supervisor:</p>
+                                                <p>Name: <?php echo htmlspecialchars($supervisor['lecturer_name']); ?></p>
+                                                <p>Email: <?php echo htmlspecialchars($supervisor['lecturer_email']); ?></p>
+                                            <?php endforeach; ?>
                                             <!-- Add thesis proposal form here -->
                                             <h2>Submit Thesis Proposal</h2>
                                                 <form action="" method="POST">

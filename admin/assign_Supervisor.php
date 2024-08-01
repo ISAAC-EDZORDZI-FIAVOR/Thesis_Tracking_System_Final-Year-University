@@ -19,7 +19,7 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 
-$query = "SELECT * FROM assignments_list";
+$query = "SELECT * FROM assignment_details";
 $stmt = $pdo->query($query);
 $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -40,6 +40,10 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
     <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    
 
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
@@ -57,6 +61,11 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/dark/apps/notes.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+
+    <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> -->
+   
+
      <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
     
 
@@ -68,6 +77,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/custom_dt_custom.css">
+    
 
 </head>
 <body class="layout-boxed">
@@ -238,7 +248,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
                                 </svg>
-                                <span>Add New Department</span>
+                                <span>Add Department</span>
                             </div>
                         </a>
                     </li>
@@ -310,7 +320,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 
-                                    <form class="moveInline" method="post" enctype="multipart/form-data">
+                                    <!-- <form class="moveInline" method="post" enctype="multipart/form-data">
                                         <div class="form-group">
                                             <label for="excelFile">Upload Excel File</label>
                                             <input type="file" class="form-control-file" id="excelFile" name="excelFile" accept=".xlsx,.xls,.csv">
@@ -329,7 +339,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 margin-top: 30px;
                                             }
                                         </style>
-                                    </form>
+                                    </form> -->
     
                                    
     
@@ -350,7 +360,9 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                         <tr>
                                                             <th class="text-primary">Department</th>
                                                             <th class="text-primary">Student Name</th>
-                                                            <th class="text-primary">Lecturer Name</th>
+                                                            <th class="text-primary">Primary Supervisor</th>
+                                                            <th class="text-primary">Secondary1 Supervisor</th>
+                                                            <th class="text-primary">Secondary2 Supervisor</th>
                                                             <th class="dt-no-sorting text-primary">Action</th>
                                                         </tr>
                                                     </thead>
@@ -359,18 +371,20 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                             <tr>
                                                                 <td><?php echo $assignment['department_name']; ?></td>
                                                                 <td class="text-primary"><?php echo $assignment['student_name']; ?></td>
-                                                                <td><?php echo $assignment['lecturer_name']; ?></td>
+                                                                <td><?php echo $assignment['primary_supervisor_name']; ?></td>
+                                                                <td><?php echo $assignment['secondary_supervisor1_name']; ?></td>
+                                                                <td><?php echo $assignment['secondary_supervisor2_name']; ?></td>
                                                                 <td>
                                                                     <ul class="table-controls">
                                                                         <li>
-                                                                            <a href="edit_assignment.php?id=<?php echo $assignment['id']; ?>" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit">
+                                                                            <a href="edit_assignment.php?id=<?php echo $assignment['assignment_id']; ?>" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success">
                                                                                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                                                                                 </svg>
                                                                             </a>
                                                                         </li>
                                                                         <li>
-                                                                            <a href="assign_Supervisor.php?delete_id=<?php echo $assignment['id']; ?>" class="bs-tooltip delete-user" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete">
+                                                                            <a href="assign_Supervisor.php?delete_id=<?php echo $assignment['assignment_id']; ?>" class="bs-tooltip delete-user" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete">
                                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1 text-danger">
                                                                                     <polyline points="3 6 5 6 21 6"></polyline>
                                                                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -443,42 +457,56 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <div class="notes-content">  
 
 
-                                                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="notesMailModalTitle">
-                                                       <div class="row">
-                                                        <div class="col-md-12 mb-2">
-                                                    
-                                                            <h2>TTS</h2>
-                                                            
-                                                        </div>
-
+                                                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="notesMailModalTitle">
+                                                    <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="mb-3">
                                                                 <label class="form-label" for="department">Select Department:</label>
                                                                 <select class="form-control" name="department_id" id="department" required>
-                                                                <option value="">Select Department</option>
-                                                                <?php foreach ($departments as $department): ?>
-                                                                    <option value="<?php echo $department['id']; ?>"><?php echo $department['name']; ?></option>
-                                                                <?php endforeach; ?>
+                                                                    <option value="">Select Department</option>
+                                                                    <?php foreach ($departments as $department): ?>
+                                                                        <option value="<?php echo $department['id']; ?>"><?php echo $department['name']; ?></option>
+                                                                    <?php endforeach; ?>
                                                                 </select>
                                                             </div>
                                                         </div>
 
-                                                        <label class="form-label" for="student">Select Student:</label>
-                                                        <select class="form-control" name="student_id" id="student" required>
-                                                            <option value="">Select Student</option>
-                                                        </select>
-
-                                                        <label class="form-label" for="lecturer">Select Lecturer:</label>
-                                                        <select class="form-control" name="lecturer_id" id="lecturer" required>
-                                                            <option value="">Select Lecturer</option>
-                                                        </select>
-                                                
-                                                        
-                                                        <div class="modal-footer">
-                                                            <button class="btn"  data-bs-dismiss="modal">Discard</button>
-                                                            <button type="submit" id="" name="assign_Student" class="btn btn-primary">Assign Supervisor</button>
+                                                        <div class="col-md-12">
+                                                            <label class="form-label" for="students">Select Students:</label>
+                                                            <select class="form-control" name="student_ids[]" id="students" size="10" multiple required>
+                                                               <!-- <option value="">Select Student</option> -->
+                                                            </select>
+                                                            <div id="selectedStudents" class="mt-2"></div>
                                                         </div>
-                                                    </form>
+
+                                                        <div class="col-md-12">
+                                                            <label class="form-label" for="primary_supervisor">Select Primary Supervisor:</label>
+                                                            <select class="form-control" name="primary_supervisor_id" id="primary_supervisor" required>
+                                                                <option value="">Select Primary Supervisor</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <label class="form-label" for="secondary_supervisor1">Select Secondary Supervisor 1:</label>
+                                                            <select class="form-control" name="secondary_supervisor_id1" id="secondary_supervisor1" required>
+                                                                <option value="">Select Secondary Supervisor 1</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <label class="form-label" for="secondary_supervisor2">Select Secondary Supervisor 2:</label>
+                                                            <select class="form-control" name="secondary_supervisor_id2" id="secondary_supervisor2" required>
+                                                                <option value="">Select Secondary Supervisor 2</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="modal-footer">
+                                                        <button class="btn" data-bs-dismiss="modal">Discard</button>
+                                                        <button type="submit" id="" name="assign_Student" class="btn btn-primary">Assign Supervisors</button>
+                                                    </div>
+                                                </form>
+
 
                                                     
                                                    
@@ -512,6 +540,87 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
     <script src="../src/plugins/src/waves/waves.min.js"></script>
     <script src="../layouts/vertical-dark-menu/app.js"></script>
+
+
+    <script>
+        $(document).ready(function() {
+    $('#department').on('change', function() {
+        var departmentId = $(this).val();
+        if (departmentId) {
+            $.ajax({
+                url: 'get_students.php',
+                type: 'POST',
+                data: {department_id: departmentId},
+                success: function(response) {
+                    $('#students').html(response).trigger('change');
+                    // Enable multiple selection
+                    $('#students').attr('multiple', 'multiple');
+                    // Initialize select2 for better UX
+                    $('#students').select2({
+                        placeholder: "Select Students",
+                    allowClear: true,
+                    closeOnSelect: false,
+                    selectionAdapter: 'MultipleSelection'
+                    });
+                }
+            });
+            $.ajax({
+                url: 'get_lecturers.php',
+                type: 'POST',
+                data: {department_id: departmentId},
+                success: function(response) {
+                    $('#primary_supervisor').html(response);
+                    $('#secondary_supervisor1').html(response);
+                    $('#secondary_supervisor2').html(response);
+                }
+            });
+        } else {
+            $('#students').html('<option value="">Select Students</option>').trigger('change');
+            $('#primary_supervisor').html('<option value="">Select Primary Supervisor</option>');
+            $('#secondary_supervisor1').html('<option value="">Select Secondary Supervisor 1</option>');
+            $('#secondary_supervisor2').html('<option value="">Select Secondary Supervisor 2</option>');
+        }
+    });
+
+    // Handle student selection changes
+    $('#students').on('change', function() {
+        var selectedStudents = $(this).val();
+        console.log('Selected students:', selectedStudents);
+        updateSelectedStudentsBadges(selectedStudents);
+    });
+
+    function updateSelectedStudentsBadges(selectedStudents) {
+        var displayDiv = $('#selectedStudents');
+        displayDiv.empty();
+        if (selectedStudents) {
+            selectedStudents.forEach(function(studentId) {
+                var studentName = $('#students option[value="' + studentId + '"]').text();
+                var badge = $('<span class="badge bg-primary me-1 mb-1">' + studentName + '</span>');
+                displayDiv.append(badge);
+            });
+        }
+    }
+});
+
+    </script>
+
+<!-- >    <script>
+     document.getElementById('students').addEventListener('change', function() {
+    var selectedOptions = Array.from(this.selectedOptions);
+    console.log('Number of selected students:', selectedOptions.length);
+    var displayDiv = document.getElementById('selectedStudents');
+    displayDiv.innerHTML = '';
+    console.log('Selected students:', selectedOptions.map(option => ({id: option.value, name: option.text})));
+    selectedOptions.forEach(function(option) {
+        var badge = document.createElement('span');
+        badge.className = 'badge bg-primary me-1';
+        badge.textContent = option.text;
+        displayDiv.appendChild(badge);
+    });
+    });
+
+     </script> -->
+
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 
 
@@ -604,54 +713,8 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </script>
     <!-- END PAGE LEVEL SCRIPTS --> 
 
-    <!-- <script>
-        $(document).ready(function() {
-            $('.edit-chapter').click(function() {
-                var id = $(this).data('id');
-                $.ajax({
-                    url: 'get_chapter.php',
-                    type: 'GET',
-                    data: {id: id},
-                    success: function(response) {
-                        var chapter = JSON.parse(response);
-                        $('#edit_chapter_id').val(chapter.id);
-                        $('#edit_chapter_name').val(chapter.chapter_name);
-                        $('#editChapterModal').modal('show');
-                    }
-                });
-            });
-        });
-    </script> -->
+   
 
-
-<script>
-    $(document).ready(function() {
-        $('#department').on('change', function() {
-            var departmentId = $(this).val();
-            if (departmentId) {
-                $.ajax({
-                    url: 'get_students.php',
-                    type: 'POST',
-                    data: {department_id: departmentId},
-                    success: function(response) {
-                        $('#student').html(response);
-                    }
-                });
-                $.ajax({
-                    url: 'get_lecturers.php',
-                    type: 'POST',
-                    data: {department_id: departmentId},
-                    success: function(response) {
-                        $('#lecturer').html(response);
-                    }
-                });
-            } else {
-                $('#student').html('<option value="">Select Student</option>');
-                $('#lecturer').html('<option value="">Select Lecturer</option>');
-            }
-        });
-    });
-    </script>
 
 
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
@@ -666,51 +729,124 @@ require '../config.php';
 
 // Handle form submission
 if (isset($_POST['assign_Student'])) {
-    $studentId = $_POST['student_id'];
-    $lecturerId = $_POST['lecturer_id'];
+    $studentIds = $_POST['student_ids'];
+    $primarySupervisorId = $_POST['primary_supervisor_id'];
+    $secondarySupervisor1Id = $_POST['secondary_supervisor_id1'];
+    $secondarySupervisor2Id = $_POST['secondary_supervisor_id2'];
     $departmentId = $_POST['department_id'];
 
-    // Check if the student is already assigned a supervisor
-    $query = "SELECT * FROM assignments WHERE student_id = ?";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$studentId]);
-    $result = $stmt->fetchAll();
+    $allAssigned = true;
+    $assignmentCount = 0;
 
-    if (count($result) > 0) {
-        // Student is already assigned a supervisor
-           ?>
-            <script>
-                swal("Thesis Tracking System.", "This Student is already Assigned a Supervisor !!", "error");
-            </script>
-            <?php
-    } else {
-        // Assign the student to the selected lecturer
-        $query = "INSERT INTO assignments (student_id, lecturer_id, department_id) VALUES (?, ?, ?)";
+    foreach ($studentIds as $studentId) {
+        $query = "SELECT * FROM assignments WHERE student_id = ?";
         $stmt = $pdo->prepare($query);
-        $stmt->execute([$studentId, $lecturerId, $departmentId]);
+        $stmt->execute([$studentId]);
+        $result = $stmt->fetchAll();
 
-        if ($stmt->rowCount() > 0) {
-            ?>
-            <script>
-                swal("Thesis Tracking System.", "Student Assigned Successfully !!", "success");
-                            setTimeout(function() {
-                window.location.href = "assign_supervisor.php";
-            }, 1000);
-            </script>
-            <?php
+        if (count($result) > 0) {
+            $allAssigned = false;
         } else {
-            ?>
-            <script>
-                swal("Thesis Tracking System.", "Failed to Assigned Student !!", "error");
-            </script>
-            <?php
+            $query = "INSERT INTO assignments (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, department_id) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([$studentId, $primarySupervisorId, $secondarySupervisor1Id, $secondarySupervisor2Id, $departmentId]);
+
+            if ($stmt->rowCount() > 0) {
+                $assignmentCount++;
+                ?>
+                <script>
+                    swal("Thesis Tracking System.", " Supervisors assigned successfully!!", "success");
+                    setTimeout(function() {
+                        window.location.href = "assign_supervisor.php";
+                    }, 1000);
+                </script>
+                <?php
+            } else {
+                $allAssigned = false;
+            }
         }
     }
 
-
-
-
+    if ($allAssigned && $assignmentCount > 0) {
+        ?>
+        <script>
+            swal("Thesis Tracking System.", "Supervisors assigned successfully!!", "success");
+            setTimeout(function() {
+                window.location.href = "assign_supervisor.php";
+            }, 1000);
+        </script>
+        <?php
+    } elseif ($assignmentCount > 0) {
+        ?>
+        <script>
+            swal("Thesis Tracking System.", "Some students were assigned supervisors, but others were already assigned or failed to assign.", "warning");
+            setTimeout(function() {
+                window.location.href = "assign_supervisor.php";
+            }, 2000);
+        </script>
+        <?php
+    } else {
+        ?>
+        <script>
+            swal("Thesis Tracking System.", "Failed to assign supervisors. All students may already be assigned or an error occurred.", "error");
+        </script>
+        <?php
+    }
 }
+
+
+
+
+
+
+
+
+// if (isset($_POST['assign_Student'])) {
+//     $studentIds = $_POST['student_ids'];
+//     $primarySupervisorId = $_POST['primary_supervisor_id'];
+//     $secondarySupervisor1Id = $_POST['secondary_supervisor_id1'];
+//     $secondarySupervisor2Id = $_POST['secondary_supervisor_id2'];
+//     $departmentId = $_POST['department_id'];
+
+//     $successCount = 0;
+//     $errorCount = 0;
+
+//     foreach ($studentIds as $studentId) {
+//         $query = "INSERT INTO assignments (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, department_id) 
+//                   VALUES (?, ?, ?, ?, ?)";
+//         $stmt = $pdo->prepare($query);
+        
+//         if ($stmt->execute([$studentId, $primarySupervisorId, $secondarySupervisor1Id, $secondarySupervisor2Id, $departmentId])) {
+//             $successCount++;
+//         } else {
+//             $errorCount++;
+//         }
+//     }
+
+//     if ($successCount > 0) {
+//         echo "<script>swal('Success', '$successCount students assigned successfully!', 'success');</script>";
+//     }
+//     if ($errorCount > 0) {
+//         echo "<script>swal('Warning', '$errorCount students could not be assigned.', 'warning');</script>";
+//     }
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -797,65 +933,6 @@ if (isset($_POST['edit_chapter_id'])) {
 } 
 
 
-
-
-
-
-
-require '../vendor/autoload.php';
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-if (isset($_POST['import_assined_Student'])) {
-    $inputFile = $_FILES['excelFile']['tmp_name'];
-    $extension = pathinfo($_FILES['excelFile']['name'], PATHINFO_EXTENSION);
-   if($extension == 'xlsx' || $extension == 'xls' || $extension == 'csv') {
-      $objReader = PhpOffice\PhpSpreadsheet\IOFactory::load($inputFile);
-      $data = $objReader->getActiveSheet()->toArray();
-
-      foreach ($data as $row) {
-        $studentId = $row['0'];
-        $lecturerId = $row['1'];
-        $departmentId = $row['3'];
-        
-
-        $sql = 'INSERT INTO assignments (student_id, lecturer_id, department_id) VALUES (?, ?, ?)';
-        $stmt = $pdo->prepare($sql);
-
-        try {
-            if ($stmt->execute([$studentId, $lecturerId,$departmentId])) {
-                // User added successfully
-                ?>
-                <script>
-                    swal("Thesis Tracking System.", "Student Assigned Successfully !!", "success");
-                            setTimeout(function() {
-                        window.location.href = "assign_Supervisor.php";
-                    }, 1000);
-                </script>
-                <?php
-                
-
-                header("Location: add_new_User.php");
-            } else {
-                $error = $stmt->errorInfo()[2];
-                ?>
-                <script>
-                    swal("Thesis Tracking System.", "<?php echo $error; ?>", "error");
-                </script>
-                <?php
-            }
-        } catch (PDOException $e) {
-            ?>
-            <script>
-                swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
-            </script>
-            <?php
-        }
-      }
-    }
-        
-}
 
 
 ?>
