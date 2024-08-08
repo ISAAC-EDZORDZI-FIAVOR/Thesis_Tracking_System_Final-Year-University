@@ -15,8 +15,8 @@ window.addEventListener("load", function(){
                 darkMode: true,
                 boxed: true,
                 logo: {
-                    darkLogo: '../src/assets/img/logo.svg',
-                    lightLogo: '../src/assets/img/logo2.svg'
+                    darkLogo: '../src/assets/img/logo.png',
+                    lightLogo: '../src/assets/img/logo.png'
                 }
             }
         },
@@ -70,7 +70,7 @@ window.addEventListener("load", function(){
             document.body.classList.add('dark');
             if (ifStarterKit) {
                 if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', '../../src/assets/img/logo.svg')
+                    document.querySelector('.navbar-logo').setAttribute('src', '../../src/assets/img/logo.png')
                 }
             } else {
                 if (document.querySelector('.navbar-logo')) {
@@ -88,7 +88,7 @@ window.addEventListener("load", function(){
             document.body.classList.remove('dark');
             if (ifStarterKit) {
                 if (document.querySelector('.navbar-logo')) {
-                    document.querySelector('.navbar-logo').setAttribute('src', '../../src/assets/img/logo2.svg')
+                    document.querySelector('.navbar-logo').setAttribute('src', '../../src/assets/img/logo.png')
                 }
             } else {
                 if (document.querySelector('.navbar-logo')) {

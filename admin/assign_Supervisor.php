@@ -33,7 +33,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>Thesis Tracking System </title>
-    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico"/>
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/logo.png"/>
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
@@ -177,7 +177,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="nav-logo">
                         <div class="nav-item theme-logo">
                             <a href="./index.php">
-                            <img src="../src/assets/img/logo.svg" class="navbar-logo" alt="logo">
+                            <img src="../src/assets/img/logo.png"  alt="logo">
                             </a>
                         </div>
                         <div class="nav-item theme-text">
@@ -219,7 +219,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <a href="./index.php"> Analytics </a>
                             </li>
                             <li>
-                                <a href="./index2.html"> Sales </a>
+                                <!-- <a href="./index2.html"> Sales </a> -->
                             </li>
                         </ul>
                     </li>
@@ -312,7 +312,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <div class="row">
                                            
                                             <div class="col-md-12 col-sm-12 col-12 text-center">
-                                                <a id="btn-add-notes" class="btn btn-secondary w-100" href="javascript:void(0);">Assign Student</a>
+                                                <a id="btn-add-notes" class="btn btn-primary w-100" href="javascript:void(0);">Assign Student</a>
                                                 
                                             </div>
                                         </div>
@@ -376,12 +376,13 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                 <td><?php echo $assignment['secondary_supervisor2_name']; ?></td>
                                                                 <td>
                                                                     <ul class="table-controls">
-                                                                        <li>
-                                                                            <a href="edit_assignment.php?id=<?php echo $assignment['assignment_id']; ?>" class="bs-tooltip" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit">
-                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success">
-                                                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                                                                                </svg>
-                                                                            </a>
+                                                                       <li>
+                                                                       <a href="javascript:void(0);" class="bs-tooltip edit-assignment" data-toggle="tooltip" data-placement="top" title="Edit" data-original-title="Edit" data-id="<?php echo $assignment['assignment_id']; ?>" data-department="<?php echo $assignment['department_id']; ?>">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success">
+                                                                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                                                            </svg>
+                                                                        </a>
+
                                                                         </li>
                                                                         <li>
                                                                             <a href="assign_Supervisor.php?delete_id=<?php echo $assignment['assignment_id']; ?>" class="bs-tooltip delete-user" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete">
@@ -409,30 +410,46 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 
-                                                        <!-- Edit Chapter Modal -->
-                            <div class="modal fade" id="editChapterModal" tabindex="-1" role="dialog" aria-labelledby="editChapterModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editChapterModalLabel">Edit Chapter</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form id="editChapterForm" method="post">
-                                                <input type="hidden" id="edit_chapter_id" name="edit_chapter_id">
-                                                <div class="mb-3">
-                                                    <label for="edit_chapter_name" class="form-label">Chapter Name</label>
-                                                    <input type="text" class="form-control" id="edit_chapter_name" name="edit_chapter_name" required>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-primary">Update Chapter</button>
-                                                </div>
-                                            </form>
-                                        </div>
+                            <!-- Edit Assignment Modal -->
+                        <div class="modal fade" id="editAssignmentModal" tabindex="-1" role="dialog" aria-labelledby="editAssignmentModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editAssignmentModalLabel">Edit Assigned Supervisors</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                                              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                         </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="editAssignmentForm" method="post">
+                                            <input type="hidden" id="edit_assignment_id" name="edit_assignment_id">
+                                            <div class="form-group">
+                                                <label for="edit_primary_supervisor">Primary Supervisor</label>
+                                                <select class="form-control" id="edit_primary_supervisor" name="edit_primary_supervisor" required>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit_secondary_supervisor1">Secondary Supervisor 1</label>
+                                                <select class="form-control" id="edit_secondary_supervisor1" name="edit_secondary_supervisor1">
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="edit_secondary_supervisor2">Secondary Supervisor 2</label>
+                                                <select class="form-control" id="edit_secondary_supervisor2" name="edit_secondary_supervisor2">
+                                                </select>
+                                            </div>
+                                            <!-- <button type="submit" class="btn btn-primary"></button> -->
+
+                                            <div class="modal-footer">
+                                                <button class="btn" data-bs-dismiss="modal">Discard</button>
+                                                <button type="submit" id="" name="update_Assigned" class="btn btn-primary">Update Assignment</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+ 
 
 
 
@@ -574,6 +591,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     $('#secondary_supervisor2').html(response);
                 }
             });
+            
         } else {
             $('#students').html('<option value="">Select Students</option>').trigger('change');
             $('#primary_supervisor').html('<option value="">Select Primary Supervisor</option>');
@@ -604,22 +622,46 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     </script>
 
-<!-- >    <script>
-     document.getElementById('students').addEventListener('change', function() {
-    var selectedOptions = Array.from(this.selectedOptions);
-    console.log('Number of selected students:', selectedOptions.length);
-    var displayDiv = document.getElementById('selectedStudents');
-    displayDiv.innerHTML = '';
-    console.log('Selected students:', selectedOptions.map(option => ({id: option.value, name: option.text})));
-    selectedOptions.forEach(function(option) {
-        var badge = document.createElement('span');
-        badge.className = 'badge bg-primary me-1';
-        badge.textContent = option.text;
-        displayDiv.appendChild(badge);
-    });
+    <script>
+   
+    $(document).ready(function() {
+        $('.edit-assignment').click(function() {
+            var assignmentId = $(this).data('id');
+            var departmentId = $(this).data('department');
+            
+            // Fetch assignment details and populate the modal
+            $.ajax({
+                url: 'get_assignment_details.php',
+                type: 'POST',
+                data: {assignment_id: assignmentId},
+                success: function(response) {
+                    var assignment = JSON.parse(response);
+                    $('#edit_assignment_id').val(assignmentId);
+                    
+                    // Fetch lecturers for the department
+                    $.ajax({
+                        url: 'get_lecturers.php',
+                        type: 'POST',
+                        data: {department_id: departmentId},
+                        success: function(lecturers) {
+                            $('#edit_primary_supervisor').html(lecturers);
+                            $('#edit_secondary_supervisor1').html(lecturers);
+                            $('#edit_secondary_supervisor2').html(lecturers);
+                            
+                            // Set selected supervisors
+                            $('#edit_primary_supervisor').val(assignment.primary_supervisor_id);
+                            $('#edit_secondary_supervisor1').val(assignment.secondary_supervisor_id1);
+                            $('#edit_secondary_supervisor2').val(assignment.secondary_supervisor_id2);
+                            
+                            $('#editAssignmentModal').modal('show');
+                        }
+                    });
+                }
+            });
+        });
     });
 
-     </script> -->
+     </script> 
 
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 
@@ -722,6 +764,7 @@ $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- END PAGE LEVEL SCRIPTS -->
 
 </body>
+</html>
 
 
 <?php
@@ -801,47 +844,42 @@ if (isset($_POST['assign_Student'])) {
 
 
 
-// if (isset($_POST['assign_Student'])) {
-//     $studentIds = $_POST['student_ids'];
-//     $primarySupervisorId = $_POST['primary_supervisor_id'];
-//     $secondarySupervisor1Id = $_POST['secondary_supervisor_id1'];
-//     $secondarySupervisor2Id = $_POST['secondary_supervisor_id2'];
-//     $departmentId = $_POST['department_id'];
+if (isset($_POST['update_Assigned'])) {
+    $assignment_id = $_POST['edit_assignment_id'];
+    $primary_supervisor_id = $_POST['edit_primary_supervisor'];
+    $secondary_supervisor_id1 = $_POST['edit_secondary_supervisor1'];
+    $secondary_supervisor_id2 = $_POST['edit_secondary_supervisor2'];
 
-//     $successCount = 0;
-//     $errorCount = 0;
+    $stmt = $pdo->prepare("UPDATE assignments SET primary_supervisor_id = ?, secondary_supervisor_id1 = ?, secondary_supervisor_id2 = ? WHERE id = ?");
+    if ($stmt->execute([$primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $assignment_id])) {
+       
+        ?>
+            <script>
 
-//     foreach ($studentIds as $studentId) {
-//         $query = "INSERT INTO assignments (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, department_id) 
-//                   VALUES (?, ?, ?, ?, ?)";
-//         $stmt = $pdo->prepare($query);
+                swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this Assigned Data!",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#4912E1",
+                confirmButtonText: "Yes, Update it!",
+                closeOnConfirm: false
+                },
+                function(){
+                    swal("Thesis Tracking System.", "Assigned Supervisors Updated Successfully !!", "success");
+                    setTimeout(function() {
+                window.location.href = "assign_Supervisor.php";
+                }, 3000);
+                });
+
+            </script>
+        <?php
+    } else {
         
-//         if ($stmt->execute([$studentId, $primarySupervisorId, $secondarySupervisor1Id, $secondarySupervisor2Id, $departmentId])) {
-//             $successCount++;
-//         } else {
-//             $errorCount++;
-//         }
-//     }
-
-//     if ($successCount > 0) {
-//         echo "<script>swal('Success', '$successCount students assigned successfully!', 'success');</script>";
-//     }
-//     if ($errorCount > 0) {
-//         echo "<script>swal('Warning', '$errorCount students could not be assigned.', 'warning');</script>";
-//     }
-// }
-
-
-
-
-
-
-
-
-
-
-
-
+        $error = $stmt->errorInfo()[2];
+        echo "<script>swal('Thesis Tracking System', '$error', 'error');</script>";
+    }
+}
 
 
 
@@ -856,7 +894,6 @@ if (isset($_GET['delete_id'])) {
     // Delete the assignment from the database
     $query = "DELETE FROM assignments WHERE id = ?";
     $stmt = $pdo->prepare($query);
-   ;
 
     if ($stmt->execute([$assignmentId])) {
        
@@ -886,55 +923,4 @@ if (isset($_GET['delete_id'])) {
 }
 
 
-
-
-
-if (isset($_POST['edit_chapter_id'])) {
-    // Handle edit chapter
-    $chapter_id = $_POST['edit_chapter_id'];
-    $chapter_name = $_POST['edit_chapter_name'];
-
-    $sql = 'UPDATE chapter_type SET chapter_name = ? WHERE id = ?';
-    $stmt = $pdo->prepare($sql);
-
-    try {
-        $result = $stmt->execute([$chapter_name, $chapter_id]);
-        if ($result) {
-           
-            ?>
-            <script>
-
-                swal({
-                title: "Are you sure?",
-                text: "You will not be able to recover this Chapter Data!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#4912E1",
-                confirmButtonText: "Yes, Update it!",
-                closeOnConfirm: false
-                },
-                function(){
-                    swal("Thesis Tracking System.", "Chapter Updated Successfully !!", "success");
-                    setTimeout(function() {
-                window.location.href = "add_new_Chapter.php";
-                }, 3000);
-                });
-
-            </script>
-        <?php
-
-        } else {
-            $error = $stmt->errorInfo()[2];
-            echo "<script>swal('Thesis Tracking System', '$error', 'error');</script>";
-        }
-    } catch (PDOException $e) {
-        echo "<script>swal('Thesis Tracking System', '{$e->getMessage()}', 'error');</script>";
-    }
-} 
-
-
-
-
 ?>
-
-</html>

@@ -8,8 +8,8 @@ $("input[name='demo1']").TouchSpin({
     boostat: 5,
     maxboostedstep: 1,
     // postfix: '%',
-    buttondown_class: "btn btn-secondary",
-    buttonup_class: "btn btn-secondary"
+    buttondown_class: "btn btn-primary",
+    buttonup_class: "btn btn-primary"
 });
 
 

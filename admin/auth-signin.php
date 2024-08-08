@@ -27,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $redirect_url = '';
             switch ($user['role']) {
                 case 'student':
-                    $redirect_url = '../student/student_dashboard.php';
+                    $redirect_url = '../student/index.php';
                     break;
                 case 'lecturer':
-                    $redirect_url = '../faculty/faculty_dashboard.php';
+                    $redirect_url = '../lecturer/index.php';
                     break;
                 case 'hod':
                     $redirect_url = '../hod/hod_dashboard.php';
@@ -71,7 +71,7 @@ $pdo = null;
     <meta content="BlackCode" name="author" />
     <title>Thesis Tracking System</title>
     <link rel="stylesheet" href="../layouts/vertical-dark-menu/css/custom.css" />
-    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico"/>
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/logo.png"/>
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
@@ -173,8 +173,8 @@ $pdo = null;
                                     
                                     <div class="col-12">
                                         <div class="mb-4">
-                                            <!-- <button type="submit" class="btn btn-secondary w-100">SIGN IN</button> -->
-                                            <button type="submit" id="signInButton" class="btn btn-secondary w-100">
+                                            <!-- <button type="submit" class="btn btn-primary w-100">SIGN IN</button> -->
+                                            <button type="submit" id="signInButton" class="btn btn-primary w-100">
                                                 <span class="button-text">SIGN IN</span>
                                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                             </button>

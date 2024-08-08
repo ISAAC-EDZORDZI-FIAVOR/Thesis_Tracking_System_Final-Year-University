@@ -1306,13 +1306,13 @@ select.form-control.form-custom {
   box-shadow: none;
 }
 
-.btn-secondary:not(:disabled):not(.disabled) {
+.btn-primary:not(:disabled):not(.disabled) {
   &.active:focus, &:active:focus {
     box-shadow: none;
   }
 }
 
-.show > .btn-secondary.dropdown-toggle:focus {
+.show > .btn-primary.dropdown-toggle:focus {
   box-shadow: none;
 }
 
@@ -1356,13 +1356,13 @@ select.form-control.form-custom {
   box-shadow: none;
 }
 
-.btn-secondary:not(:disabled):not(.disabled) {
+.btn-primary:not(:disabled):not(.disabled) {
   &.active:focus, &:active:focus {
     box-shadow: none;
   }
 }
 
-.show > .btn-secondary.dropdown-toggle:focus {
+.show > .btn-primary.dropdown-toggle:focus {
   box-shadow: none;
 }
 
@@ -1452,7 +1452,7 @@ select.form-control.form-custom {
   }
 }
 
-.btn-success:focus, .btn-info:focus, .btn-danger:focus, .btn-warning:focus, .btn-secondary:focus, .btn-dark:focus, .btn-outline-success:focus, .btn-outline-info:focus, .btn-outline-danger:focus, .btn-outline-warning:focus, .btn-outline-secondary:focus, .btn-outline-dark:focus .btn-light-default:focus, .btn-light-primary:focus, .btn-light-success:focus, .btn-light-info:focus, .btn-light-danger:focus, .btn-light-warning:focus, .btn-light-secondary:focus, .btn-light-dark:focus {
+.btn-success:focus, .btn-info:focus, .btn-danger:focus, .btn-warning:focus, .btn-primary:focus, .btn-dark:focus, .btn-outline-success:focus, .btn-outline-info:focus, .btn-outline-danger:focus, .btn-outline-warning:focus, .btn-outline-secondary:focus, .btn-outline-dark:focus .btn-light-default:focus, .btn-light-primary:focus, .btn-light-success:focus, .btn-light-info:focus, .btn-light-danger:focus, .btn-light-warning:focus, .btn-light-secondary:focus, .btn-light-dark:focus {
   box-shadow: none;
 }
 
@@ -1545,7 +1545,7 @@ select.form-control.form-custom {
   background-color: #bfc1fb;
 }
 
-.btn-secondary {
+.btn-primary {
   color: #fff !important;
   background-color: $secondary;
   border-color: $secondary;
@@ -1572,13 +1572,13 @@ select.form-control.form-custom {
   }
 }
 
-.show > .btn-secondary.dropdown-toggle {
+.show > .btn-primary.dropdown-toggle {
   color: #fff !important;
   background-color: $secondary;
   border-color: $secondary;
 }
 
-.btn-secondary {
+.btn-primary {
   &.disabled, &.btn[disabled], &:disabled {
     background-color: $secondary;
     border-color: $secondary;
@@ -2139,7 +2139,7 @@ fieldset:disabled .btn {
       border-left: 1px solid rgb(74, 78, 106);
     }
 
-    &.btn-secondary {
+    &.btn-primary {
       border-left: 1px solid rgb(149, 112, 227);
     }
   }
@@ -2174,7 +2174,7 @@ fieldset:disabled .btn {
       border-left: 1px solid rgb(112, 118, 122);
     }
 
-    .btn-secondary:not(.dropdown-toggle-split) {
+    .btn-primary:not(.dropdown-toggle-split) {
       border-left: 1px solid rgb(131, 83, 220);
     }
   }

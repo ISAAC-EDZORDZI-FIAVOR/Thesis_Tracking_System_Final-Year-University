@@ -1127,11 +1127,11 @@ select.form-control.form-custom {
   box-shadow: none;
 }
 
-.btn-secondary:not(:disabled):not(.disabled).active:focus, .btn-secondary:not(:disabled):not(.disabled):active:focus {
+.btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus {
   box-shadow: none;
 }
 
-.show > .btn-secondary.dropdown-toggle:focus {
+.show > .btn-primary.dropdown-toggle:focus {
   box-shadow: none;
 }
 
@@ -1167,11 +1167,11 @@ select.form-control.form-custom {
   box-shadow: none;
 }
 
-.btn-secondary:not(:disabled):not(.disabled).active:focus, .btn-secondary:not(:disabled):not(.disabled):active:focus {
+.btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus {
   box-shadow: none;
 }
 
-.show > .btn-secondary.dropdown-toggle:focus {
+.show > .btn-primary.dropdown-toggle:focus {
   box-shadow: none;
 }
 
@@ -1243,7 +1243,7 @@ select.form-control.form-custom {
   box-shadow: none;
 }
 
-.btn-success:focus, .btn-info:focus, .btn-danger:focus, .btn-warning:focus, .btn-secondary:focus, .btn-dark:focus, .btn-outline-success:focus, .btn-outline-info:focus, .btn-outline-danger:focus, .btn-outline-warning:focus, .btn-outline-secondary:focus, .btn-outline-dark:focus .btn-light-default:focus, .btn-light-primary:focus, .btn-light-success:focus, .btn-light-info:focus, .btn-light-danger:focus, .btn-light-warning:focus, .btn-light-secondary:focus, .btn-light-dark:focus {
+.btn-success:focus, .btn-info:focus, .btn-danger:focus, .btn-warning:focus, .btn-primary:focus, .btn-dark:focus, .btn-outline-success:focus, .btn-outline-info:focus, .btn-outline-danger:focus, .btn-outline-warning:focus, .btn-outline-secondary:focus, .btn-outline-dark:focus .btn-light-default:focus, .btn-light-primary:focus, .btn-light-success:focus, .btn-light-info:focus, .btn-light-danger:focus, .btn-light-warning:focus, .btn-light-secondary:focus, .btn-light-dark:focus {
   box-shadow: none;
 }
 
@@ -1318,42 +1318,42 @@ select.form-control.form-custom {
   background-color: #bfc1fb;
 }
 
-.btn-secondary {
+.btn-primary {
   color: #fff !important;
   background-color: #805dca;
   border-color: #805dca;
   box-shadow: 0 10px 20px -10px rgba(92, 26, 195, 0.59);
 }
-.btn-secondary:hover, .btn-secondary:focus {
+.btn-primary:hover, .btn-primary:focus {
   color: #fff !important;
   background-color: #805dca !important;
   box-shadow: none;
   border-color: #805dca !important;
 }
-.btn-secondary:active, .btn-secondary.active {
+.btn-primary:active, .btn-primary.active {
   background-color: #805dca;
   border-top: 1px solid #805dca;
 }
-.btn-secondary:not(:disabled):not(.disabled).active, .btn-secondary:not(:disabled):not(.disabled):active {
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active {
   color: #fff !important;
   background-color: #805dca;
   border-color: #805dca;
 }
 
-.show > .btn-secondary.dropdown-toggle {
+.show > .btn-primary.dropdown-toggle {
   color: #fff !important;
   background-color: #805dca;
   border-color: #805dca;
 }
 
-.btn-secondary.disabled, .btn-secondary.btn[disabled], .btn-secondary:disabled {
+.btn-primary.disabled, .btn-primary.btn[disabled], .btn-primary:disabled {
   background-color: #805dca;
   border-color: #805dca;
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
 }
-.btn-secondary .caret {
+.btn-primary .caret {
   border-top-color: #fff;
 }
 
@@ -1791,7 +1791,7 @@ fieldset:disabled .btn {
 .btn-group > .btn + .dropdown-toggle.btn-dark {
   border-left: 1px solid rgb(74, 78, 106);
 }
-.btn-group > .btn + .dropdown-toggle.btn-secondary {
+.btn-group > .btn + .dropdown-toggle.btn-primary {
   border-left: 1px solid rgb(149, 112, 227);
 }
 .btn-group.dropstart .dropdown-toggle-split {
@@ -1816,7 +1816,7 @@ fieldset:disabled .btn {
 .btn-group.dropstart .btn-dark:not(.dropdown-toggle-split) {
   border-left: 1px solid rgb(112, 118, 122);
 }
-.btn-group.dropstart .btn-secondary:not(.dropdown-toggle-split) {
+.btn-group.dropstart .btn-primary:not(.dropdown-toggle-split) {
   border-left: 1px solid rgb(131, 83, 220);
 }
 

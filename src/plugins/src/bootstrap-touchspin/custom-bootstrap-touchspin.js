@@ -29,7 +29,7 @@ $("input[name='demo2']").TouchSpin({
 $("input[name='demo_vertical']").TouchSpin({
     verticalbuttons: true,
     buttondown_class: "btn btn-info",
-    buttonup_class: "btn btn-secondary"
+    buttonup_class: "btn btn-primary"
 });
 
 
@@ -39,7 +39,7 @@ $("input[name='demo_vertical2']").TouchSpin({
     verticalup: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>',
     verticaldown: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down"><polyline points="6 9 12 15 18 9"></polyline></svg>',
     buttondown_class: "btn btn-info",
-    buttonup_class: "btn btn-secondary"
+    buttonup_class: "btn btn-primary"
 });
 
 // Value attribute is not set (applying settings.initval)

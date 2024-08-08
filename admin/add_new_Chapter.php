@@ -81,7 +81,7 @@ function displayChapterTable($pdo)
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>Thesis Tracking System </title>
-    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico"/>
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/logo.png"/>
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
@@ -215,7 +215,7 @@ function displayChapterTable($pdo)
                     <div class="nav-logo">
                         <div class="nav-item theme-logo">
                             <a href="./index.php">
-                                <img src="../src/assets/img/logo.svg" class="navbar-logo" alt="logo">
+                            <img src="../src/assets/img/logo.png"  alt="logo">
                             </a>
                         </div>
                         <div class="nav-item theme-text">
@@ -351,7 +351,7 @@ function displayChapterTable($pdo)
                                         <div class="row">
                                            
                                             <div class="col-md-12 col-sm-12 col-12 text-center">
-                                                <a id="btn-add-notes" class="btn btn-secondary w-100" href="javascript:void(0);">Add New Department</a>
+                                                <a id="btn-add-notes" class="btn btn-primary w-100" href="javascript:void(0);">Add New Department</a>
                                                 
                                             </div>
                                         </div>
