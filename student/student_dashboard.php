@@ -967,59 +967,106 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     
                     <div class="row layout-top-spacing">
                         <div class="col-xl-12 col-lg-12 col-md-12">
+
+                                    <style>
+                                        .list-group-item-primary {
+                                            background-color: #2731B4;
+                                            color: white;
+                                        }
+                                        .list-group-item-primary strong {
+                                            color: #f8f9fa;
+                                        }
+                                    </style>
+
     
                             <div class="row">
     
-                                <div class="col-xl-12  col-md-12">
-    
-                                   
+                                    <div class="col-xl-12 col-md-12">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h2 class="card-title mb-4 text-center">Welcome, <?php echo htmlspecialchars($_SESSION['fullname']); ?></h2>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <ul class="list-group list-group-flush rounded  btn-primary">
+                                                            <li class="list-group-item list-group-item-primary"><strong>Department:</strong> <?php echo htmlspecialchars($student['name']); ?></li>
+                                                            <li class="list-group-item list-group-item-primary"><strong>Username:</strong> <?php echo htmlspecialchars($_SESSION['username']); ?></li>
+                                                            <li class="list-group-item list-group-item-primary"><strong>Role:</strong> <?php echo htmlspecialchars($_SESSION['role']); ?></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <ul class="list-group list-group-flush rounded btn-primary">
+                                                            <li class="list-group-item list-group-item-primary"><strong>Level:</strong> <?php echo htmlspecialchars($_SESSION['StudentLevel']); ?></li>
+                                                            <li class="list-group-item list-group-item-primary"><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['email']); ?></li>
+                                                            <li class="list-group-item list-group-item-primary"><strong>Date Registered:</strong> <?php echo htmlspecialchars($_SESSION['dateRegistered']); ?></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
 
-                                    <h1>Welcome, <?php echo htmlspecialchars($_SESSION['fullname']); ?></h1>
-                                    <p>Department: <?php echo htmlspecialchars($student['name']); ?></p>
-                                    <p>Username: <?php echo htmlspecialchars($_SESSION['username']); ?></p>
-                                    <p>Role: <?php echo htmlspecialchars($_SESSION['role']); ?></p>
-                                    <p>Level: <?php echo htmlspecialchars($_SESSION['StudentLevel']); ?></p>
-                                    <p>Email: <?php echo htmlspecialchars($_SESSION['email']); ?></p>
-                                    <p>Date Registered: <?php echo htmlspecialchars($_SESSION['dateRegistered']); ?></p>
+                                                <?php if (!$supervisor): ?>
+                                                    <div class="alert alert-warning mt-4" role="alert">
+                                                        You have not been assigned a supervisor yet. Contact the Administrator or Your HOD.
+                                                    </div>
+                                                <?php else: ?>
+                                                    <?php if (!$thesis_proposal): ?>
+                                                        
+                                                        <div class="mt-4">
+                                                            <h3 class="mb-3 text-center">Assigned Supervisors</h3>
+                                                            <div class="row">
+                                                                <?php foreach ($assigned_supervisors as $supervisor): ?>
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <div class="card h-100">
+                                                                            <div class="card-body">
+                                                                                <h5 class="card-title"><?php echo htmlspecialchars($supervisor['supervisor_type']); ?> Supervisor</h5>
+                                                                                <p class="card-text"><strong>Name:</strong> <?php echo htmlspecialchars($supervisor['lecturer_name']); ?></p>
+                                                                                <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($supervisor['lecturer_email']); ?></p>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                <?php endforeach; ?>
+                                                            </div>
+                                                        </div>
 
-                                    <?php if (!$supervisor): ?>
-                                        <p>You have not been assigned a supervisor yet. Contact the Administrator or Your HOD</p>
-                                    <?php else: ?>
-                                        <?php if (!$thesis_proposal): ?>
-                                           
-                                            <h3>Assigned Supervisors</h3>
-                                            <?php foreach ($assigned_supervisors as $supervisor): ?>
-                                                <p><?php echo htmlspecialchars($supervisor['supervisor_type']); ?> Supervisor:</p>
-                                                <p>Name: <?php echo htmlspecialchars($supervisor['lecturer_name']); ?></p>
-                                                <p>Email: <?php echo htmlspecialchars($supervisor['lecturer_email']); ?></p>
-                                            <?php endforeach; ?>
-                                            <!-- Add thesis proposal form here -->
-                                            <h2>Submit Thesis Proposal</h2>
-                                                <form action="" method="POST">
-                                                    <label for="title">Thesis Title:</label>
-                                                    <input type="text" id="title" name="title" required>
-                                                    
-                                                    <label for="description">Brief Description:</label>
-                                                    <textarea id="description" name="description" required></textarea>
-                                                    
-                                                    <input type="submit" value="Submit Proposal">
-                                                </form>
-                                                <?php elseif ($thesis_proposal['status'] == 'pending'): ?>
-                                                    <p>Your thesis proposal is pending approval.</p>
-                                                     <!-- Student has submitted a thesis proposal -->
-                                                    <h2>Thesis Proposal Status</h2>
-                                                     <p>Title:  <?php echo htmlspecialchars($thesis_proposal['title']); ?>. </p>
-                                                     <p>Description:  <?php echo htmlspecialchars($thesis_proposal['description']); ?>. </p>
-                                                     <p>Status:  <?php echo htmlspecialchars($thesis_proposal['status']); ?> . </p>
-                                                     <p>Submitted Date:  <?php echo htmlspecialchars($thesis_proposal['submission_date']); ?> . </p>
+
+                                                        
+                                                        
+                                                        <div class="mt-4">
+                                                            <h2 class="mb-3">Submit Thesis Proposal</h2>
+                                                            <form action="" method="POST">
+                                                                <div class="mb-3">
+                                                                    <label for="title" class="form-label">Thesis Title:</label>
+                                                                    <input type="text" class="form-control" id="title" name="title" required>
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label for="description" class="form-label">Brief Description:</label>
+                                                                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary">Submit Proposal</button>
+                                                            </form>
+                                                        </div>
+                                                    <?php elseif ($thesis_proposal['status'] == 'pending'): ?>
+                                                        <div class="alert alert-info mt-4" role="alert">
+                                                            Your thesis proposal is pending approval.
+                                                        </div>
+                                                        <div class="mt-4">
+                                                            <h2 class="mb-3">Thesis Proposal Status</h2>
+                                                            <ul class="list-group">
+                                                                <li class="list-group-item"><strong>Title:</strong> <?php echo htmlspecialchars($thesis_proposal['title']); ?></li>
+                                                                <li class="list-group-item"><strong>Description:</strong> <?php echo htmlspecialchars($thesis_proposal['description']); ?></li>
+                                                                <li class="list-group-item"><strong>Status:</strong> <?php echo htmlspecialchars($thesis_proposal['status']); ?></li>
+                                                                <li class="list-group-item"><strong>Submitted Date:</strong> <?php echo htmlspecialchars($thesis_proposal['submission_date']); ?></li>
+                                                            </ul>
+                                                        </div>
                                                     <?php elseif ($thesis_proposal['status'] == 'approved'): ?>
-                                                    <h2>Thesis Progress</h2>
-                                                    <!-- Add chapter submission options here -->
+                                                        <div class="mt-4">
+                                                            <h2 class="mb-3">Thesis Progress</h2>
+                                                            <!-- Add chapter submission options here -->
+                                                        </div>
+                                                    <?php endif; ?>
                                                 <?php endif; ?>
-                                    <?php endif; ?>
-                                    
-    
-                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
     
     
                             </div>
