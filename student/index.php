@@ -344,14 +344,25 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                             </div>
                                                                             <div class="card-body">
                                                                                 <div class="alert alert-info" role="alert">
-                                                                                    Your thesis proposal is pending approval.
+                                                                                    Your Thesis proposal is Pending Approval.
                                                                                 </div>
                                                                                 <ul class="list-group">
                                                                                     <li class="list-group-item list-group-item-primary"><strong>Title:</strong> <?php echo htmlspecialchars($thesis_proposal['title']); ?></li>
                                                                                     <li class="list-group-item list-group-item-primary"><strong>Description:</strong> <?php echo htmlspecialchars($thesis_proposal['description']); ?></li>
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Status:</strong> <span class="badge bg-warning text-dark"><?php echo htmlspecialchars($thesis_proposal['status']); ?></span></li>
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Submitted Date:</strong> <?php echo htmlspecialchars($thesis_proposal['submission_date']); ?></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Status:</strong> <span class="badge bg-warning text-dark"><?php echo ucfirst( htmlspecialchars($thesis_proposal['status'])); ?></span></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($thesis_proposal['submission_date'])); ?></li>
                                                                                 </ul>
+
+                                                                                <?php if (!empty($thesis_proposal['file_path'])): ?>
+                                                                                    <div class="card mt-4">
+                                                                                        <div class="card-header bg-primary text-white">
+                                                                                            <h5 class="mb-0">Proposal Document</h5>
+                                                                                        </div>
+                                                                                        <div class="card-body">
+                                                                                            <p>View the proposal document: <a href="../lecturer/<?php echo $thesis_proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                <?php endif; ?>
                                                                             </div>
                                                                         </div>
 
@@ -362,14 +373,25 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                 </div>
                                                                                 <div class="card-body">
                                                                                     <div class="alert alert-danger" role="alert">
-                                                                                        Your thesis proposal has been rejected. Please review the feedback and resubmit.
+                                                                                        Your Thesis Proposal has been Rejected. Please Review the Feedback and Resubmit.
                                                                                     </div>
                                                                                     <ul class="list-group">
                                                                                         <li class="list-group-item list-group-item-danger"><strong>Title:</strong> <?php echo htmlspecialchars($thesis_proposal['title']); ?></li>
                                                                                         <li class="list-group-item list-group-item-danger"><strong>Description:</strong> <?php echo htmlspecialchars($thesis_proposal['description']); ?></li>
                                                                                         <li class="list-group-item list-group-item-danger"><strong>Feedback:</strong> <?php echo htmlspecialchars($thesis_proposal['comment']); ?></li>
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo htmlspecialchars($thesis_proposal['submission_date']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($thesis_proposal['submission_date'])); ?></li>
                                                                                     </ul>
+
+                                                                                    <?php if (!empty($thesis_proposal['file_path'])): ?>
+                                                                                    <div class="card mt-4">
+                                                                                        <div class="card-header bg-primary text-white">
+                                                                                            <h5 class="mb-0">Proposal Document</h5>
+                                                                                        </div>
+                                                                                        <div class="card-body">
+                                                                                            <p>View the proposal document: <a href="../lecturer/<?php echo $thesis_proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <?php endif; ?>
                                                                                     
                                                                                     <div class="mt-4">
                                                                                     <div class="col-md-12 col-sm-12 col-12 text-center">
@@ -446,7 +468,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                                                             <div class="form-group">
                                                                                 <label for="proposal_file">Upload Thesis Proposal (PDF only)</label>
-                                                                                <input type="file" class="form-control" id="proposal_file" name="proposal_file" accept=".pdf" required>
+                                                                                <input type="file" class="form-control" id="proposal_file" name="proposal_file" accept=".pdf">
                                                                             </div>
                                                                         </div>
                                                                             <div class="modal-footer">
@@ -629,45 +651,61 @@ if (isset($_POST['submit_Proposal'])) {
             $file = $_FILES['proposal_file'];
             $fileName = $_SESSION['username'] . '_' . str_replace(' ', '_', $_SESSION['fullname']) . '_proposal.pdf';
             $uploadPath = '../uploads/proposals/' . $fileName;
-            
+           
             if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                 $file_path = $uploadPath;
             }
         }
 
-        $stmt = $pdo->prepare("INSERT INTO thesis_proposals 
-            (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, title, description, file_path, faculty_id, department_id, status, submission_date) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
-            ON DUPLICATE KEY UPDATE 
-            primary_supervisor_id = VALUES(primary_supervisor_id),
-            secondary_supervisor_id1 = VALUES(secondary_supervisor_id1),
-            secondary_supervisor_id2 = VALUES(secondary_supervisor_id2),
-            title = VALUES(title),
-            description = VALUES(description),
-            file_path = VALUES(file_path),
-            faculty_id = VALUES(faculty_id),
-            department_id = VALUES(department_id),
-            status = 'pending',
-            submission_date = CURRENT_TIMESTAMP");
+        $pdo->beginTransaction();
 
-        $stmt->execute([$student_id, $primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $title, $description, $file_path, $faculty_id, $department_id]);
+        try {
+            $stmt = $pdo->prepare("INSERT INTO thesis_proposals
+                (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, title, description, file_path, faculty_id, department_id, status, submission_date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
+                ON DUPLICATE KEY UPDATE
+                primary_supervisor_id = VALUES(primary_supervisor_id),
+                secondary_supervisor_id1 = VALUES(secondary_supervisor_id1),
+                secondary_supervisor_id2 = VALUES(secondary_supervisor_id2),
+                title = VALUES(title),
+                description = VALUES(description),
+                file_path = VALUES(file_path),
+                faculty_id = VALUES(faculty_id),
+                department_id = VALUES(department_id),
+                status = 'pending',
+                submission_date = CURRENT_TIMESTAMP");
 
-        ?>
-        <script>
-            swal("Thesis Tracking System.", "Thesis Proposal Submitted Successfully !!", "success");
-                        setTimeout(function() {
-            window.location.href = "index.php";
-        }, 2000);
-        </script>
-       <?php
+            $stmt->execute([$student_id, $primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $title, $description, $file_path, $faculty_id, $department_id]);
+
+            // Fetch the proposal_id
+            $fetch_id_stmt = $pdo->prepare("SELECT id FROM thesis_proposals WHERE student_id = ? ORDER BY submission_date DESC LIMIT 1");
+            $fetch_id_stmt->execute([$student_id]);
+            $proposal_id = $fetch_id_stmt->fetchColumn();
+
+            $stmt = $pdo->prepare("INSERT INTO thesis_interactions (thesis_proposal_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$proposal_id, $student_id, $title, $description, "Proposal submitted"]);
+
+            $pdo->commit();
+
+                ?>
+            <script>
+                swal("Thesis Tracking System.", "Thesis Proposal Submitted Successfully !!", "success");
+                            setTimeout(function() {
+                window.location.href = "index.php";
+            }, 2000);
+            </script>
+           <?php
+        } catch (Exception $e) {
+            $pdo->rollBack();
+            echo "<script>
+                swal('Thesis Tracking System', 'Error submitting proposal. Please try again.', 'error');
+            </script>";
+        }
     } else {
         echo "<script>
             swal('Thesis Tracking System', 'No supervisors assigned. Please contact your administrator.', 'error');
         </script>";
     }
 }
-
 ?>
-
-
 

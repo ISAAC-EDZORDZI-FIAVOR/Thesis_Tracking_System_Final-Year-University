@@ -16,7 +16,7 @@ if (!$student_id) {
 }
 
 // Fetch the thesis proposal for this student
-$query = "SELECT tp.id, tp.title, tp.description, tp.status, tp.submission_date,tp.comment,tp.file_path, u.fullname 
+$query = "SELECT tp.id, tp.title, tp.description, tp.status, tp.submission_date,tp.comment,tp.file_path, tp.lecturer_comment_time, u.fullname 
           FROM thesis_proposals tp 
           JOIN users u ON tp.student_id = u.id 
           JOIN assignments a ON u.id = a.student_id 
@@ -30,6 +30,32 @@ $stmt->bindParam(3, $lecturer_id, PDO::PARAM_INT);
 $stmt->bindParam(4, $lecturer_id, PDO::PARAM_INT);
 $stmt->execute();
 $proposals = $stmt->fetchAll();
+
+
+
+
+
+
+// $proposal_id = $_GET['id'];
+
+
+// $stmt = $pdo->prepare("
+//     SELECT tp.*, 
+//            s.fullname AS student_name,
+//            ps.fullname AS primary_supervisor_name,
+//            ss1.fullname AS secondary_supervisor1_name,
+//            ss2.fullname AS secondary_supervisor2_name
+//     FROM thesis_proposals tp
+//     JOIN users s ON tp.student_id = s.id
+//     LEFT JOIN users ps ON tp.primary_supervisor_id = ps.id
+//     LEFT JOIN users ss1 ON tp.secondary_supervisor_id1 = ss1.id
+//     LEFT JOIN users ss2 ON tp.secondary_supervisor_id2 = ss2.id
+//     WHERE tp.id = ?
+// ");
+// $stmt->execute([$proposal_id]);
+// $proposal1 = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
 
 ?>
 
@@ -966,111 +992,131 @@ $proposals = $stmt->fetchAll();
 
                 <div class="middle-content container-xxl p-0">
 
-                    <div class="row layout-spacing layout-top-spacing" id="cancel-row">
-                        <div class="col-lg-12">
-                            <div class="container py-5">
-                                <h1 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Proposal Review</h1>
-                                
-                                <?php if (!empty($proposals)): ?>
-                                    <?php foreach ($proposals as $proposal): ?>
-                                        <div class="card mb-4 proposal-card">
-                                            <div class="card-header bg-primary text-white">
-                                                <h2 class="card-title h5 mb-0 text-center"><?php echo htmlspecialchars($proposal['title']); ?></h2>
-                                            </div>
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($proposal['fullname']); ?></span>
-                                                    <span><i class="fas fa-calendar-alt"></i> <?php echo date('F j, Y, g:i a', strtotime($proposal['submission_date'])); ?></span>
-                                                    <span class="badge bg-<?php echo strtolower($proposal['status']) == 'approved' ? 'success' : (strtolower($proposal['status']) == 'rejected' ? 'danger' : 'warning'); ?>">
-                                                        <?php echo ucfirst(htmlspecialchars($proposal['status'])); ?>
-                                                    </span>
-                                                </div>
-                                                <div class="bg-light p-3 mb-3 rounded">
-                                                    <?php echo nl2br(htmlspecialchars($proposal['description'])); ?>
-                                                </div>
-
-                                                <div class="comments-section">
-                                                    <div class="student-description">
-                                                        <strong><?php echo htmlspecialchars($student['fullname']); ?> (Student):</strong>
-                                                        <p><?php echo htmlspecialchars($proposal['description']); ?></p>
-                                                        <small><?php echo date('F j, Y, g:i a', strtotime($proposal['submission_date'])); ?></small>
-                                                    </div>
-                                                    
-                                                    <?php if (!empty($proposal['comment'])): ?>
-                                                        <div class="supervisor-comment">
-                                                            <strong><?php echo htmlspecialchars($supervisor['fullname']); ?> (Supervisor):</strong>
-                                                            <p><?php echo htmlspecialchars($proposal['comment']); ?></p>
-                                                            <!-- Add timestamp if available in your database -->
-                                                        </div>
-                                                    <?php endif; ?>
-                                                </div>
-
-
-                                                <?php if (!empty($proposal['file_path'])): ?>
-                                                    <div class="card mt-4">
-                                                        <div class="card-header bg-primary text-white">
-                                                            <h5 class="mb-0">Proposal Document</h5>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <p>View the proposal document: <a href="<?php echo $proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
-                                                        </div>
-                                                    </div>
-                                                <?php endif; ?>
-
-
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal<?php echo $proposal['id']; ?>">
-                                                    <i class="fas fa-edit"></i> Review Proposal
-                                                </button>
-                                            </div>
+                <div class="row layout-spacing layout-top-spacing" id="cancel-row">
+                    <div class="col-lg-12">
+                        <div class="container py-5">
+                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Proposal Review</h2>
+                            
+                            <?php if (!empty($proposals)): ?>
+                                <?php foreach ($proposals as $proposal): ?>
+                                    <div class="card mb-4 proposal-card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h1 class="card-title h5 mb-0 text-center"><?php echo htmlspecialchars($proposal['title']); ?></h1>
                                         </div>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($proposal['fullname']); ?></span>
+                                                <span><i class="fas fa-calendar-alt"></i> <?php echo date('F j, Y, g:i a', strtotime($proposal['submission_date'])); ?></span>
+                                                <span class="badge bg-<?php echo strtolower($proposal['status']) == 'approved' ? 'success' : (strtolower($proposal['status']) == 'rejected' ? 'danger' : 'warning'); ?>">
+                                                    <?php echo ucfirst(htmlspecialchars($proposal['status'])); ?>
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="container mt-4">
+                                                <div class="row">
+                                                    <div class="col-md-8 offset-md-2">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div class="media mb-4">
+                                                                    <img src="../src/assets/img/profile-30.png" class="mr-3 rounded-circle" width="50" height="50" alt="Student">
+                                                                    <div class="media-body">
+                                                                        <h5 class="mt-0"><?php echo htmlspecialchars($proposal['fullname']); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($proposal['submission_date'])); ?></small></h5>
+                                                                        <p class="bg-light p-3 rounded"><?php echo nl2br(htmlspecialchars($proposal['description'])); ?></p>
+                                                                    </div>
+                                                                </div>
 
-                                               <!-- Review Modal -->
-                                        <div class="modal fade" id="reviewModal<?php echo $proposal['id']; ?>" tabindex="-1" aria-labelledby="reviewModalLabel<?php echo $proposal['id']; ?>" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="reviewModalLabel<?php echo $proposal['id']; ?>">Review Proposal</h5>
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                            <i class="fas fa-times"></i> Close
-                                                        </button>
-                                                    </div>
-                                                    <form method="POST">
-                                                        <div class="modal-body">
-                                                            <input type="hidden" name="proposal_id" value="<?php echo $proposal['id']; ?>">
-                                                            <div class="mb-3">
-                                                                <label for="status" class="form-label">Status:</label>
-                                                                <select name="status" id="status" class="form-select" required>
-                                                                    <option value="">Choose Status..</option>
-                                                                    <option value="approved">Approve</option>
-                                                                    <option value="rejected">Reject</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label for="comment" class="form-label">Comment:</label>
-                                                                <textarea name="comment" id="comment" rows="4" class="form-control" ></textarea>
+                                                                <?php if (!empty($proposal['comment'])): ?>
+                                                                    <div class="media mt-4">
+                                                                        <img src="../src/assets/img/profile-30.png" class="mr-3 rounded-circle" width="50" height="50" alt="Lecturer">
+                                                                        <div class="media-body">
+                                                                            <h5 class="mt-0"><?php echo htmlspecialchars($proposal['primary_supervisor_name'] ?? 'Supervisor'); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($proposal['lecturer_comment_time'] ?? $proposal['submission_date'])); ?></small></h5>
+                                                                            <p class="bg-light p-3 rounded"><?php echo nl2br(htmlspecialchars($proposal['comment'])); ?></p>
+                                                                        </div>
+                                                                    </div>
+                                                                <?php endif; ?>
                                                             </div>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Submit Review</button>
-                                                        </div>
-                                                    </form>
+                                                    </div>
                                                 </div>
                                             </div>
+
+
+                                            <?php if (!empty($proposal['file_path'])): ?>
+                                                <div class="card mt-4">
+                                                    <div class="card-header bg-primary text-white">
+                                                        <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Proposal Document</h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span>Access the proposal document:</span>
+                                                            <div>
+                                                                <a href="<?php echo $proposal['file_path']; ?>" download class="btn btn-outline-primary me-2">
+                                                                    <i class="fas fa-download"></i> Download PDF
+                                                                </a>
+                                                                <a href="<?php echo $proposal['file_path']; ?>" target="_blank" class="btn btn-outline-secondary">
+                                                                    <i class="fas fa-external-link-alt"></i> Open in New Tab
+                                                                </a>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                        <div class="alert alert-info mt-3">
+                                                            <i class="fas fa-info-circle"></i> Preview not available. Please download or open in a new tab to view the document.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+
+
+
+                                            
+                                            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal<?php echo $proposal['id']; ?>">
+                                                <i class="fas fa-edit"></i> Review Proposal
+                                            </button>
                                         </div>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <div class="alert alert-info" role="alert">
-                                        No thesis proposal found for this student.
                                     </div>
-                                <?php endif; ?>
-                                
-                                <!-- <a href="lecturer_dashboard.php" class="btn btn-secondary mt-3">
-                                    <i class="fas fa-arrow-left"></i> Back to Dashboard
-                                </a> -->
-                            </div>
+
+                                    <!-- Review Modal -->
+                                    <div class="modal fade" id="reviewModal<?php echo $proposal['id']; ?>" tabindex="-1" aria-labelledby="reviewModalLabel<?php echo $proposal['id']; ?>" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="reviewModalLabel<?php echo $proposal['id']; ?>">Review Proposal</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form method="POST">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="proposal_id" value="<?php echo $proposal['id']; ?>">
+                                                        <div class="mb-3">
+                                                            <label for="status" class="form-label">Status:</label>
+                                                            <select name="status" id="status" class="form-select" required>
+                                                                <option value="">Choose Status..</option>
+                                                                <option value="approved">Approve</option>
+                                                                <option value="rejected">Reject</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="comment" class="form-label">Comment:</label>
+                                                            <textarea name="comment" id="comment" rows="4" class="form-control" ></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="alert alert-info" role="alert">
+                                    No thesis proposal found for this student.
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
+                </div>
+
 
                 </div>
                 
@@ -1109,41 +1155,38 @@ $proposals = $stmt->fetchAll();
 <?php 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        $pdo->beginTransaction();
+
         $proposal_id = $_POST['proposal_id'];
         $status = $_POST['status'];
         $comment = $_POST['comment'];
+        $supervisor_id = $_SESSION['user_id'];
 
-        $update_query = "UPDATE thesis_proposals SET status = ?, comment = ? WHERE id = ?";
+        // Update thesis_proposals table
+        $update_query = "UPDATE thesis_proposals SET status = ?, comment = ?, lecturer_comment_time = CURRENT_TIMESTAMP WHERE id = ?";
         $update_stmt = $pdo->prepare($update_query);
         $update_stmt->execute([$status, $comment, $proposal_id]);
-        
-        if($update_stmt){
-            ?>
-            <script>
-                swal("Thesis Tracking System.", "Review Submitted successfully !!", "success");
-                setTimeout(function() {
-                    window.location.href = "view_student_proposal.php?student_id=<?php echo $student_id; ?>";
+
+
+        // Insert into thesis_interactions table
+        $insert_query = "INSERT INTO thesis_interactions (thesis_proposal_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)";
+        $insert_stmt = $pdo->prepare($insert_query);
+        $insert_stmt->execute([$proposal_id, $supervisor_id, "Proposal Review", "Status: $status", $comment]);
+
+        $pdo->commit();
+
+        echo "<script>
+            swal('Thesis Tracking System', 'Review Submitted successfully!', 'success');
+            setTimeout(function() {
+                window.location.href = 'view_student_proposal.php?student_id=" . $student_id . "';
             }, 1000);
-            </script>
-            <?php
-        }
-       
+        </script>";
     } catch (PDOException $e) {
-        ?>
-        <script>
-            swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
-        </script>
-        <?php
+        $pdo->rollBack();
+        echo "<script>
+            swal('Thesis Tracking System', '" . $e->getMessage() . "', 'error');
+        </script>";
     }
-
-    // header("Location: view_student_proposal.php?student_id=" . $student_id);
-    // exit();
 }
-
-
-
-
-
-
 
  ?>
