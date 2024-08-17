@@ -1,11 +1,19 @@
+<?php 
+session_start();
+require_once '../config.php';
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "student") {
+    header("Location: ../admin/auth-signin.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <title>Chat Application | EQUATION - Multipurpose Bootstrap Dashboard Template </title>
-    <link rel="icon" type="image/x-icon" href="../src/assets/img/favicon.ico"/>
+    <title>Thesis Tracking System </title>
+    <link rel="icon" type="image/x-icon" href="../src/assets/img/logo.png"/>
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
@@ -15,6 +23,11 @@
     <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
     <!-- END GLOBAL MANDATORY STYLES -->
+    <script src="../dist/js/jquery.min.js"></script>
+    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
+    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+
 
     <!-- BEGIN PAGE LEVEL STYLES -->
     <link href="../src/assets/css/light/apps/chat.css" rel="stylesheet" type="text/css" />
@@ -50,18 +63,7 @@
 
             <ul class="navbar-item flex-row ms-lg-auto ms-0">
 
-                <li class="nav-item dropdown language-dropdown">
-                    <a href="javascript:void(0);" class="nav-link dropdown-toggle" id="language-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="../src/assets/img/1x1/us.svg" class="flag-width" alt="flag">
-                    </a>
-                    <div class="dropdown-menu position-absolute" aria-labelledby="language-dropdown">
-                        <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="../src/assets/img/1x1/us.svg" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;English</span></a>
-                        <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="../src/assets/img/1x1/tr.svg" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;Turkish</span></a>
-                        <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="../src/assets/img/1x1/br.svg" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;Portuguese</span></a>
-                        <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="../src/assets/img/1x1/in.svg" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;Hindi</span></a>
-                        <a class="dropdown-item d-flex" href="javascript:void(0);"><img src="../src/assets/img/1x1/de.svg" class="flag-width" alt="flag"> <span class="align-self-center">&nbsp;German</span></a>
-                    </div>
-                </li>
+               
 
                 <li class="nav-item theme-toggle-item">
                     <a href="javascript:void(0);" class="nav-link theme-toggle">
@@ -201,8 +203,8 @@
                                     &#x1F44B;
                                 </div>
                                 <div class="media-body">
-                                    <h5>Shaun Park</h5>
-                                    <p>Project Leader</p>
+                                    <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
+                                    <p>Student</p>
                                 </div>
                             </div>
                         </div>
@@ -222,7 +224,7 @@
                             </a>
                         </div>
                         <div class="dropdown-item">
-                            <a href="auth-boxed-signin.html">
+                            <a href="..admin/logout.php">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>
                             </a>
                         </div>
@@ -250,11 +252,11 @@
                     <div class="nav-logo">
                         <div class="nav-item theme-logo">
                             <a href="./index.php">
-                                <img src="../src/assets/img/logo.png" class="navbar-logo" alt="logo">
+                                <img src="../src/assets/img/logo.png" class="" alt="logo">
                             </a>
                         </div>
                         <div class="nav-item theme-text">
-                            <a href="./index.php" class="nav-link"> EQUATION </a>
+                            <a href="./index.php" class="nav-link"> TTS </a>
                         </div>
                     </div>
                     <div class="nav-item sidebar-toggle">
@@ -269,8 +271,8 @@
                             <img src="../src/assets/img/profile-30.png" alt="avatar">
                         </div>
                         <div class="profile-content">
-                            <h6 class="">Shaun Park</h6>
-                            <p class="">Project Leader</p>
+                        <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
+                        <p class="">Student</p>
                         </div>
                     </div>
                 </div>
@@ -302,19 +304,19 @@
                     </li>
 
                     <li class="menu">
-                        <a href="./app-calendar.html" aria-expanded="false" class="dropdown-toggle">
+                        <a href="index.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                                <span>Calendar</span>
+                                <span>Thesis Proposal</span>
                             </div>
                         </a>
                     </li>
                     
                     <li class="menu active">
-                        <a href="./app-chat.html" aria-expanded="false" class="dropdown-toggle">
+                        <a href="./chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chat</span>
+                                <span>Chapter</span>
                             </div>
                         </a>
                     </li>

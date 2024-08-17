@@ -1,66 +1,66 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
-    header("Location: auth-signin.php");
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "super_admin") {
+    header("Location: ../admin/auth-signin.php");
     exit();
 }
 ?>
 
 
-
+ 
 <?php
 require '../config.php';
 
 // Function to fetch all users from the database
-function getAllDepartment($pdo)
+function getAllChapter($pdo)
 {
-    $sql = "SELECT * FROM departments";
+    $sql = "SELECT * FROM chapter_type";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+   
 }
 
 
 
 // Fetch all departments from the database
-$departments = getAllDepartment($pdo);
+$users = getAllChapter($pdo);
 
 
-function displayDepartmentTable($pdo)
+function displayChapterTable($pdo)
 {
-    // $users = getAllDepartment($pdo);
-    $departments = getAllDepartment($pdo);
+    $users = getAllChapter($pdo);
     ?>
 
             <div class="row layout-spacing">
                 <div class="col-lg-12">
                     <div class="statbox widget box box-shadow">
                         <div class="widget-content widget-content-area">
-                        <div class="text-center mt-4"><h2>List of Departments</h2></div>
+                        <div class="text-center mt-4"><h2>List of Chapters</h2></div>
                             <table id="style-3" class="table style-3 dt-table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="checkbox-column text-primary">Department ID</th>
-                                        <th class="text-primary">Department Name</th>
+                                        <th class="checkbox-column text-primary">Chapter ID</th>
+                                        <th class="text-primary">Chapter Name</th>
                                         <th class="text-primary">Date Registered</th>
                                         <th class="dt-no-sorting text-primary">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($departments as $department): ?>
+                                    <?php foreach ($users as $user): ?>
                                         <tr>
                                             
-                                            <td class="text-success"><?php echo $department['id']; ?></td>
-                                            <td class="text-primary"><?php echo $department['name']; ?></td>
-                                            <td class=""><?php echo $department['dateRegistered']; ?></td>
+                                            <td class="text-success"><?php echo $user['id']; ?></td>
+                                            <td class="text-primary"><?php echo $user['chapter_name']; ?></td>
+                                            <td class=""><?php echo $user['dateRegistered']; ?></td>
                                             <td class="text-center">
                                                 <ul class="table-controls">
-                                                <li><a href="javascript:void(0);" class="bs-tooltip edit-department" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit" data-id="<?php echo $department['id']; ?>"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
-                                                <li><a href="add_new_Department.php?delete_id=<?php echo $department['id']; ?>" class="bs-tooltip delete-user" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete" ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
+                                                    <li><a href="javascript:void(0);" class="bs-tooltip edit-chapter" data-id="<?php echo $user['id']; ?>" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
+                                                    <li><a href="add_new_Chapter.php?delete_id=<?php echo $user['id']; ?>" class="bs-tooltip delete-chapter" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
                                                 </ul>
                                             </td>
+
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -86,7 +86,6 @@ function displayDepartmentTable($pdo)
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
     <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
-    <script src="../dist/js/jquery.min.js"></script>
     <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 
@@ -173,7 +172,7 @@ function displayDepartmentTable($pdo)
                                 </div>
                                 <div class="media-body">
                                     <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
-                                    <p>Admin</p>
+                                    <p>Super Admin</p>
                                 </div>
                             </div>
                         </div>
@@ -187,9 +186,9 @@ function displayDepartmentTable($pdo)
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-inbox"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg> <span>Inbox</span>
                             </a>
                         </div>
-                        
+                           
                         <div class="dropdown-item">
-                            <a href="logout.php">
+                            <a href="../admin/logout.php">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>
                             </a>
                         </div>
@@ -236,7 +235,7 @@ function displayDepartmentTable($pdo)
                         </div>
                         <div class="profile-content">
                             <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
-                            <p class="">Admin</p>
+                            <p class="">Super Admin</p>
                         </div>
                     </div>
                 </div>
@@ -258,7 +257,7 @@ function displayDepartmentTable($pdo)
                                 <a href="./index.php"> Analytics </a>
                             </li>
                             <li>
-                                <!-- <a href="./index2.html"> Sales </a> -->
+                                <a href="./index2.html"> Sales </a>
                             </li>
                         </ul>
                     </li>
@@ -280,7 +279,7 @@ function displayDepartmentTable($pdo)
                         </a>
                     </li>
 
-                    <li class="menu active">
+                    <li class="menu">
                         <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
@@ -292,7 +291,7 @@ function displayDepartmentTable($pdo)
                         </a>
                     </li>
 
-                    <li class="menu">
+                    <li class="menu active">
                         <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
@@ -320,15 +319,21 @@ function displayDepartmentTable($pdo)
                         </a>
                     </li>
 
+
+
                     <li class="menu">
-                        <a href="./app-todoList.html" aria-expanded="false" class="dropdown-toggle">
+                        <a href="./add_new_Faculty.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                <span>Todo List</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Add Faculty</span>
                             </div>
                         </a>
                     </li>
-
+                    
+                    
                 </ul>
                 
             </nav>
@@ -375,7 +380,7 @@ function displayDepartmentTable($pdo)
                                 <div class="table-responsive mb-2 mt-4">
                                    <?php
                                     require '../config.php';
-                                    displayDepartmentTable($pdo)
+                                    displayChapterTable($pdo)
                                     ?>
                                 </div>
                             </div>
@@ -383,36 +388,33 @@ function displayDepartmentTable($pdo)
 
 
 
-                            
-                                                    <!-- Edit Department Modal -->
-                            <div class="modal fade" id="editDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered" role="document">
+
+
+                                                        <!-- Edit Chapter Modal -->
+                            <div class="modal fade" id="editChapterModal" tabindex="-1" role="dialog" aria-labelledby="editChapterModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editDepartmentModalLabel">Edit Department</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
+                                            <h5 class="modal-title" id="editChapterModalLabel">Edit Chapter</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <form method="post" action="" id="editDepartmentForm">
-                                            <div class="modal-body">
-                                                <input type="hidden" name="edit_id" id="edit_id">
-                                                <div class="form-group">
-                                                    <label for="edit_name">Department Name</label>
-                                                    <input type="text" class="form-control" id="edit_name" name="name" required>
+                                        <div class="modal-body">
+                                            <form id="editChapterForm" method="post">
+                                                <input type="hidden" id="edit_chapter_id" name="edit_chapter_id">
+                                                <div class="mb-3">
+                                                    <label for="edit_chapter_name" class="form-label">Chapter Name</label>
+                                                    <input type="text" class="form-control" id="edit_chapter_name" name="edit_chapter_name" required>
                                                 </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" name="edit_department" class="btn btn-primary">Save Changes</button>
-                                            </div>
-                                        </form>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-primary">Update Chapter</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
 
 
 
@@ -425,7 +427,7 @@ function displayDepartmentTable($pdo)
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New Department</h5>
+                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New User</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
@@ -436,7 +438,7 @@ function displayDepartmentTable($pdo)
                                                 <div class="notes-content">  
 
                                                     
-                                                   <form method="post" action="" id="notesMailModalTitle" >
+                                                   <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" id="notesMailModalTitle" >
                                                         <div class="row">
                                                         <div class="col-md-12 mb-2">
                                                     
@@ -445,13 +447,13 @@ function displayDepartmentTable($pdo)
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="mb-3">
-                                                                <label class="form-label" for="department">Department Name</label>
-                                                                <input type="text" id="department" name="department" class="form-control" placeholder="Enter Department Name Here..." required>
+                                                                <label class="form-label" for="department">Chapter Name</label>
+                                                                <input type="text" id="chapter" name="chapter" class="form-control" placeholder="Enter Chapter Name Here..." required>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button class="btn"  data-bs-dismiss="modal">Discard</button>
-                                                            <button type="submit" id="" name="add_department" class="btn btn-primary">Add</button>
+                                                            <button type="submit" id="" name="add_chapter" class="btn btn-primary">Add</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -475,30 +477,7 @@ function displayDepartmentTable($pdo)
 
     </div>
     <!-- END MAIN CONTAINER -->
-     <!-- Edit User JavaScript -->
-     <script>
-
-$(document).ready(function() {
-    $('table').on('click', '.edit-department', function() {
-        var departmentId = $(this).data('id');
-        $.ajax({
-            url: 'get_department.php',
-            type: 'GET',
-            data: {id: departmentId},
-            dataType: 'json',
-            success: function(data) {
-                $('#edit_id').val(data.id);
-                $('#edit_name').val(data.name);
-                $('#editDepartmentModal').modal('show');
-            },
-            error: function() {
-                alert('Error fetching department data');
-            }
-        });
-    });
-});
-
-    </script>
+    
 
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     <script src="../src/plugins/src/global/vendors.min.js"></script>
@@ -599,6 +578,26 @@ $(document).ready(function() {
     </script>
     <!-- END PAGE LEVEL SCRIPTS --> 
 
+    <script>
+        $(document).ready(function() {
+            $('.edit-chapter').click(function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: 'get_chapter.php',
+                    type: 'GET',
+                    data: {id: id},
+                    success: function(response) {
+                        var chapter = JSON.parse(response);
+                        $('#edit_chapter_id').val(chapter.id);
+                        $('#edit_chapter_name').val(chapter.chapter_name);
+                        $('#editChapterModal').modal('show');
+                    }
+                });
+            });
+        });
+    </script>
+
+
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
     <script src="../src/assets/js/apps/notes.js"></script>
     <!-- END PAGE LEVEL SCRIPTS -->
@@ -606,29 +605,23 @@ $(document).ready(function() {
 </body>
 
 
-</html>
-
-
-
-
-
 <?php
 require '../config.php';
 
-if (isset($_POST['add_department'])) {
-    $department = $_POST['department'];
-    $sql = 'INSERT INTO departments (name) VALUES (?)';
+if (isset($_POST['add_chapter'])) {
+    $chapter = $_POST['chapter'];
+    $sql = 'INSERT INTO chapter_type (chapter_name) VALUES (?)';
     $stmt = $pdo->prepare($sql);
 
     try {
-        if ($stmt->execute([$department])) {
+        if ($stmt->execute([$chapter])) {
             
             
             ?>
             <script>
-                swal("Thesis Tracking System.", "Department Saved Successfully !!", "success");
+                swal("Thesis Tracking System.", "Chapter Saved Successfully !!", "success");
                             setTimeout(function() {
-                window.location.href = "add_new_Department.php";
+                window.location.href = "add_new_Chapter.php";
             }, 1000);
             </script>
             <?php
@@ -652,19 +645,17 @@ if (isset($_POST['add_department'])) {
 
 
 
+
 if (isset($_GET['delete_id'])) {
     $delete_id = $_GET['delete_id'];
-
-    // Prepare the delete statement
-    $stmt = $pdo->prepare("DELETE FROM departments WHERE id = ?");
-    $stmt->execute([$delete_id]);
-
-    if ($stmt->rowCount() > 0) {
+    $delete_sql = "DELETE FROM chapter_type WHERE id = ?";
+    $delete_stmt = $pdo->prepare($delete_sql);
+    if ($delete_stmt->execute([$delete_id])) {
         ?>
         <script>
             swal({
             title: "Are you sure?",
-            text: "You will not be able to recover this Department Data!",
+            text: "You will not be able to recover this Chapter Data!",
             type: "warning",
             showCancelButton: true,
             confirmButtonColor: "#DD6B55",
@@ -672,39 +663,39 @@ if (isset($_GET['delete_id'])) {
             closeOnConfirm: false
             },
             function(){
-            swal("Thesis Tracking System.", "Department Deleted Successfully !!", "success");
+            swal("Thesis Tracking System.", "Chapter Deleted Successfully !!", "success");
             });
             
              setTimeout(function() {
-            window.location.href = "add_new_Department.php";
+            window.location.href = "add_new_Chapter.php";
             }, 3000);
         </script>
     <?php
     } else {
-        echo "<script>swal('Error', 'Failed to delete user', 'error');</script>";
+        echo "<script>swal('Thesis Tracking System', 'Error deleting chapter!', 'error');</script>";
     }
 }
 
 
 
+if (isset($_POST['edit_chapter_id'])) {
+    // Handle edit chapter
+    $chapter_id = $_POST['edit_chapter_id'];
+    $chapter_name = $_POST['edit_chapter_name'];
 
-//Edit User
-if (isset($_POST['edit_department'])) {
-    $edit_id = $_POST['edit_id'];
-    $name = $_POST['name'];
-    
+    $sql = 'UPDATE chapter_type SET chapter_name = ? WHERE id = ?';
+    $stmt = $pdo->prepare($sql);
 
-    // Prepare the update statement
-    $stmt = $pdo->prepare("UPDATE departments SET name = ? WHERE id = ?");
-    $stmt->execute([$name, $edit_id]);
-
-    if ($stmt->rowCount() > 0) {
-        ?>
+    try {
+        $result = $stmt->execute([$chapter_name, $chapter_id]);
+        if ($result) {
+           
+            ?>
             <script>
 
                 swal({
                 title: "Are you sure?",
-                text: "You will not be able to recover this Department Data!",
+                text: "You will not be able to recover this Chapter Data!",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#4912E1",
@@ -712,17 +703,25 @@ if (isset($_POST['edit_department'])) {
                 closeOnConfirm: false
                 },
                 function(){
-                    swal("Thesis Tracking System.", "Department Updated Successfully !!", "success");
+                    swal("Thesis Tracking System.", "Chapter Updated Successfully !!", "success");
                     setTimeout(function() {
-                window.location.href = "add_new_Department.php";
+                window.location.href = "add_new_Chapter.php";
                 }, 3000);
                 });
 
             </script>
         <?php
-    } else {
-        echo "<script>swal('Error', 'Failed to Update User', 'error');</script>";
+
+        } else {
+            $error = $stmt->errorInfo()[2];
+            echo "<script>swal('Thesis Tracking System', '$error', 'error');</script>";
+        }
+    } catch (PDOException $e) {
+        echo "<script>swal('Thesis Tracking System', '{$e->getMessage()}', 'error');</script>";
     }
-}
+} 
+
 
 ?>
+
+</html>

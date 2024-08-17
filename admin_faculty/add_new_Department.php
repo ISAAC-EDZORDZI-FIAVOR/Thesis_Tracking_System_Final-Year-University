@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
-    header("Location: auth-signin.php");
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "faculty_admin") {
+    header("Location: ../admin/auth-signin.php");
     exit();
 }
 ?>
@@ -12,13 +12,21 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
 <?php
 require '../config.php';
 
+$faculty_id = $_SESSION['faculty_id']; // Assuming we store the faculty_id in session
 // Function to fetch all users from the database
 function getAllDepartment($pdo)
 {
-    $sql = "SELECT * FROM departments";
+    $faculty_id = $_SESSION['faculty_id']; // Assuming we store the faculty_id in session
+        // Fetch existing departments for this faculty
+    // Fetch existing departments for this faculty with faculty name
+    $sql = "SELECT d.*, f.name AS faculty_name 
+    FROM departments d
+    JOIN faculties f ON d.faculty_id = f.id
+    WHERE d.faculty_id = ?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    $stmt->execute([$faculty_id]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     
 }
 
@@ -38,12 +46,19 @@ function displayDepartmentTable($pdo)
                 <div class="col-lg-12">
                     <div class="statbox widget box box-shadow">
                         <div class="widget-content widget-content-area">
-                        <div class="text-center mt-4"><h2>List of Departments</h2></div>
+                        <div class="text-center mt-4"><h4>List of Departments in <?php 
+                                    $faculty_query = "SELECT name FROM faculties WHERE id = ?";
+                                    $stmt = $pdo->prepare($faculty_query);
+                                    $stmt->execute([$_SESSION['faculty_id']]);
+                                    $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $faculty['name']; 
+                                    ?></h4></div>
                             <table id="style-3" class="table style-3 dt-table-hover">
                                 <thead>
                                     <tr>
                                         <th class="checkbox-column text-primary">Department ID</th>
                                         <th class="text-primary">Department Name</th>
+                                        <th class="text-primary">Faculty Name</th>
                                         <th class="text-primary">Date Registered</th>
                                         <th class="dt-no-sorting text-primary">Action</th>
                                     </tr>
@@ -54,7 +69,8 @@ function displayDepartmentTable($pdo)
                                             
                                             <td class="text-success"><?php echo $department['id']; ?></td>
                                             <td class="text-primary"><?php echo $department['name']; ?></td>
-                                            <td class=""><?php echo $department['dateRegistered']; ?></td>
+                                            <td class="text-primary"><?php echo $department['faculty_name']; ?></td>
+                                            <td><span><i class="fas fa-calendar-alt"></i> <?php echo date('F j, Y, g:i a', strtotime($department['dateRegistered'])); ?></span></td>
                                             <td class="text-center">
                                                 <ul class="table-controls">
                                                 <li><a href="javascript:void(0);" class="bs-tooltip edit-department" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit" data-id="<?php echo $department['id']; ?>"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
@@ -117,6 +133,7 @@ function displayDepartmentTable($pdo)
 
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/custom_dt_custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
 </head>
 <body class="layout-boxed">
@@ -172,8 +189,15 @@ function displayDepartmentTable($pdo)
                                     &#x1F44B;
                                 </div>
                                 <div class="media-body">
-                                    <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
-                                    <p>Admin</p>
+                                    <h5><?php  echo $_SESSION["fullname"]; ?> !</h5>
+                                    <p>Faculty Admin</p>
+                                    <p><?php 
+                                    $faculty_query = "SELECT name FROM faculties WHERE id = ?";
+                                    $stmt = $pdo->prepare($faculty_query);
+                                    $stmt->execute([$_SESSION['faculty_id']]);
+                                    $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $faculty['name']; 
+                                    ?></p>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +213,7 @@ function displayDepartmentTable($pdo)
                         </div>
                         
                         <div class="dropdown-item">
-                            <a href="logout.php">
+                            <a href="../admin/logout.php">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>
                             </a>
                         </div>
@@ -236,7 +260,14 @@ function displayDepartmentTable($pdo)
                         </div>
                         <div class="profile-content">
                             <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
-                            <p class="">Admin</p>
+                            <p class="">Faculty Admin</p>
+                            <p><?php 
+                                    $faculty_query = "SELECT name FROM faculties WHERE id = ?";
+                                    $stmt = $pdo->prepare($faculty_query);
+                                    $stmt->execute([$_SESSION['faculty_id']]);
+                                    $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $faculty['name']; 
+                                    ?></p>
                         </div>
                     </div>
                 </div>
@@ -360,7 +391,7 @@ function displayDepartmentTable($pdo)
                                         <div class="row">
                                            
                                             <div class="col-md-12 col-sm-12 col-12 text-center">
-                                                <a id="btn-add-notes" class="btn btn-primary w-100" href="javascript:void(0);">Add New Department</a>
+                                                <a id="btn-add-notes" class="btn btn-primary w-100" href="javascript:void(0);">Add New Department </a>
                                                 
                                             </div>
                                         </div>
@@ -389,7 +420,13 @@ function displayDepartmentTable($pdo)
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editDepartmentModalLabel">Edit Department</h5>
+                                            <h6 class="modal-title" id="editDepartmentModalLabel">Edit Department in <?php 
+                                    $faculty_query = "SELECT name FROM faculties WHERE id = ?";
+                                    $stmt = $pdo->prepare($faculty_query);
+                                    $stmt->execute([$_SESSION['faculty_id']]);
+                                    $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $faculty['name']; 
+                                    ?></h6>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
                                                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -425,7 +462,13 @@ function displayDepartmentTable($pdo)
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New Department</h5>
+                                            <h6 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New Department in <?php 
+                                    $faculty_query = "SELECT name FROM faculties WHERE id = ?";
+                                    $stmt = $pdo->prepare($faculty_query);
+                                    $stmt->execute([$_SESSION['faculty_id']]);
+                                    $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $faculty['name']; 
+                                    ?></h6>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
@@ -615,13 +658,16 @@ $(document).ready(function() {
 <?php
 require '../config.php';
 
+
 if (isset($_POST['add_department'])) {
-    $department = $_POST['department'];
-    $sql = 'INSERT INTO departments (name) VALUES (?)';
+    $department_name = $_POST['department'];
+    $faculty_id = $_SESSION['faculty_id']; // Assuming we store the faculty_id in session
+    
+    $sql = "INSERT INTO departments (name, faculty_id) VALUES (?, ?)";
     $stmt = $pdo->prepare($sql);
 
     try {
-        if ($stmt->execute([$department])) {
+        if ($stmt->execute([$department_name, $faculty_id])) {
             
             
             ?>
@@ -658,7 +704,7 @@ if (isset($_GET['delete_id'])) {
     // Prepare the delete statement
     $stmt = $pdo->prepare("DELETE FROM departments WHERE id = ?");
     $stmt->execute([$delete_id]);
-
+    try {
     if ($stmt->rowCount() > 0) {
         ?>
         <script>
@@ -683,6 +729,13 @@ if (isset($_GET['delete_id'])) {
     } else {
         echo "<script>swal('Error', 'Failed to delete user', 'error');</script>";
     }
+} catch (PDOException $e) {
+    ?>
+    <script>
+        swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+    </script>
+    <?php
+}
 }
 
 
@@ -697,7 +750,7 @@ if (isset($_POST['edit_department'])) {
     // Prepare the update statement
     $stmt = $pdo->prepare("UPDATE departments SET name = ? WHERE id = ?");
     $stmt->execute([$name, $edit_id]);
-
+    try {
     if ($stmt->rowCount() > 0) {
         ?>
             <script>
@@ -723,6 +776,13 @@ if (isset($_POST['edit_department'])) {
     } else {
         echo "<script>swal('Error', 'Failed to Update User', 'error');</script>";
     }
+} catch (PDOException $e) {
+    ?>
+    <script>
+        swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+    </script>
+    <?php
+}
 }
 
 ?>

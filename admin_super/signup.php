@@ -1,74 +1,3 @@
-<?php
-session_start();
-require '../config.php';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    // Prepare SQL statement with placeholders
-    $sql = "SELECT id, username, fullname, password, role,department_id ,email,dateRegistered,student_level,faculty_id FROM Users WHERE username = ?";
-    $stmt = $pdo->prepare($sql);
-
-    try {
-        $stmt->execute([$username]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['fullname'] = $user['fullname'];
-            $_SESSION['role'] = $user['role'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['department_id']= $user['department_id'];
-            $_SESSION['dateRegistered'] =  $user['dateRegistered'];
-            $_SESSION['StudentLevel'] =  $user['student_level'];
-            $_SESSION['faculty_id'] =  $user['faculty_id'];
-        
-            $redirect_url = '';
-            switch ($user['role']) {
-                case 'student':
-                    $redirect_url = '../student/index.php';
-                    break;
-                case 'lecturer':
-                    $redirect_url = '../lecturer/index.php';
-                    break;
-                case 'hod':
-                    $redirect_url = '../hod/hod_dashboard.php';
-                    break;
-                case 'dean':
-                    $redirect_url = '../dean/dean_dashboard.php';
-                    break;
-                case 'department_admin':
-                    $redirect_url = 'index.php';
-                    break;
-                case 'super_admin':
-                    $redirect_url = '../admin_super/index.php';
-                    break;
-                case 'faculty_admin':
-                    $redirect_url = '../admin_faculty/index.php';
-                    break;
-            }
-        
-            echo json_encode(['success' => true, 'redirect_url' => $redirect_url]);
-            exit();
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Invalid username or password']);
-            exit();
-        }
-       
-    } catch (PDOException $e) {
-       ?>
-        <script>
-            swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
-        </script>
-        <?php
-    }
-}
-
-// Close database connection
-$pdo = null;
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -137,8 +66,8 @@ $pdo = null;
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         
-                                        <h2>Sign In</h2>
-                                        <p>Enter your Username and Password to Login</p>
+                                        <h2>Sign Up</h2>
+                                        <p>Enter your Index Number as Username </p>
                                         
                                     </div>
                                     <div class="col-md-12">

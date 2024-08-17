@@ -1,8 +1,7 @@
 <?php
 session_start();
-
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
-    header("Location: auth-signin.php");
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "super_admin") {
+    header("Location: ../admin/auth-signin.php");
     exit();
 }
 ?>
@@ -12,41 +11,36 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
 <?php
 require '../config.php';
 
-$department_id = $_SESSION['department_id'];
-
-// Fetch students from this department
-$student_query = "SELECT id, fullname FROM users WHERE department_id = ? AND role = 'student'";
-$stmt = $pdo->prepare($student_query);
-$stmt->execute([$department_id]);
-$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Fetch lecturers from this department
-$lecturer_query = "SELECT id, fullname FROM users WHERE department_id = ? AND role = 'lecturer'";
-$stmt = $pdo->prepare($lecturer_query);
-$stmt->execute([$department_id]);
-$lecturers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Get the list of departments
+$query = "SELECT * FROM departments";
+$stmt = $pdo->query($query);
+$departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
-// Function to get all assignments for this department
-function getAllAssignments($pdo, $department_id) {
-        $query = "SELECT a.*, 
-        s.fullname AS student_name, 
-        p.fullname AS primary_supervisor_name,
-        s1.fullname AS secondary_supervisor1_name,
-        s2.fullname AS secondary_supervisor2_name
-    FROM assignments a
-    JOIN users s ON a.student_id = s.id
-    JOIN users p ON a.primary_supervisor_id = p.id
-    LEFT JOIN users s1 ON a.secondary_supervisor_id1 = s1.id
-    LEFT JOIN users s2 ON a.secondary_supervisor_id2 = s2.id
-    WHERE s.department_id = ?
-    ";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$department_id]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 
-$assignments = getAllAssignments($pdo, $department_id);
+$query = "SELECT * FROM faculties";
+$stmt = $pdo->query($query);
+$faculties = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+//This query is too long so I have created VIew for this call assignment_details2. note: the id is assignment_id
+
+$query = "SELECT a.*, s.fullname AS student_name, p.fullname AS primary_supervisor_name, 
+              s1.fullname AS secondary_supervisor1_name, s2.fullname AS secondary_supervisor2_name, 
+              d.name AS department_name, f.name AS faculty_name
+              FROM assignments a
+              JOIN users s ON a.student_id = s.id
+              JOIN users p ON a.primary_supervisor_id = p.id
+              LEFT JOIN users s1 ON a.secondary_supervisor_id1 = s1.id
+              LEFT JOIN users s2 ON a.secondary_supervisor_id2 = s2.id
+              JOIN departments d ON a.department_id = d.id
+              JOIN faculties f ON a.faculty_id = f.id
+              ORDER BY a.assigned_at DESC";
+$stmt = $pdo->query($query);
+$assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Function to fetch all users from the database
 ?>
 
 <!DOCTYPE html>
@@ -101,6 +95,7 @@ $assignments = getAllAssignments($pdo, $department_id);
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/custom_dt_custom.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     
 
 </head>
@@ -157,15 +152,8 @@ $assignments = getAllAssignments($pdo, $department_id);
                                     &#x1F44B;
                                 </div>
                                 <div class="media-body">
-                                <p><?php echo $_SESSION["fullname"]; ?> !</p>
-                                    <p>Department Admin</p>
-                                    <p><?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></p>
+                                    <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
+                                    <p>Super Admin</p>
                                 </div>
                             </div>
                         </div>
@@ -181,7 +169,7 @@ $assignments = getAllAssignments($pdo, $department_id);
                         </div>
                            
                         <div class="dropdown-item">
-                            <a href="logout.php">
+                            <a href="../admin/logout.php">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>
                             </a>
                         </div>
@@ -227,15 +215,8 @@ $assignments = getAllAssignments($pdo, $department_id);
                             <img src="../src/assets/img/profile-30.png" alt="avatar">
                         </div>
                         <div class="profile-content">
-                        <p><?php echo $_SESSION["fullname"]; ?> !</p>
-                                    <p>Department Admin</p>
-                                    <p><?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></p>
+                            <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
+                            <p class="">Super Admin</p>
                         </div>
                     </div>
                 </div>
@@ -279,7 +260,32 @@ $assignments = getAllAssignments($pdo, $department_id);
                         </a>
                     </li>
 
-                   
+                    <li class="menu">
+                        <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Add Department</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="menu">
+                        <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+
+                                <span>Thesis Chapter</span>
+                            </div>
+                        </a>
+                    </li>
+
+
                     <li class="menu active">
                         <a href="./assign_supervisor.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
@@ -290,6 +296,20 @@ $assignments = getAllAssignments($pdo, $department_id);
                                 </svg>
 
                                 <span>Assign Student</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+
+                    <li class="menu">
+                        <a href="./add_new_Faculty.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Add Faculty</span>
                             </div>
                         </a>
                     </li>
@@ -333,7 +353,7 @@ $assignments = getAllAssignments($pdo, $department_id);
 
 
 
-                                    <!-- <form class="moveInline" method="post" enctype="multipart/form-data">
+                                    <form class="moveInline" method="post" enctype="multipart/form-data">
                                         <div class="form-group">
                                             <label for="excelFile">Upload Excel File</label>
                                             <input type="file" class="form-control-file" id="excelFile" name="excelFile" accept=".xlsx,.xls,.csv">
@@ -352,7 +372,7 @@ $assignments = getAllAssignments($pdo, $department_id);
                                                 margin-top: 30px;
                                             }
                                         </style>
-                                    </form> -->
+                                    </form>
     
                                    
     
@@ -367,32 +387,30 @@ $assignments = getAllAssignments($pdo, $department_id);
                                     <div class="col-lg-12">
                                         <div class="statbox widget box box-shadow">
                                             <div class="widget-content widget-content-area">
-                                                <div class="text-center mt-4"><h5>Assigned Supervisors in <?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></h5></div>
+                                                <div class="text-center mt-4"><h2>Assigned Supervisors</h2></div>
                                                 <table id="style-3" class="table style-3 dt-table-hover">
                                                     <thead>
                                                         <tr>
-                                                            
+                                                            <th class="text-primary">Department</th>
                                                             <th class="text-primary">Student Name</th>
+                                                            <th class="text-primary">Faculty</th>
                                                             <th class="text-primary">Primary Supervisor</th>
                                                             <th class="text-primary">Secondary1 Supervisor</th>
                                                             <th class="text-primary">Secondary2 Supervisor</th>
+                                                            
                                                             <th class="dt-no-sorting text-primary">Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php foreach ($assignments as $assignment): ?>
                                                             <tr>
-                                                            
+                                                                <td><?php echo $assignment['department_name']; ?></td>
                                                                 <td class="text-primary"><?php echo $assignment['student_name']; ?></td>
-                                                                <td><?php echo $assignment['primary_supervisor_name']; ?></td>
+                                                                <td><?php echo $assignment['faculty_name']; ?></td>
+                                                                <td class="text-success"><?php echo $assignment['primary_supervisor_name']; ?></td>
                                                                 <td><?php echo $assignment['secondary_supervisor1_name']; ?></td>
                                                                 <td><?php echo $assignment['secondary_supervisor2_name']; ?></td>
+                                                                
                                                                 <td>
                                                                     <ul class="table-controls">
                                                                        <li>
@@ -434,16 +452,10 @@ $assignments = getAllAssignments($pdo, $department_id);
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h6 class="modal-title" id="editAssignmentModalLabel">Edit Assigned Supervisors in <?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></h6>
+                                        <h5 class="modal-title" id="editAssignmentModalLabel">Edit Assigned Supervisors</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                         </button>
+                                        </button>
                                     </div>
                                     <div class="modal-body">
                                         <form id="editAssignmentForm" method="post">
@@ -488,13 +500,7 @@ $assignments = getAllAssignments($pdo, $department_id);
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Assign Student in <?php
-                                            $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                            $stmt = $pdo->prepare($dept_query);
-                                            $stmt->execute([$_SESSION['department_id']]);
-                                            $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                            echo $department['name'];
-                                            ?></h5>
+                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Assign Student</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
@@ -507,55 +513,52 @@ $assignments = getAllAssignments($pdo, $department_id);
 
                                                 <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="notesMailModalTitle">
                                                     <div class="row">
-                                                        
 
-                                                        <div class="col-md-12">
-                                                            <!-- <label class="form-label" for="students">Select Students:</label> -->
-                                                            <div class="col-md-12 mb-3">
+                                                       <div class="mb-3">
+                                                            <label for="faculty" class="form-label">Select Faculty:</label>
+                                                            <select class="form-control" id="faculty" name="faculty_id" required onchange="loadDepartments(this.value)">
+                                                                <option value="">Select Faculty</option>
+                                                                <?php foreach ($faculties as $faculty): ?>
+                                                                    <option value="<?php echo $faculty['id']; ?>"><?php echo $faculty['name']; ?></option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="department" class="form-label">Select Department:</label>
+                                                            <select class="form-control" id="department" name="department_id" required onchange="loadStudentsAndSupervisors()">
+                                                                <option value="">Select Department</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-12 mb-3">
                                                                 <label class="form-label" for="student_search">Search Student:</label>
                                                                 <input type="text" class="form-control" id="student_search" placeholder="Enter student name">
-                                                            </div>
-                                                            <div class="col-md-12">
-                                                                <label class="form-label" for="students">Select Students:</label>
-                                                                <select class="form-control" name="student_ids[]" id="students" size="10" multiple required>
-                                                                    <!-- Options will be populated dynamically -->
-                                                                     <?php foreach ($students as $student): ?>
-                                                                    <option value="<?php echo $student['id']; ?>"><?php echo htmlspecialchars($student['fullname']); ?></option>
-                                                                <?php endforeach; ?>
-                                                                </select>
-                                                                <div id="selectedStudents" class="mt-2"></div>
-                                                            </div>
                                                         </div>
-
-                                                        <div class="col-md-12">
-                                                            <label class="form-label" for="primary_supervisor">Select Primary Supervisor:</label>
-                                                            <select class="form-control" name="primary_supervisor_id" id="primary_supervisor" required>
+                                                        <div class="mb-3">
+                                                            <label for="students" class="form-label">Select Students:</label>
+                                                            <select class="form-control" id="students" name="student_ids[]" multiple required>
+                                                                <option value="">Select Students</option>
+                                                            </select>
+                                                            <div id="selectedStudents" class="mt-2"></div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="primary_supervisor" class="form-label">Primary Supervisor:</label>
+                                                            <select class="form-control" id="primary_supervisor" name="primary_supervisor_id" required>
                                                                 <option value="">Select Primary Supervisor</option>
-                                                                <?php foreach ($lecturers as $lecturer): ?>
-                                                                    <option value="<?php echo $lecturer['id']; ?>"><?php echo htmlspecialchars($lecturer['fullname']); ?></option>
-                                                                <?php endforeach; ?>
                                                             </select>
                                                         </div>
-
-                                                        <div class="col-md-12">
-                                                            <label class="form-label" for="secondary_supervisor1">Select Secondary Supervisor 1:</label>
-                                                            <select class="form-control" name="secondary_supervisor_id1" id="secondary_supervisor1" required>
+                                                        <div class="mb-3">
+                                                            <label for="secondary_supervisor1" class="form-label">Secondary Supervisor 1:</label>
+                                                            <select class="form-control" id="secondary_supervisor1" name="secondary_supervisor_id1" required>
                                                                 <option value="">Select Secondary Supervisor 1</option>
-                                                                <?php foreach ($lecturers as $lecturer): ?>
-                                                                    <option value="<?php echo $lecturer['id']; ?>"><?php echo htmlspecialchars($lecturer['fullname']); ?></option>
-                                                                <?php endforeach; ?>
                                                             </select>
                                                         </div>
-
-                                                        <div class="col-md-12">
-                                                            <label class="form-label" for="secondary_supervisor2">Select Secondary Supervisor 2:</label>
-                                                            <select class="form-control" name="secondary_supervisor_id2" id="secondary_supervisor2" required>
+                                                        <div class="mb-3">
+                                                            <label for="secondary_supervisor2" class="form-label">Secondary Supervisor 2:</label>
+                                                            <select class="form-control" id="secondary_supervisor2" name="secondary_supervisor_id2" required>
                                                                 <option value="">Select Secondary Supervisor 2</option>
-                                                                <?php foreach ($lecturers as $lecturer): ?>
-                                                                    <option value="<?php echo $lecturer['id']; ?>"><?php echo htmlspecialchars($lecturer['fullname']); ?></option>
-                                                                <?php endforeach; ?>
                                                             </select>
                                                         </div>
+                                                       
                                                     </div>
                                                     
                                                     <div class="modal-footer">
@@ -599,53 +602,130 @@ $assignments = getAllAssignments($pdo, $department_id);
     <script src="../layouts/vertical-dark-menu/app.js"></script>
 
 
+
+
     <script>
-       $(document).ready(function() {
-    $(document).on('change', '#students', function() {
-        var selectedStudents = $(this).val();
-        updateSelectedStudentsBadges(selectedStudents);
-    });
 
-    function updateSelectedStudentsBadges(selectedStudents) {
-        var displayDiv = $('#selectedStudents');
-        displayDiv.empty();
-        if (selectedStudents) {
-            selectedStudents.forEach(function(studentId) {
-                var studentName = $('#students option[value="' + studentId + '"]').text();
-                var badge = $('<span class="badge bg-primary me-1 mb-1">' + studentName + 
-                              ' <i class="fas fa-times deselect-student" data-id="' + studentId + '"></i></span>');
-                displayDiv.append(badge);
+function loadDepartments(facultyId) {
+    $.ajax({
+        url: 'get_department_from_Faculty.php',
+        type: 'GET',
+        data: { faculty_id: facultyId },
+        dataType: 'json',
+        success: function(data) {
+            var options = '<option value="">Select Department</option>';
+            $.each(data, function(index, department) {
+                options += '<option value="' + department.id + '">' + department.name + '</option>';
             });
+            $('#department').html(options);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error loading departments:", error);
         }
-    }
+    });
+}
 
-    $(document).on('click', '.deselect-student', function() {
-        var studentId = $(this).data('id');
-        $('#students option[value="' + studentId + '"]').prop('selected', false);
-        $('#students').trigger('change');
+function loadStudentsAndSupervisors() {
+    var facultyId = $('#faculty').val();
+    var departmentId = $('#department').val();
+    
+    $.ajax({
+        url: 'get_students_Faculty.php',
+        type: 'GET',
+        data: { faculty_id: facultyId, department_id: departmentId },
+        dataType: 'json',
+        success: function(data) {
+            var options = '';
+            $.each(data, function(index, student) {
+                options += '<option value="' + student.id + '">' + student.fullname + '</option>';
+            });
+            $('#students').html(options);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error loading students:", error);
+        }
     });
 
-    $(document).on('click', '.edit-assignment', function() {
-        var assignmentId = $(this).data('id');
+    $.ajax({
+        url: 'get_supervisors_Faculty.php',
+        type: 'GET',
+        data: { faculty_id: facultyId, department_id: departmentId },
+        dataType: 'json',
+        success: function(data) {
+            var options = '<option value="">Select Supervisor</option>';
+            $.each(data, function(index, supervisor) {
+                options += '<option value="' + supervisor.id + '">' + supervisor.fullname + '</option>';
+            });
+            $('#primary_supervisor, #secondary_supervisor1, #secondary_supervisor2').html(options);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error loading supervisors:", error);
+        }
+    });
+}
+
+$(document).ready(function() {
+    $('#assignSupervisorForm').submit(function(e) {
+        e.preventDefault();
         $.ajax({
-            url: 'get_assignment.php',
-            type: 'GET',
-            data: {id: assignmentId},
+            url: 'assign_supervisor_process.php',
+            type: 'POST',
+            data: $(this).serialize(),
             dataType: 'json',
-            success: function(data) {
-                $('#edit_id').val(data.id);
-                $('#edit_student_id').val(data.student_id);
-                $('#edit_primary_supervisor_id').val(data.primary_supervisor_id);
-                $('#edit_secondary_supervisor_id1').val(data.secondary_supervisor_id1);
-                $('#edit_secondary_supervisor_id2').val(data.secondary_supervisor_id2);
-                $('#editAssignmentModal').modal('show');
+            success: function(response) {
+                if (response.success) {
+                    alert('Supervisors assigned successfully!');
+                    $('#assignSupervisorModal').modal('hide');
+                    // Optionally refresh the page or update the assignments list
+                } else {
+                    alert('Error: ' + response.message);
+                }
             },
-           
+            error: function(xhr, status, error) {
+                console.error("Error assigning supervisors:", error);
+            }
+        });
     });
 });
 
+   </script>
+
+
+    <script>
+    $('#students').on('change', function() {
+    var selectedStudents = $(this).val();
+    updateSelectedStudentsBadges(selectedStudents);
+});
+
+function updateSelectedStudentsBadges(selectedStudents) {
+    var displayDiv = $('#selectedStudents');
+    displayDiv.empty();
+    if (selectedStudents) {
+        selectedStudents.forEach(function(studentId) {
+            var studentName = $('#students option[value="' + studentId + '"]').text();
+            var badge = $('<span class="badge bg-primary me-1 mb-1">' + studentName + 
+                          ' <i class="fas fa-times deselect-student" data-id="' + studentId + '"></i></span>');
+            displayDiv.append(badge);
+        });
+    }
+}
+
 
     </script>
+
+
+    <!-- JavaScript for dynamic dropdowns and multiple selection -->
+    
+    <script>
+        
+$(document).on('click', '.deselect-student', function() {
+    var studentId = $(this).data('id');
+    $('#students option[value="' + studentId + '"]').prop('selected', false);
+    $('#students').trigger('change');
+});
+
+    </script>
+
 
     <script>
    
@@ -816,12 +896,14 @@ if (isset($_POST['assign_Student'])) {
     $primarySupervisorId = $_POST['primary_supervisor_id'];
     $secondarySupervisor1Id = $_POST['secondary_supervisor_id1'];
     $secondarySupervisor2Id = $_POST['secondary_supervisor_id2'];
-    $departmentId = $_SESSION['department_id'];
-   
+    $departmentId = $_POST['department_id'];
+    $faculty_id = $_POST['faculty_id'];
+    
 
     $allAssigned = true;
     $assignmentCount = 0;
-   try{
+    try {
+   
     foreach ($studentIds as $studentId) {
         $query = "SELECT * FROM assignments WHERE student_id = ?";
         $stmt = $pdo->prepare($query);
@@ -831,13 +913,20 @@ if (isset($_POST['assign_Student'])) {
         if (count($result) > 0) {
             $allAssigned = false;
         } else {
-            $query = "INSERT INTO assignments (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, department_id) VALUES (?, ?, ?, ?, ?)";
+            $query = "INSERT INTO assignments (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, department_id,faculty_id) VALUES (?, ?, ?, ?, ?,?)";
             $stmt = $pdo->prepare($query);
-            $stmt->execute([$studentId, $primarySupervisorId, $secondarySupervisor1Id, $secondarySupervisor2Id, $departmentId]);
+            $stmt->execute([$studentId, $primarySupervisorId, $secondarySupervisor1Id, $secondarySupervisor2Id, $departmentId,$faculty_id]);
 
             if ($stmt->rowCount() > 0) {
                 $assignmentCount++;
-                
+                // ?>
+                // <script>
+                //     swal("Thesis Tracking System.", " Supervisors assigned successfully!!", "success");
+                //     setTimeout(function() {
+                //         window.location.href = "assign_supervisor.php";
+                //     }, 1000);
+                // </script>
+                // <?php
             } else {
                 $allAssigned = false;
             }
@@ -847,7 +936,7 @@ if (isset($_POST['assign_Student'])) {
     if ($allAssigned && $assignmentCount > 0) {
         ?>
         <script>
-            swal("Thesis Tracking System.", "Supervisors assigned successfully!!", "success");
+            swal("Thesis Tracking System.", "All Students assigned to Supervisors  successfully!!", "success");
             setTimeout(function() {
                 window.location.href = "assign_supervisor.php";
             }, 1000);
@@ -856,7 +945,7 @@ if (isset($_POST['assign_Student'])) {
     } elseif ($assignmentCount > 0) {
         ?>
         <script>
-            swal("Thesis Tracking System.", "Some students were assigned supervisors, but others were already assigned or failed to assign.", "warning");
+            swal("Thesis Tracking System.", "Some students were assigned Supervisors, but others were Already assigned or failed to Assign.", "warning");
             setTimeout(function() {
                 window.location.href = "assign_supervisor.php";
             }, 2000);
@@ -865,18 +954,19 @@ if (isset($_POST['assign_Student'])) {
     } else {
         ?>
         <script>
-            swal("Thesis Tracking System.", "Failed to assign supervisors. All students may already be assigned or an error occurred.", "error");
+            swal("Thesis Tracking System.", "Failed to assign Supervisors. Students(student) May already be assigned .", "error");
         </script>
         <?php
     }
+
+
 } catch (PDOException $e) {
     ?>
     <script>
         swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
     </script>
     <?php
-}
-}
+}}
 
 
 
@@ -890,7 +980,7 @@ if (isset($_POST['update_Assigned'])) {
     $primary_supervisor_id = $_POST['edit_primary_supervisor'];
     $secondary_supervisor_id1 = $_POST['edit_secondary_supervisor1'];
     $secondary_supervisor_id2 = $_POST['edit_secondary_supervisor2'];
-    try{
+
     $stmt = $pdo->prepare("UPDATE assignments SET primary_supervisor_id = ?, secondary_supervisor_id1 = ?, secondary_supervisor_id2 = ? WHERE id = ?");
     if ($stmt->execute([$primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $assignment_id])) {
        
@@ -920,13 +1010,6 @@ if (isset($_POST['update_Assigned'])) {
         $error = $stmt->errorInfo()[2];
         echo "<script>swal('Thesis Tracking System', '$error', 'error');</script>";
     }
-} catch (PDOException $e) {
-    ?>
-    <script>
-        swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
-    </script>
-    <?php
-}
 }
 
 
@@ -942,7 +1025,9 @@ if (isset($_GET['delete_id'])) {
     // Delete the assignment from the database
     $query = "DELETE FROM assignments WHERE id = ?";
     $stmt = $pdo->prepare($query);
-    try{
+    try {
+        //code...
+    
     if ($stmt->execute([$assignmentId])) {
        
         ?>
@@ -967,14 +1052,96 @@ if (isset($_GET['delete_id'])) {
     <?php
     } else {
         echo "<script>swal('Thesis Tracking System', 'Error deleting chapter!', 'error');</script>";
+    }}
+    catch (PDOException $e) {
+        ?>
+        <script>
+            swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+        </script>
+        <?php
     }
-} catch (PDOException $e) {
-    ?>
-    <script>
-        swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
-    </script>
-    <?php
+    
 }
+
+
+
+require '../config.php';
+require '../vendor/autoload.php'; // Make sure PHPSpreadsheet is installed
+
+use PhpOffice\PhpSpreadsheet\IOFactory;
+
+if (isset($_POST['upload_excel'])) {
+    $inputFileName = $_FILES['excel_file']['tmp_name'];
+    $spreadsheet = IOFactory::load($inputFileName);
+    $worksheet = $spreadsheet->getActiveSheet();
+    $highestRow = $worksheet->getHighestRow();
+
+    $allAssigned = true;
+    $assignmentCount = 0;
+
+    try {
+        for ($row = 2; $row <= $highestRow; $row++) {
+            $studentId = $worksheet->getCellByColumnAndRow(1, $row)->getValue();
+            $primarySupervisorId = $worksheet->getCellByColumnAndRow(2, $row)->getValue();
+            $secondarySupervisor1Id = $worksheet->getCellByColumnAndRow(3, $row)->getValue();
+            $secondarySupervisor2Id = $worksheet->getCellByColumnAndRow(4, $row)->getValue();
+            $departmentId = $worksheet->getCellByColumnAndRow(5, $row)->getValue();
+            $facultyId = $worksheet->getCellByColumnAndRow(6, $row)->getValue();
+
+            $query = "SELECT * FROM assignments WHERE student_id = ?";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([$studentId]);
+            $result = $stmt->fetchAll();
+
+            if (count($result) == 0) {
+                $query = "INSERT INTO assignments (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, department_id, faculty_id) VALUES (?, ?, ?, ?, ?, ?)";
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$studentId, $primarySupervisorId, $secondarySupervisor1Id, $secondarySupervisor2Id, $departmentId, $facultyId]);
+
+                if ($stmt->rowCount() > 0) {
+                    $assignmentCount++;
+                } else {
+                    $allAssigned = false;
+                }
+            } else {
+                $allAssigned = false;
+            }
+        }
+
+        if ($allAssigned && $assignmentCount > 0) {
+            //echo "<script>swal('Thesis Tracking System', 'All Students assigned to Supervisors successfully!', 'success');</script>";
+            ?>
+                <script>
+                    swal("Thesis Tracking System.", " All Students assigned to Supervisors Successfully!!", "success");
+                    setTimeout(function() {
+                        window.location.href = "assign_supervisor.php";
+                    }, 1000);
+                </script>
+                <?php
+        } elseif ($assignmentCount > 0) {
+           // echo "<script>swal('Thesis Tracking System', 'Some students were assigned Supervisors, but others were already assigned or failed to assign.', 'warning');</script>";
+            ?>
+        <script>
+            swal("Thesis Tracking System.", "Some students were assigned Supervisors, but others were Already assigned or failed to Assign.", "warning");
+            setTimeout(function() {
+                window.location.href = "assign_supervisor.php";
+            }, 2000);
+        </script>
+        <?php
+        } else {
+            //echo "<script>swal('Thesis Tracking System', 'Failed to assign Supervisors. Students may already be assigned.', 'error');</script>";
+            ?>
+            <script>
+                swal("Thesis Tracking System.", "Failed to assign Supervisors. Students(student) May already be assigned .", "error");
+            </script>
+            <?php
+        }
+
+    } catch (PDOException $e) {
+        echo "<script>swal('Thesis Tracking System', '{$e->getMessage()}', 'error');</script>";
+    }
+
+   // echo "<script>setTimeout(function() { window.location.href = 'assign_supervisor.php'; }, 2000);</script>";
 }
 
 

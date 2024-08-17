@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     // Prepare SQL statement with placeholders
-    $sql = "SELECT id, username, fullname, password, role,department_id ,email,dateRegistered,student_level,faculty_id FROM Users WHERE username = ?";
+    $sql = "SELECT id, username, fullname, password, role,department_id ,email,dateRegistered,student_level FROM Users WHERE username = ?";
     $stmt = $pdo->prepare($sql);
 
     try {
@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['department_id']= $user['department_id'];
             $_SESSION['dateRegistered'] =  $user['dateRegistered'];
             $_SESSION['StudentLevel'] =  $user['student_level'];
-            $_SESSION['faculty_id'] =  $user['faculty_id'];
         
             $redirect_url = '';
             switch ($user['role']) {
@@ -39,14 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 case 'dean':
                     $redirect_url = '../dean/dean_dashboard.php';
                     break;
-                case 'department_admin':
+                case 'admin':
                     $redirect_url = 'index.php';
                     break;
                 case 'super_admin':
                     $redirect_url = '../admin_super/index.php';
-                    break;
-                case 'faculty_admin':
-                    $redirect_url = '../admin_faculty/index.php';
                     break;
             }
         

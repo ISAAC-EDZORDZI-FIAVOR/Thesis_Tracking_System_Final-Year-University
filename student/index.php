@@ -96,6 +96,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/custom_dt_custom.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
 </head>
 <body class="layout-boxed">
@@ -150,8 +151,15 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     &#x1F44B;
                                 </div>
                                 <div class="media-body">
-                                    <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
+                                <p><?php echo $_SESSION["fullname"]; ?> !</p>
                                     <p>Student</p>
+                                    <p><?php
+                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                    $stmt = $pdo->prepare($dept_query);
+                                    $stmt->execute([$_SESSION['department_id']]);
+                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $department['name'];
+                                    ?></p>
                                 </div>
                             </div>
                         </div>
@@ -213,91 +221,22 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <img src="../src/assets/img/profile-30.png" alt="avatar">
                         </div>
                         <div class="profile-content">
-                            <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
-                            <p class="">Student</p>
+                        <?php echo $_SESSION["fullname"]; ?> !</p>
+                                    <p>Student</p>
+                                    <p><?php
+                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                    $stmt = $pdo->prepare($dept_query);
+                                    $stmt->execute([$_SESSION['department_id']]);
+                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $department['name'];
+                                    ?>
                         </div>
                     </div>
                 </div>
                                 
                 <div class="shadow-bottom"></div>
                 <ul class="list-unstyled menu-categories" id="accordionExample">
-                    <li class="menu">
-                        <a href="#dashboard" data-bs-toggle="collapse" aria-expanded="true" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                                <span>Dashboard</span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled show" id="dashboard" data-bs-parent="#accordionExample">
-                            <li class="">
-                                <a href="./index.php"> Analytics </a>
-                            </li>
-                            <li>
-                                <!-- <a href="./index2.html"> Sales </a> -->
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="menu menu-heading">
-                        <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>APPLICATIONS</span></div>
-                    </li>
-
-                    
-
-                    <li class="menu active">
-                        <a href="./add_new_User.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                    </svg>
-                               <span>Add New User</span>
-                            </div>
-                        </a>
-                    </li>
-
-                    <li class="menu">
-                        <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                </svg>
-                                <span>Add  Department</span>
-                            </div>
-                        </a>
-                    </li>
-
-                    <li class="menu">
-                        <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                                </svg>
-
-                                <span>Thesis Chapter</span>
-                            </div>
-                        </a>
-                    </li>
-
-
-                    <li class="menu">
-                        <a href="./assign_supervisor.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="8.5" cy="7" r="4"></circle>
-                                <polyline points="17 11 19 13 23 9"></polyline>
-                                </svg>
-
-                                <span>Assign Student</span>
-                            </div>
-                        </a>
-                    </li>
+               
 
                     
                     
@@ -346,20 +285,22 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 <div class="col-xl-12 col-md-12">
                                                     <div class="card">
                                                         <div class="card-body">
-                                                            <h2 class="card-title mb-4 text-center">Welcome, <?php echo htmlspecialchars($_SESSION['fullname']); ?></h2>
+                                                            <h3 class="card-title mb-4 text-center">Welcome, <?php echo htmlspecialchars($_SESSION['fullname']); ?></h3>
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <ul class="list-group list-group-flush rounded  btn-primary">
                                                                         <li class="list-group-item btn-primary"><strong>Department:</strong> <?php echo htmlspecialchars($student['name']); ?></li>
                                                                         <li class="list-group-item list-group-item-primary"><strong>Username:</strong> <?php echo htmlspecialchars($_SESSION['username']); ?></li>
-                                                                        <li class="list-group-item btn-primary"><strong>Role:</strong> <?php echo htmlspecialchars($_SESSION['role']); ?></li>
+                                                                        <li class="list-group-item btn-primary"><strong>Role:</strong> <?php echo ucfirst(htmlspecialchars($_SESSION['role'])); ?></li>
+                                                                        
                                                                     </ul>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <ul class="list-group list-group-flush rounded btn-primary">
                                                                         <li class="list-group-item btn-primary"><strong>Level:</strong> <?php echo htmlspecialchars($_SESSION['StudentLevel']); ?></li>
                                                                         <li class="list-group-item list-group-item-primary"><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['email']); ?></li>
-                                                                        <li class="list-group-item btn-primary"><strong>Date Registered:</strong> <?php echo htmlspecialchars($_SESSION['dateRegistered']); ?></li>
+                                                                        <li class="list-group-item btn-primary"><strong>Date Registered: </strong><span><i class="fas fa-calendar-alt"></i> <?php echo date('F j, Y, g:i a', strtotime($_SESSION['dateRegistered'])); ?></span></li>
+                                                                        
                                                                     </ul>
                                                                 </div>
                                                             </div>
@@ -439,16 +380,24 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                    <?php elseif ($thesis_proposal['status'] == 'approved'): ?>
-                                                                        <div class="card mt-4">
-                                                                            <div class="card-header bg-success text-white">
-                                                                                <h2 class="mb-0">Thesis Progress</h2>
-                                                                            </div>
-                                                                            <div class="card-body">
-                                                                                <!-- Add chapter submission options here -->
-                                                                            </div>
-                                                                        </div>
-                                                                    <?php endif; ?>
+                                                                            <?php elseif ($thesis_proposal['status'] == 'approved'): ?>
+                                                                                <div class="card mt-4">
+                                                                                    <div class="card-header bg-success text-white">
+                                                                                        <h2 class="mb-0 text-center">Thesis Proposal Accepted ! , Congrat !!! &#x1F44B;</h2>
+                                                                                    </div>
+                                                                                    <div class="card-body">
+                                                                                        <h3>Chapters</h3>
+                                                                                        <div class="d-grid gap-2">
+                                                                                            <a href="chat.php" class="btn btn-primary">
+                                                                                                Submit Chapters <i class="fas fa-arrow-right"></i>
+                                                                                            </a>
+                                                                                            
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            <?php endif; ?>
+
+
                                                                     <?php endif; ?>
 
                                                         </div>
@@ -475,26 +424,31 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                     <div class="notes-content">  
 
                                                                         
-                                                                    <form method="post" action="" id="notesMailModalTitle" >
-                                                                            <div class="row">
-                                                                            <div class="col-md-12 mb-2">
+                                                                    <form method="post" action="" id="notesMailModalTitle" enctype="multipart/form-data"> 
+                                                                        <div class="row">
+                                                                        <div class="col-md-12 mb-2">
+                                                                    
+                                                                            <h3>TTS</h3>
                                                                         
-                                                                                <h2>TTS</h2>
-                                                                            
-                                                                            </div>
-                                                                            <div class="col-md-12">
-                                                                                <div class="mb-3">
-                                                                                <div class="form-group">
-                                                                                            <label for="title">Thesis Title:</label>
-                                                                                            <input type="text" class="form-control" id="title" name="title" required>
-                                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12">
+                                                                            <div class="mb-3">
+                                                                            <div class="form-group">
+                                                                                <label for="title">Thesis Title:</label>
+                                                                                <input type="text" class="form-control" id="title" name="title" required>
+                                                                                </div>
 
-                                                                                            <div class="form-group">
-                                                                                                <label for="description">Brief Description/Comment:</label>
-                                                                                                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                                                                                            </div>
+                                                                                <div class="form-group">
+                                                                                    <label for="description">Brief Description/Comment:</label>
+                                                                                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                                                                                 </div>
                                                                             </div>
+
+                                                                            <div class="form-group">
+                                                                                <label for="proposal_file">Upload Thesis Proposal (PDF only)</label>
+                                                                                <input type="file" class="form-control" id="proposal_file" name="proposal_file" accept=".pdf" required>
+                                                                            </div>
+                                                                        </div>
                                                                             <div class="modal-footer">
                                                                                 <button class="btn"  data-bs-dismiss="modal">Discard</button>
                                                                                 <button type="submit" id="" name="submit_Proposal" class="btn btn-primary">Submit Proposal</button>
@@ -652,50 +606,67 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 require_once '../config.php';
 
+
 if (isset($_POST['submit_Proposal'])) {
     $student_id = $_SESSION['user_id'];
     $title = $_POST['title'];
     $description = $_POST['description'];
-   
+    $faculty_id = $_SESSION['faculty_id'];
+    $department_id = $_SESSION['department_id'];
+
     // Fetch the assigned supervisors for this student
     $stmt = $pdo->prepare("SELECT primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2 FROM assignments WHERE student_id = ?");
     $stmt->execute([$student_id]);
     $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
-   
+
     if ($assignment) {
         $primary_supervisor_id = $assignment['primary_supervisor_id'];
         $secondary_supervisor_id1 = $assignment['secondary_supervisor_id1'];
         $secondary_supervisor_id2 = $assignment['secondary_supervisor_id2'];
-       
-        $stmt = $pdo->prepare("INSERT INTO thesis_proposals 
-    (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, title, description, status, submission_date) 
-    VALUES (?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
-    ON DUPLICATE KEY UPDATE 
-    primary_supervisor_id = VALUES(primary_supervisor_id),
-    secondary_supervisor_id1 = VALUES(secondary_supervisor_id1),
-    secondary_supervisor_id2 = VALUES(secondary_supervisor_id2),
-    title = VALUES(title),
-    description = VALUES(description),
-    status = 'pending',
-    submission_date = CURRENT_TIMESTAMP");
-        $stmt->execute([$student_id, $primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $title, $description]);
 
-        
+        $file_path = null;
+        if (!empty($_FILES['proposal_file']['name'])) {
+            $file = $_FILES['proposal_file'];
+            $fileName = $_SESSION['username'] . '_' . str_replace(' ', '_', $_SESSION['fullname']) . '_proposal.pdf';
+            $uploadPath = '../uploads/proposals/' . $fileName;
+            
+            if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                $file_path = $uploadPath;
+            }
+        }
+
+        $stmt = $pdo->prepare("INSERT INTO thesis_proposals 
+            (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, title, description, file_path, faculty_id, department_id, status, submission_date) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
+            ON DUPLICATE KEY UPDATE 
+            primary_supervisor_id = VALUES(primary_supervisor_id),
+            secondary_supervisor_id1 = VALUES(secondary_supervisor_id1),
+            secondary_supervisor_id2 = VALUES(secondary_supervisor_id2),
+            title = VALUES(title),
+            description = VALUES(description),
+            file_path = VALUES(file_path),
+            faculty_id = VALUES(faculty_id),
+            department_id = VALUES(department_id),
+            status = 'pending',
+            submission_date = CURRENT_TIMESTAMP");
+
+        $stmt->execute([$student_id, $primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $title, $description, $file_path, $faculty_id, $department_id]);
+
         ?>
-            <script>
-                swal("Thesis Tracking System.", "Thesis Proposal Submitted Successfully !!", "success");
-                            setTimeout(function() {
-                window.location.href = "index.php";
-            }, 2000);
-            </script>
-        <?php
-    
+        <script>
+            swal("Thesis Tracking System.", "Thesis Proposal Submitted Successfully !!", "success");
+                        setTimeout(function() {
+            window.location.href = "index.php";
+        }, 2000);
+        </script>
+       <?php
     } else {
         echo "<script>
             swal('Thesis Tracking System', 'No supervisors assigned. Please contact your administrator.', 'error');
         </script>";
     }
 }
+
 ?>
 
 

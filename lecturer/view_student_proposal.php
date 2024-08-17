@@ -16,7 +16,7 @@ if (!$student_id) {
 }
 
 // Fetch the thesis proposal for this student
-$query = "SELECT tp.id, tp.title, tp.description, tp.status, tp.submission_date, u.fullname 
+$query = "SELECT tp.id, tp.title, tp.description, tp.status, tp.submission_date,tp.comment,tp.file_path, u.fullname 
           FROM thesis_proposals tp 
           JOIN users u ON tp.student_id = u.id 
           JOIN assignments a ON u.id = a.student_id 
@@ -56,8 +56,11 @@ $proposals = $stmt->fetchAll();
     <!-- BEGIN PAGE LEVEL STYLES -->
     <link href="../src/assets/css/light/components/modal.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/light/apps/contacts.css" rel="stylesheet" type="text/css" />
+    <script src="../dist/js/jquery.min.js"></script>
+    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
     <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+
 
     <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/dark/apps/contacts.css" rel="stylesheet" type="text/css" />
@@ -233,7 +236,7 @@ $proposals = $stmt->fetchAll();
                                 </div>
                                 <div class="media-body">
                                     <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
-                                    <p>Admin</p>
+                                    <p>Lecturer</p>
                                 </div>
                             </div>
                         </div>
@@ -253,7 +256,7 @@ $proposals = $stmt->fetchAll();
                             </a>
                         </div>
                         <div class="dropdown-item">
-                            <a href="auth-boxed-signin.html">
+                            <a href="../admin/logout.php">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>
                             </a>
                         </div>
@@ -985,6 +988,36 @@ $proposals = $stmt->fetchAll();
                                                 <div class="bg-light p-3 mb-3 rounded">
                                                     <?php echo nl2br(htmlspecialchars($proposal['description'])); ?>
                                                 </div>
+
+                                                <div class="comments-section">
+                                                    <div class="student-description">
+                                                        <strong><?php echo htmlspecialchars($student['fullname']); ?> (Student):</strong>
+                                                        <p><?php echo htmlspecialchars($proposal['description']); ?></p>
+                                                        <small><?php echo date('F j, Y, g:i a', strtotime($proposal['submission_date'])); ?></small>
+                                                    </div>
+                                                    
+                                                    <?php if (!empty($proposal['comment'])): ?>
+                                                        <div class="supervisor-comment">
+                                                            <strong><?php echo htmlspecialchars($supervisor['fullname']); ?> (Supervisor):</strong>
+                                                            <p><?php echo htmlspecialchars($proposal['comment']); ?></p>
+                                                            <!-- Add timestamp if available in your database -->
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+
+
+                                                <?php if (!empty($proposal['file_path'])): ?>
+                                                    <div class="card mt-4">
+                                                        <div class="card-header bg-primary text-white">
+                                                            <h5 class="mb-0">Proposal Document</h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <p>View the proposal document: <a href="<?php echo $proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+
+
                                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal<?php echo $proposal['id']; ?>">
                                                     <i class="fas fa-edit"></i> Review Proposal
                                                 </button>
@@ -1007,13 +1040,14 @@ $proposals = $stmt->fetchAll();
                                                             <div class="mb-3">
                                                                 <label for="status" class="form-label">Status:</label>
                                                                 <select name="status" id="status" class="form-select" required>
+                                                                    <option value="">Choose Status..</option>
                                                                     <option value="approved">Approve</option>
                                                                     <option value="rejected">Reject</option>
                                                                 </select>
                                                             </div>
                                                             <div class="mb-3">
                                                                 <label for="comment" class="form-label">Comment:</label>
-                                                                <textarea name="comment" id="comment" rows="4" class="form-control" required></textarea>
+                                                                <textarea name="comment" id="comment" rows="4" class="form-control" ></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -1068,6 +1102,7 @@ $proposals = $stmt->fetchAll();
     <!-- END GLOBAL MANDATORY SCRIPTS -->
     <script src="../src/plugins/src/jquery-ui/jquery-ui.min.js"></script>
     <script src="../src/assets/js/apps/contact.js"></script>
+    
 </body>
 </html>
 
@@ -1081,12 +1116,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update_query = "UPDATE thesis_proposals SET status = ?, comment = ? WHERE id = ?";
         $update_stmt = $pdo->prepare($update_query);
         $update_stmt->execute([$status, $comment, $proposal_id]);
-
-        ?>
-        <script>
-            swal("Thesis Tracking System.", "Review Submitted successfully !!", "success");
-        </script>
-        <?php
+        
+        if($update_stmt){
+            ?>
+            <script>
+                swal("Thesis Tracking System.", "Review Submitted successfully !!", "success");
+                setTimeout(function() {
+                    window.location.href = "view_student_proposal.php?student_id=<?php echo $student_id; ?>";
+            }, 1000);
+            </script>
+            <?php
+        }
+       
     } catch (PDOException $e) {
         ?>
         <script>
@@ -1095,8 +1136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php
     }
 
-    header("Location: view_student_proposal.php?student_id=" . $student_id);
-    exit();
+    // header("Location: view_student_proposal.php?student_id=" . $student_id);
+    // exit();
 }
 
 

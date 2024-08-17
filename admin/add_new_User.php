@@ -1,31 +1,34 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
+
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
     header("Location: auth-signin.php");
     exit();
 }
 
 require '../config.php';
 
-// Function to fetch all users from the database
+$faculty_id = $_SESSION['faculty_id']; 
+
+
 function getAllUsers($pdo)
 {
-    $sql = "SELECT id, username, fullname, role, department_id, email FROM users";
+    $department_id = $_SESSION['department_id'];
+    // Function to fetch all users from the database
+
+    // Fetch existing users in the department
+    $sql = "SELECT u.*, d.name AS department_name 
+        FROM users u 
+        JOIN departments d ON u.department_id = d.id 
+        WHERE u.department_id = ?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $stmt->execute([$department_id]);
+    return  $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Function to get the department name for a given department ID
-function getDepartmentName($pdo, $departmentId)
-{
-    $sql = "SELECT name FROM Departments WHERE id = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$departmentId]);
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    return $result['name'] ?? 'Unknown';
-}
+
 
 
 
@@ -52,6 +55,7 @@ function displayUsersTable($pdo)
                                         <th class="text-primary">Full Name</th>
                                         <th class="text-primary">Role</th>
                                         <th class="text-primary">Department</th>
+                                        <th class="text-primary">Level</th>
                                         <th class="text-primary">Email</th>
                                         <th class="dt-no-sorting text-primary">Action</th>
                                     </tr>
@@ -63,7 +67,8 @@ function displayUsersTable($pdo)
                                             <td class=""><?php echo $user['username']; ?></td>
                                             <td class=""><?php echo $user['fullname']; ?></td>
                                             <td class="text-success"><span class="shadow-none badge badge-primary"><?php echo $user['role']; ?></span></td>
-                                            <td class="text-info"><?php echo getDepartmentName($pdo, $user['department_id']); ?></td>
+                                            <td class="text-info"><?php echo $user['department_name']; ?></td>
+                                            <td class="text-info"><?php echo $user['student_level']; ?></td>
                                             <td class=""><?php echo $user['email']; ?></td>
                                             <td class="text-center">
                                             <ul class="table-controls">
@@ -181,8 +186,15 @@ function displayUsersTable($pdo)
                                     &#x1F44B;
                                 </div>
                                 <div class="media-body">
-                                    <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
-                                    <p>Admin</p>
+                                <p><?php echo $_SESSION["fullname"]; ?> !</p>
+                                    <p>Department Admin</p>
+                                    <p><?php
+                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                    $stmt = $pdo->prepare($dept_query);
+                                    $stmt->execute([$_SESSION['department_id']]);
+                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $department['name'];
+                                    ?></p>
                                 </div>
                             </div>
                         </div>
@@ -244,8 +256,15 @@ function displayUsersTable($pdo)
                             <img src="../src/assets/img/profile-30.png" alt="avatar">
                         </div>
                         <div class="profile-content">
-                            <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
-                            <p class="">Admin</p>
+                        <p><?php echo $_SESSION["fullname"]; ?> !</p>
+                            <p>Department Admin</p>
+                            <p><?php
+                            $dept_query = "SELECT name FROM departments WHERE id = ?";
+                            $stmt = $pdo->prepare($dept_query);
+                            $stmt->execute([$_SESSION['department_id']]);
+                            $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                            echo $department['name'];
+                            ?></p>
                         </div>
                     </div>
                 </div>
@@ -290,31 +309,9 @@ function displayUsersTable($pdo)
                         </a>
                     </li>
 
-                    <li class="menu">
-                        <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                </svg>
-                                <span>Add  Department</span>
-                            </div>
-                        </a>
-                    </li>
+                   
 
-                    <li class="menu">
-                        <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                                </svg>
-
-                                <span>Thesis Chapter</span>
-                            </div>
-                        </a>
-                    </li>
-
+                    
 
                     <li class="menu">
                         <a href="./assign_supervisor.php" aria-expanded="false" class="dropdown-toggle">
@@ -410,7 +407,13 @@ function displayUsersTable($pdo)
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                                            <h6 class="modal-title" id="editUserModalLabel">Edit User in <?php
+                                                $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                                $stmt = $pdo->prepare($dept_query);
+                                                $stmt->execute([$_SESSION['department_id']]);
+                                                $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                                echo $department['name'];
+                                                ?></h6>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
@@ -432,14 +435,28 @@ function displayUsersTable($pdo)
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="role">Role</label>
-                                                    <select id="role1" name="role" class="form-control custom-select" required >
+                                                    <select id="edit_role" name="role" class="form-control custom-select" required >
                                                                     <option >Select The Role</option>
                                                                     <option value="student">Student</option>
                                                                     <option value="lecturer">Lecturer</option>
                                                                     <option value="hod">HOD</option>
                                                                     <option value="dean">Dean</option>
                                                                     <option value="admin">Admin</option>
+                                                                    
                                                     </select>
+                                                </div>
+                                                <div class="form-group" id="edit_student_level_group" style="display: none;">
+                                                            <label for="student_level">Student Level</label>
+                                                            <select class="form-control" id="edit_student_level" name="student_level">
+                                                                <option value="">Select Level</option>
+                                                                <option value="1st Year">1st Year</option>
+                                                                <option value="2nd Years">2nd Years</option>
+                                                                <option value="3rd Years">3rd Years</option>
+                                                                <option value="4th Years">4th Years</option>
+                                                                <option value="5th Years">5th Years</option>
+                                                                <option value="6th Years">6th Years</option>
+                                                                
+                                                            </select>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="department_id">Department</label>
@@ -468,7 +485,13 @@ function displayUsersTable($pdo)
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New User</h5>
+                                            <h6 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New User in <?php
+                                                $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                                $stmt = $pdo->prepare($dept_query);
+                                                $stmt->execute([$_SESSION['department_id']]);
+                                                $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                                echo $department['name'];
+                                                ?></h6>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
@@ -480,7 +503,7 @@ function displayUsersTable($pdo)
 
                                                     
                                                    <form method="post" action="" id="notesMailModalTitle" >
-                                                                                                 <div class="row">
+                                                        <div class="row">
                                                         <div class="col-md-12 mb-2">
                                                             
                                                             <h2>TTS</h2>
@@ -530,7 +553,7 @@ function displayUsersTable($pdo)
                                                                     <option value="lecturer">Lecturer</option>
                                                                     <option value="hod">HOD</option>
                                                                     <option value="dean">Dean</option>
-                                                                    <option value="admin">Admin</option>
+                                                                    
                                                                 </select>
                                                                 <i class="bi bi-chevron-down"></i>
                                                             </div>
@@ -551,26 +574,6 @@ function displayUsersTable($pdo)
                                                             </select>
                                                         </div>
 
-
-
-
-                                                        <div class="col-md-12">
-                                                            <div class="mb-3">
-                                                                <label class="form-label" for="role">Departments</label>
-                                                                 <select id="department_id" name="department_id" class="form-control custom-select" required >
-                                                                    <?php
-                                                                    // Fetch departments from database and populate dropdown
-                                                                    require '../config.php';
-                                                                    $sql = "SELECT id, name FROM Departments";
-                                                                    $stmt = $pdo->query($sql);
-                                                                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                                                        echo "<option value=\"{$row['id']}\">{$row['name']}</option>";
-                                                                    }
-                                                                    ?>
-                                                                </select>
-                                                                <i class="bi bi-chevron-down" ></i>
-                                                            </div>
-                                                        </div>
                                                       
                
                                                         <div class="modal-footer">
@@ -639,28 +642,43 @@ function displayUsersTable($pdo)
      <!-- Edit User JavaScript -->
     <script>
     $(document).ready(function() {
-        $('.edit-user').click(function() {
-            var userId = $(this).data('id');
-            $.ajax({
-                url: 'get_user.php',
-                type: 'GET',
-                data: {id: userId},
-                dataType: 'json',
-                success: function(data) {
-                    $('#edit_id').val(data.id);
-                    $('#edit_username').val(data.username);
-                    $('#edit_fullname').val(data.fullname);
-                    $('#edit_password').val(data.password);
-                    $('#edit_role').val(data.role);
-                    $('#edit_department_id').val(data.department_id);
-                    $('#editUserModal').modal('show');
-                },
-                error: function() {
-                    alert('Error fetching user data');
+    $(document).on('click', '.edit-user', function() {
+        var userId = $(this).data('id');
+        $.ajax({
+            url: 'get_user.php',
+            type: 'GET',
+            data: {id: userId},
+            dataType: 'json',
+            success: function(data) {
+                $('#edit_id').val(data.id);
+                $('#edit_username').val(data.username);
+                $('#edit_fullname').val(data.fullname);
+                $('#edit_password').val(data.password);
+                $('#edit_role').val(data.role);
+                $('#edit_department_id').val(data.department_id);
+                if (data.role === 'student') {
+                    $('#edit_student_level_group').show();
+                    $('#edit_student_level').val(data.student_level);
+                } else {
+                    $('#edit_student_level_group').hide();
                 }
-            });
+                $('#editUserModal').modal('show');
+            },
+            error: function() {
+                alert('Error fetching user data');
+            }
         });
     });
+
+    $('#edit_role').change(function() {
+        if ($(this).val() === 'student') {
+            $('#edit_student_level_group').show();
+        } else {
+            $('#edit_student_level_group').hide();
+        }
+    });
+});
+
     </script>
 
 
@@ -783,7 +801,7 @@ if (isset($_GET['delete_id'])) {
     // Prepare the delete statement
     $stmt = $pdo->prepare("DELETE FROM Users WHERE id = ?");
     $stmt->execute([$delete_id]);
-
+    try {
     if ($stmt->rowCount() > 0) {
         ?>
             <script>
@@ -810,6 +828,13 @@ if (isset($_GET['delete_id'])) {
     } else {
         echo "<script>swal('Error', 'Failed to delete user', 'error');</script>";
     }
+} catch (PDOException $e) {
+    ?>
+    <script>
+        swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+    </script>
+    <?php
+}
 }
 
 
@@ -824,9 +849,9 @@ if (isset($_POST['edit_user'])) {
     $department_id = $_POST['department_id'];
 
     // Prepare the update statement
-    $stmt = $pdo->prepare("UPDATE Users SET username = ?, fullname = ?, password = ?, role = ?, department_id = ? WHERE id = ?");
-    $stmt->execute([$username, $fullname, $password, $role, $department_id, $edit_id]);
-
+    $stmt = $pdo->prepare("UPDATE Users SET username = ?, fullname = ?, password = ?, role = ? WHERE id = ?");
+    $stmt->execute([$username, $fullname, $password, $role, $edit_id]);
+    try {
     if ($stmt->rowCount() > 0) {
         ?>
             <script>
@@ -853,6 +878,13 @@ if (isset($_POST['edit_user'])) {
     } else {
         echo "<script>swal('Error', 'Failed to update user', 'error');</script>";
     }
+} catch (PDOException $e) {
+    ?>
+    <script>
+        swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+    </script>
+    <?php
+}
 }
 
 if (isset($_POST['add_user'])) {
@@ -860,14 +892,16 @@ if (isset($_POST['add_user'])) {
     $fullname = $_POST['fullname'];
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
     $role = $_POST['role'];
-    $department_id = $_POST['department_id'];
+    $department_id = $_SESSION['department_id'];
+    $faculty_id = $_SESSION['faculty_id'];
     $student_level = ($role === 'student') ? $_POST['student_level'] : null;
+   
 
-    $sql = 'INSERT INTO Users (username, fullname, password, role, department_id, student_level) VALUES (?, ?, ?, ?, ?, ?)';
+    $sql = 'INSERT INTO Users (username, fullname, password, role, department_id,faculty_id, student_level) VALUES (?, ?, ?, ?, ?, ?,?)';
     $stmt = $pdo->prepare($sql);
 
     try {
-        if ($stmt->execute([$username,$fullname, $password, $role, $department_id, $student_level])) {
+        if ($stmt->execute([$username,$fullname, $password, $role, $department_id,$faculty_id, $student_level])) {
             
             
             ?>
@@ -916,13 +950,14 @@ if (isset($_POST['import_users'])) {
         $password = password_hash($row['2'], PASSWORD_DEFAULT);
         $role = $row['3'];
         $department_id = $row['4'];
-        $student_level = $row['5'];
+        $faculty_id = $row['5'];
+        $student_level = $row['6'];
 
-        $sql = 'INSERT INTO Users (username, fullname, password, role, department_id,student_level) VALUES (?, ?, ?, ?, ?,?)';
+        $sql = 'INSERT INTO Users (username, fullname, password, role, department_id,faculty_id,student_level) VALUES (?, ?, ?, ?, ?,?,?)';
         $stmt = $pdo->prepare($sql);
 
         try {
-            if ($stmt->execute([$username, $fullname, $password, $role, $department_id,$student_level])) {
+            if ($stmt->execute([$username, $fullname, $password, $role, $department_id,$faculty_id, $student_level])) {
                 // User added successfully
                 ?>
                 <script>

@@ -1,65 +1,86 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
-    header("Location: auth-signin.php");
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "super_admin") {
+    header("Location: ../admin/auth-signin.php");
     exit();
 }
-?>
 
-
-
-<?php
 require '../config.php';
 
 // Function to fetch all users from the database
-function getAllDepartment($pdo)
+function getAllUsers($pdo)
 {
-    $sql = "SELECT * FROM departments";
+    $sql = "SELECT u.*, d.name AS department_name, f.name AS faculty_name FROM users u LEFT JOIN departments d ON u.department_id = d.id LEFT JOIN faculties f ON u.faculty_id = f.id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+}
+
+// Function to get the department name for a given department ID
+function getDepartmentName($pdo, $departmentId)
+{
+    $sql = "SELECT name FROM Departments WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$departmentId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $result['name'] ?? 'Unknown';
 }
 
 
 
-// Fetch all departments from the database
-$departments = getAllDepartment($pdo);
+$faculties_query = "SELECT * FROM faculties";
+$faculties_stmt = $pdo->prepare($faculties_query);
+$faculties_stmt->execute();
+$faculties = $faculties_stmt->fetchAll();
 
 
-function displayDepartmentTable($pdo)
+
+
+
+// Fetch all users from the database
+$users = getAllUsers($pdo);
+
+
+function displayUsersTable($pdo)
 {
-    // $users = getAllDepartment($pdo);
-    $departments = getAllDepartment($pdo);
+    $users = getAllUsers($pdo);
     ?>
 
             <div class="row layout-spacing">
                 <div class="col-lg-12">
                     <div class="statbox widget box box-shadow">
                         <div class="widget-content widget-content-area">
-                        <div class="text-center mt-4"><h2>List of Departments</h2></div>
+                        <div class="text-center mt-4"><h2>List of Users in the System</h2></div>
                             <table id="style-3" class="table style-3 dt-table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="checkbox-column text-primary">Department ID</th>
-                                        <th class="text-primary">Department Name</th>
-                                        <th class="text-primary">Date Registered</th>
+                                        <th class="checkbox-column text-primary">Username</th>
+                                        <th class="text-primary">Full Name</th>
+                                        <th class="text-primary">Role</th>
+                                        <th class="text-primary">Department</th>
+                                        <th class="text-primary">Faculty</th>
+                                        <th class="text-primary">Level</th>
+                                        <th class="text-primary">Email</th>
                                         <th class="dt-no-sorting text-primary">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($departments as $department): ?>
+                                    <?php foreach ($users as $user): ?>
                                         <tr>
                                             
-                                            <td class="text-success"><?php echo $department['id']; ?></td>
-                                            <td class="text-primary"><?php echo $department['name']; ?></td>
-                                            <td class=""><?php echo $department['dateRegistered']; ?></td>
+                                            <td class=""><?php echo $user['username']; ?></td>
+                                            <td class=""><?php echo $user['fullname']; ?></td>
+                                            <td class="text-success"><span class="shadow-none badge badge-primary"><?php echo ucfirst($user['role']); ?></span></td>
+                                            <td class="text-info"><?php echo getDepartmentName($pdo, $user['department_id']); ?></td>
+                                            <td class="text-success"><?php echo $user['faculty_name']; ?></td>
+                                            <td class="text-success"><?php echo $user['student_level']; ?></td>
+                                            <td class=""><?php echo $user['email']; ?></td>
                                             <td class="text-center">
-                                                <ul class="table-controls">
-                                                <li><a href="javascript:void(0);" class="bs-tooltip edit-department" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit" data-id="<?php echo $department['id']; ?>"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
-                                                <li><a href="add_new_Department.php?delete_id=<?php echo $department['id']; ?>" class="bs-tooltip delete-user" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete" ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
-                                                </ul>
+                                            <ul class="table-controls">
+                                                <li><a href="javascript:void(0);" class="bs-tooltip edit-user" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit" data-original-title="Edit" data-id="<?php echo $user['id']; ?>"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 p-1 br-8 mb-1 text-success"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></a></li>
+                                                <li><a href="add_new_User.php?delete_id=<?php echo $user['id']; ?>" class="bs-tooltip delete-user" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete" data-original-title="Delete" ><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash p-1 br-8 mb-1 text-danger"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a></li>
+                                            </ul>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -85,11 +106,11 @@ function displayDepartmentTable($pdo)
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
     <script src="../layouts/vertical-dark-menu/loader.js"></script>
-    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
+    
     <script src="../dist/js/jquery.min.js"></script>
+    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
     <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
-
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
@@ -154,8 +175,7 @@ function displayDepartmentTable($pdo)
                     </a>
                 </li>
 
-             
-
+                
                 <li class="nav-item dropdown user-profile-dropdown  order-lg-0 order-1">
                     <a href="javascript:void(0);" class="nav-link dropdown-toggle user" id="userProfileDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <div class="avatar-container">
@@ -173,7 +193,7 @@ function displayDepartmentTable($pdo)
                                 </div>
                                 <div class="media-body">
                                     <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
-                                    <p>Admin</p>
+                                    <p>Super Admin</p>
                                 </div>
                             </div>
                         </div>
@@ -216,7 +236,7 @@ function displayDepartmentTable($pdo)
                     <div class="nav-logo">
                         <div class="nav-item theme-logo">
                             <a href="./index.php">
-                            <img src="../src/assets/img/logo.png"  alt="logo">
+                                <img src="../src/assets/img/logo.png"  alt="logo">
                             </a>
                         </div>
                         <div class="nav-item theme-text">
@@ -236,7 +256,7 @@ function displayDepartmentTable($pdo)
                         </div>
                         <div class="profile-content">
                             <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
-                            <p class="">Admin</p>
+                            <p class="">Super Admin</p>
                         </div>
                     </div>
                 </div>
@@ -264,11 +284,12 @@ function displayDepartmentTable($pdo)
                     </li>
 
                     <li class="menu menu-heading">
-                        <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>SETTINGS</span></div>
+                        <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>APPLICATIONS</span></div>
                     </li>
 
+                    
 
-                    <li class="menu">
+                    <li class="menu active">
                         <a href="./add_new_User.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
@@ -280,7 +301,7 @@ function displayDepartmentTable($pdo)
                         </a>
                     </li>
 
-                    <li class="menu active">
+                    <li class="menu">
                         <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
@@ -320,15 +341,21 @@ function displayDepartmentTable($pdo)
                         </a>
                     </li>
 
+
                     <li class="menu">
-                        <a href="./app-todoList.html" aria-expanded="false" class="dropdown-toggle">
+                        <a href="./add_new_Faculty.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                <span>Todo List</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Add Faculty</span>
                             </div>
                         </a>
                     </li>
 
+                    
+                    
                 </ul>
                 
             </nav>
@@ -360,13 +387,34 @@ function displayDepartmentTable($pdo)
                                         <div class="row">
                                            
                                             <div class="col-md-12 col-sm-12 col-12 text-center">
-                                                <a id="btn-add-notes" class="btn btn-primary w-100" href="javascript:void(0);">Add New Department</a>
+                                                <a id="btn-add-notes" class="btn btn-primary w-100" href="javascript:void(0);">Add New User</a>
                                                 
                                             </div>
                                         </div>
                                     </div>
-    
+                              
                                    
+
+                                    <form class="moveInline" method="post" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label for="excelFile">Upload Excel File</label>
+                                            <input type="file" class="form-control-file" id="excelFile" name="excelFile" accept=".xlsx,.xls,.csv">
+                                        </div>
+                                        <button type="submit" name="import_users" class="btn btn-primary bb">Import Users</button>
+                                        <style>
+                                            .moveInline {
+                                                display: flex;
+                                                justify-content: center;
+                                                align-items: center;
+                                                margin-left: 20px;
+                                                
+                                            }
+                                            .bb{
+                                               
+                                                margin-top: 30px;
+                                            }
+                                        </style>
+                                    </form>
     
                                 </div>
 
@@ -375,57 +423,109 @@ function displayDepartmentTable($pdo)
                                 <div class="table-responsive mb-2 mt-4">
                                    <?php
                                     require '../config.php';
-                                    displayDepartmentTable($pdo)
+                                    displayUsersTable($pdo);
                                     ?>
                                 </div>
                             </div>
 
 
-
-
-                            
-                                                    <!-- Edit Department Modal -->
-                            <div class="modal fade" id="editDepartmentModal" tabindex="-1" role="dialog" aria-labelledby="editDepartmentModalLabel" aria-hidden="true">
+                            <!-- Edit User Modal -->
+                            <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editDepartmentModalLabel">Edit Department</h5>
+                                            <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
+                                              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
                                         </div>
-                                        <form method="post" action="" id="editDepartmentForm">
+                                        <form method="post" action="" id="editUserModalLabel">
                                             <div class="modal-body">
                                                 <input type="hidden" name="edit_id" id="edit_id">
                                                 <div class="form-group">
-                                                    <label for="edit_name">Department Name</label>
-                                                    <input type="text" class="form-control" id="edit_name" name="name" required>
+                                                    <label for="username">Username</label>
+                                                    <input type="text" class="form-control" id="edit_username" name="username" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="fullname">Full Name</label>
+                                                    <input type="text" class="form-control" id="edit_fullname" name="fullname" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="password">Password</label>
+                                                    <input type="password" class="form-control" id="edit_password" name="password" required>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="role">Role</label>
+                                                    <select id="edit_role" name="role" class="form-control custom-select" required >
+                                                        <option >Select The Role</option>
+                                                        <option value="student">Student</option>
+                                                        <option value="lecturer">Lecturer</option>
+                                                        <option value="hod">HOD</option>
+                                                        <option value="dean">Dean</option>
+                                                        <option value="admin">Admin</option>
+                                                        <option value="super_admin">Super Admin</option>
+                                                        <option value="faculty_admin">Faculty Admin</option>
+                                                    </select>
+                                                </div>
+
+
+                                                <div class="form-group" id="edit_student_level_group" style="display: none;">
+                                                    <label for="edit_student_level">Student Level</label>
+                                                    <select class="form-control" id="edit_student_level" name="student_level">
+                                                                <option value="">Select Level</option>
+                                                                <option value="1st Year">1st Year</option>
+                                                                <option value="2nd Year">2nd Year</option>
+                                                                <option value="3rd Year">3rd Year</option>
+                                                                <option value="4th Year">4th Year</option>
+                                                                <option value="5th Year">5th Year</option>
+                                                                <option value="6th Year">6th Year</option>
+                                                                
+                                                            </select>
+                                                </div>
+
+
+
+                                                <div class="form-group">
+                                                    <label for="edit_faculty">Faculty</label>
+                                                    <select class="form-control" id="edit_faculty" name="faculty_id"  required onchange="loadDepartmentsForEdit(this.value)">
+                                                        <option value="">Select Faculty</option>
+                                                        <?php foreach ($faculties as $faculty): ?>
+                                                            <option value="<?php echo $faculty['id']; ?>"><?php echo $faculty['name']; ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+
+
+
+
+                                                <div class="form-group">
+                                                    <label for="department_id">Department</label>
+                                                    <select class="form-control" id="edit_department_id" name="department_id" required>
+                                                        <?php
+                                                        $sql = "SELECT id, name FROM Departments";
+                                                        $stmt = $pdo->query($sql);
+                                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                                            echo "<option value=\"{$row['id']}\">{$row['name']}</option>";
+                                                        }
+                                                        ?>
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" name="edit_department" class="btn btn-primary">Save Changes</button>
+                                                <button class="btn"  data-bs-dismiss="modal">Discard</button>
+                                                <button type="submit" name="edit_user" class="btn btn-primary">Save Changes</button>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
-
-
-
-
-
-
     
-                            <!-- Modal -->
+                            <!--Add User Modal -->
                             <div class="modal fade" id="notesMailModal" tabindex="-1" role="dialog" aria-labelledby="notesMailModalTitle" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New Department</h5>
+                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New User</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
@@ -436,22 +536,113 @@ function displayDepartmentTable($pdo)
                                                 <div class="notes-content">  
 
                                                     
-                                                   <form method="post" action="" id="notesMailModalTitle" >
+                                                    <form method="post" action="" id="notesMailModalTitle" >
                                                         <div class="row">
                                                         <div class="col-md-12 mb-2">
-                                                    
+                                                            
                                                             <h2>TTS</h2>
-                                                          
+                                                            
+                                                            
                                                         </div>
                                                         <div class="col-md-12">
                                                             <div class="mb-3">
-                                                                <label class="form-label" for="department">Department Name</label>
-                                                                <input type="text" id="department" name="department" class="form-control" placeholder="Enter Department Name Here..." required>
+                                                                <label class="form-label" for="username">Username</label>
+                                                                <input type="text" id="username" name="username" class="form-control" placeholder="Enter Username(Index No...)" required>
                                                             </div>
                                                         </div>
+
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="fullname">Full Name</label>
+                                                                <input type="text" id="fullname" name="fullname" class="form-control" placeholder="Enter Your Full Name" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="mb-4">
+                                                                <label class="form-label" for="password">Password</label>
+                                                                <input type="password" id="password" name="password" class="form-control" required>
+                                                                <style>
+                                                                    form i {
+                                                                
+                                                                    cursor: pointer;
+                                                                    color: black;
+                                                                    font-size: 20px;
+                                                                    position: relative;
+                                                                    top: -40px;
+                                                                    float: right;
+                                                                    right: 20px;
+                                                                    
+                                                                }
+                                                                </style>
+                                                                <i class="bi bi-eye-slash" id="togglePassword"></i>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="role">Role</label>
+                                                                <select id="role" name="role" class="form-control custom-select" required >
+                                                                    <option >Select The Role</option>
+                                                                    <option value="student">Student</option>
+                                                                    <option value="lecturer">Lecturer</option>
+                                                                    <option value="hod">HOD</option>
+                                                                    <option value="dean">Dean</option>
+                                                                    <option value="admin">Admin</option>
+                                                                    <option value="super_admin">Super Admin</option>
+                                                                    <option value="faculty_admin">Faculty Admin</option>
+                                                                </select>
+                                                                <i class="bi bi-chevron-down"></i>
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="form-group" id="studentLevelGroup" style="display: none;">
+                                                            <label for="student_level">Student Level</label>
+                                                            <select class="form-control" id="student_level" name="student_level">
+                                                                <option value="">Select Level</option>
+                                                                <option value="1st Year">1st Year</option>
+                                                                <option value="2nd Year">2nd Year</option>
+                                                                <option value="3rd Year">3rd Year</option>
+                                                                <option value="4th Year">4th Year</option>
+                                                                <option value="5th Year">5th Year</option>
+                                                                <option value="6th Year">6th Year</option>
+                                                                
+                                                            </select>
+                                                        </div>
+
+
+
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="faculty">Select Faculty:</label>
+                                                                <select class="form-control" name="faculty_id" id="faculty"  onchange="loadDepartments(this.value)">
+                                                                    <option value="">Select Faculty</option>
+                                                                    <?php foreach ($faculties as $faculty): ?>
+                                                                        <option value="<?php echo $faculty['id']; ?>"><?php echo $faculty['name']; ?></option>
+                                                                    <?php endforeach; ?>
+                                                                </select>
+
+                                                            </div>
+                                                        </div>
+
+
+
+
+
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="role">Departments</label>
+                                                                 <select id="department_id" name="department_id" class="form-control custom-select" >
+                                                                    
+                                                                </select>
+                                                                <i class="bi bi-chevron-down" ></i>
+                                                            </div>
+                                                        </div>
+                                                      
+               
                                                         <div class="modal-footer">
                                                             <button class="btn"  data-bs-dismiss="modal">Discard</button>
-                                                            <button type="submit" id="" name="add_department" class="btn btn-primary">Add</button>
+                                                            <button type="submit" name="add_user" id="" class="btn btn-primary">Add</button>
                                                         </div>
                                                     </form>
                                                 </div>
@@ -475,30 +666,134 @@ function displayDepartmentTable($pdo)
 
     </div>
     <!-- END MAIN CONTAINER -->
-     <!-- Edit User JavaScript -->
      <script>
+        const togglePassword = document
+            .querySelector('#togglePassword');
+        const password = document.querySelector('#password');
+        togglePassword.addEventListener('click', () => {
+            // Toggle the type attribute using
+            // getAttribure() method
+            const type = password
+                .getAttribute('type') === 'password' ?
+                'text' : 'password';
+            password.setAttribute('type', type);
+            // Toggle the eye and bi-eye icon
+            this.classList.toggle('bi-eye');
+        });
+    </script>
 
-$(document).ready(function() {
-    $('table').on('click', '.edit-department', function() {
-        var departmentId = $(this).data('id');
-        $.ajax({
-            url: 'get_department.php',
-            type: 'GET',
-            data: {id: departmentId},
-            dataType: 'json',
-            success: function(data) {
-                $('#edit_id').val(data.id);
-                $('#edit_name').val(data.name);
-                $('#editDepartmentModal').modal('show');
-            },
-            error: function() {
-                alert('Error fetching department data');
+    <script>
+
+    $(document).ready(function() {
+        $('#edit_role').change(function() {
+        if ($(this).val() === 'student') {
+            $('#edit_student_level_group').show();
+        } else {
+            $('#edit_student_level_group').hide();
+        }
+    });
+    });
+
+    </script>
+
+
+
+    <!-- Show or hide Level of Student JavaScript -->
+    <script>
+    $(document).ready(function() {
+        $('#role').change(function() {
+            if ($(this).val() === 'student') {
+                $('#studentLevelGroup').show();
+            } else {
+                $('#studentLevelGroup').hide();
             }
         });
     });
+    </script>
+
+
+
+
+
+
+
+     <!-- Edit User JavaScript -->
+    <script>
+    $(document).on('click', '.edit-user', function() {
+    var userId = $(this).data('id');
+    $.ajax({
+        url: 'get_user.php',
+        type: 'GET',
+        data: {id: userId},
+        dataType: 'json',
+        success: function(data) {
+            $('#edit_id').val(data.id);
+            $('#edit_username').val(data.username);
+            $('#edit_fullname').val(data.fullname);
+            $('#edit_password').val(data.password);
+            $('#edit_role').val(data.role).trigger('change');
+            $('#edit_faculty').val(data.faculty_id).trigger('change');
+            $('#edit_department_id').val(data.department_id);
+            $('#edit_student_level').val(data.student_level);
+            $('#editUserModal').modal('show');
+        },
+
+        error: function() {
+            alert('Error fetching user data');
+        }
+    });
 });
 
+
     </script>
+
+
+   <script>
+    function loadDepartments(facultyId) {
+    $.ajax({
+        url: 'get_department_from_Faculty.php',
+        type: 'GET',
+        data: {faculty_id: facultyId},
+        dataType: 'json',
+        success: function(data) {
+            var departmentSelect = $('#department_id');
+            departmentSelect.empty();
+            departmentSelect.append('<option value="">Select Department</option>');
+            $.each(data, function(key, value) {
+                departmentSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+            });
+        },
+        error: function() {
+            alert('Error fetching departments');
+        }
+    });
+}
+
+   </script>
+
+   <script>
+    function loadDepartmentsForEdit(facultyId) {
+    $.ajax({
+        url: 'get_department_from_Faculty.php',
+        type: 'GET',
+        data: {faculty_id: facultyId},
+        dataType: 'json',
+        success: function(data) {
+            var departmentSelect = $('#edit_department_id');
+            departmentSelect.empty();
+            departmentSelect.append('<option value="">Select Department</option>');
+            $.each(data, function(key, value) {
+                departmentSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+            });
+        },
+        error: function() {
+            alert('Error fetching departments');
+        }
+    });
+}
+
+   </script>
+
 
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     <script src="../src/plugins/src/global/vendors.min.js"></script>
@@ -605,31 +900,135 @@ $(document).ready(function() {
 
 </body>
 
-
 </html>
-
-
-
 
 
 <?php
 require '../config.php';
 
-if (isset($_POST['add_department'])) {
-    $department = $_POST['department'];
-    $sql = 'INSERT INTO departments (name) VALUES (?)';
+
+// Delete User
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+    
+    // Prepare the delete statement
+    $stmt = $pdo->prepare("DELETE FROM Users WHERE id = ?");
+    $stmt->execute([$delete_id]);
+     
+    try {
+        
+    
+        if ($stmt->rowCount() > 0) {
+            ?>
+                <script>
+                    swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this User Data!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, Delete it!",
+                    closeOnConfirm: false
+                    },
+                    function(){
+                    swal("Thesis Tracking System.", "User Deleted successfully !!", "success");
+                    });
+                    
+                    setTimeout(function() {
+                    window.location.href = "add_new_User.php";
+                    }, 3000);
+                </script>
+            <?php
+            
+            
+        } else {
+            echo "<script>swal('Error', 'Failed to delete user', 'error');</script>";
+        }
+
+   } catch (PDOException $e) {
+    ?>
+    <script>
+        swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+    </script>
+    <?php
+}
+}
+
+
+
+//Edit User
+if (isset($_POST['edit_user'])) {
+    $edit_id = $_POST['edit_id'];
+    $username = $_POST['username'];
+    $fullname = $_POST['fullname'];
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $role = $_POST['role'];
+    $faculty_id = $_POST['faculty_id'];
+    $department_id = $_POST['department_id'];
+    $student_level = ($role === 'student') ? $_POST['student_level'] : null;
+
+    $stmt = $pdo->prepare("UPDATE users SET username = ?, fullname = ?, password = ?, role = ?, department_id = ?, faculty_id = ? WHERE id = ?");
+    $stmt->execute([$username, $fullname, $password, $role, $department_id, $faculty_id, $edit_id]);
+    try {
+        
+        if ($stmt->rowCount() > 0) {
+            ?>
+                <script>
+
+                    swal({
+                    title: "Are you sure?",
+                    text: "You will not be able to recover this User Data!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#4912E1",
+                    confirmButtonText: "Yes, Update it!",
+                    closeOnConfirm: false
+                    },
+                    function(){
+                        swal("Thesis Tracking System.", "User Updated successfully !!", "success");
+                        setTimeout(function() {
+                    window.location.href = "add_new_User.php";
+                    }, 3000);
+                    });
+
+                </script>
+            <?php
+        
+        } else {
+            echo "<script>swal('Error', 'Failed to update user', 'error');</script>";
+        }
+
+    } catch (PDOException $e) {
+        ?>
+        <script>
+            swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+        </script>
+        <?php
+    }
+}
+
+if (isset($_POST['add_user'])) {
+    $username = $_POST['username'];
+    $fullname = $_POST['fullname'];
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $role = $_POST['role'];
+    $department_id = $_POST['department_id'];
+    $faculty_id = $_POST['faculty_id'];
+    $student_level = ($role === 'student') ? $_POST['student_level'] : null;
+
+    $sql = 'INSERT INTO Users (username, fullname, password, role, department_id, faculty_id, student_level) VALUES (?, ?, ?, ?, ?, ?, ?)';
     $stmt = $pdo->prepare($sql);
 
     try {
-        if ($stmt->execute([$department])) {
+        if ($stmt->execute([$username, $fullname, $password, $role, $department_id, $faculty_id, $student_level])) {
             
             
             ?>
             <script>
-                swal("Thesis Tracking System.", "Department Saved Successfully !!", "success");
+                swal("Thesis Tracking System.", "Data Saved Successfully !!", "success");
                             setTimeout(function() {
-                window.location.href = "add_new_Department.php";
-            }, 1000);
+                window.location.href = "add_new_User.php";
+            }, 2000);
             </script>
             <?php
             
@@ -652,77 +1051,63 @@ if (isset($_POST['add_department'])) {
 
 
 
-if (isset($_GET['delete_id'])) {
-    $delete_id = $_GET['delete_id'];
+require '../vendor/autoload.php';
 
-    // Prepare the delete statement
-    $stmt = $pdo->prepare("DELETE FROM departments WHERE id = ?");
-    $stmt->execute([$delete_id]);
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+if (isset($_POST['import_users'])) {
+    $inputFile = $_FILES['excelFile']['tmp_name'];
+    $extension = pathinfo($_FILES['excelFile']['name'], PATHINFO_EXTENSION);
 
-    if ($stmt->rowCount() > 0) {
-        ?>
-        <script>
-            swal({
-            title: "Are you sure?",
-            text: "You will not be able to recover this Department Data!",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "Yes, Delete it!",
-            closeOnConfirm: false
-            },
-            function(){
-            swal("Thesis Tracking System.", "Department Deleted Successfully !!", "success");
-            });
-            
-             setTimeout(function() {
-            window.location.href = "add_new_Department.php";
-            }, 3000);
-        </script>
-    <?php
-    } else {
-        echo "<script>swal('Error', 'Failed to delete user', 'error');</script>";
+    if($extension == 'xlsx' || $extension == 'xls' || $extension == 'csv') {
+        $objReader = PhpOffice\PhpSpreadsheet\IOFactory::load($inputFile);
+        $data = $objReader->getActiveSheet()->toArray();
+
+        foreach ($data as $row) {
+            $username = $row['0'];
+            $fullname = $row['1'];
+            $password = password_hash($row['2'], PASSWORD_DEFAULT);
+            $role = $row['3'];
+            $faculty_id = $row['4'];
+            $department_id = $row['5'];
+            $student_level = $row['6'];
+
+            $sql = 'INSERT INTO Users (username, fullname, password, role, faculty_id, department_id, student_level) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            $stmt = $pdo->prepare($sql);
+
+            try {
+                if ($stmt->execute([$username, $fullname, $password, $role, $faculty_id, $department_id, $student_level])) {
+                    ?>
+                    <script>
+                        swal("Thesis Tracking System.", "User Imported Successfully !!", "success");
+                        setTimeout(function() {
+                            window.location.href = "add_new_User.php";
+                        }, );
+                    </script>
+                    <?php
+                } else {
+                    $error = $stmt->errorInfo()[2];
+                    ?>
+                    <script>
+                        swal("Thesis Tracking System.", "<?php echo $error; ?>", "error");
+                    </script>
+                    <?php
+                }
+            } catch (PDOException $e) {
+                ?>
+                <script>
+                    swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+                </script>
+                <?php
+            }
+        }
     }
 }
 
 
 
-
-//Edit User
-if (isset($_POST['edit_department'])) {
-    $edit_id = $_POST['edit_id'];
-    $name = $_POST['name'];
-    
-
-    // Prepare the update statement
-    $stmt = $pdo->prepare("UPDATE departments SET name = ? WHERE id = ?");
-    $stmt->execute([$name, $edit_id]);
-
-    if ($stmt->rowCount() > 0) {
-        ?>
-            <script>
-
-                swal({
-                title: "Are you sure?",
-                text: "You will not be able to recover this Department Data!",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#4912E1",
-                confirmButtonText: "Yes, Update it!",
-                closeOnConfirm: false
-                },
-                function(){
-                    swal("Thesis Tracking System.", "Department Updated Successfully !!", "success");
-                    setTimeout(function() {
-                window.location.href = "add_new_Department.php";
-                }, 3000);
-                });
-
-            </script>
-        <?php
-    } else {
-        echo "<script>swal('Error', 'Failed to Update User', 'error');</script>";
-    }
-}
 
 ?>
+
+
+

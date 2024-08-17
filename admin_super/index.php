@@ -1,9 +1,8 @@
 <?php
-require '../config.php';
 session_start();
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
-    header("Location: auth-signin.php");
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "super_admin") {
+    header("Location: ../admin/auth-signin.php");
     exit();
 }
 ?>
@@ -199,15 +198,8 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
                                     &#x1F44B;
                                 </div>
                                 <div class="media-body">
-                                <p><?php echo $_SESSION["fullname"]; ?> !</p>
-                                    <p>Department Admin</p>
-                                    <p><?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></p>
+                                    <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
+                                    <p>Super Admin</p>
                                 </div>
                             </div>
                         </div>
@@ -223,7 +215,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
                         </div>
                         
                         <div class="dropdown-item">
-                            <a href="logout.php">
+                            <a href="../admin/logout.php">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>
                             </a>
                         </div>
@@ -269,15 +261,8 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
                             <img src="../src/assets/img/profile-30.png" alt="avatar">
                         </div>
                         <div class="profile-content">
-                        <p><?php echo $_SESSION["fullname"]; ?> !</p>
-                                    <p>Department Admin</p>
-                                    <p><?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></p>
+                            <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
+                            <p class="">Super Admin</p>
                         </div>
                     </div>
                 </div>
@@ -322,9 +307,30 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
                         </a>
                     </li>
 
-                   
+                    <li class="menu">
+                        <a href="./add_new_Department.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Add  Department</span>
+                            </div>
+                        </a>
+                    </li>
 
-                    
+                    <li class="menu">
+                        <a href="./add_new_Chapter.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                </svg>
+
+                                <span>Thesis Chapter</span>
+                            </div>
+                        </a>
+                    </li>
 
 
                     <li class="menu">
@@ -343,14 +349,13 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
 
 
                     <li class="menu">
-                        <a href="./app-todoList.html" aria-expanded="false" class="dropdown-toggle">
+                        <a href="./add_new_Faculty.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                <span>Todo List</span>
+                                <span>Add Faculty</span>
                             </div>
                         </a>
                     </li>
-
                     <li class="menu">
                         <a href="./app-notes.html" aria-expanded="false" class="dropdown-toggle">
                             <div class="">

@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
-    header("Location: auth-signin.php");
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "super_admin") {
+    header("Location: ../admin/auth-signin.php");
     exit();
 }
 ?>
@@ -15,12 +15,22 @@ require '../config.php';
 // Function to fetch all users from the database
 function getAllDepartment($pdo)
 {
-    $sql = "SELECT * FROM departments";
+    $sql = "SELECT d.*, f.name AS faculty_name 
+    FROM departments d
+    LEFT JOIN faculties f ON d.faculty_id = f.id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
     
 }
+
+
+
+$faculties_query = "SELECT * FROM faculties";
+$faculties_stmt = $pdo->prepare($faculties_query);
+$faculties_stmt->execute();
+$faculties = $faculties_stmt->fetchAll();
+
 
 
 
@@ -42,10 +52,12 @@ function displayDepartmentTable($pdo)
                             <table id="style-3" class="table style-3 dt-table-hover">
                                 <thead>
                                     <tr>
-                                        <th class="checkbox-column text-primary">Department ID</th>
-                                        <th class="text-primary">Department Name</th>
-                                        <th class="text-primary">Date Registered</th>
-                                        <th class="dt-no-sorting text-primary">Action</th>
+                                    <th class="checkbox-column text-primary">ID</th>
+                                    <th class="text-primary">Department Name</th>
+                                    <th class="text-primary">Faculty Name</th>
+                                    <th class="text-primary">Date Registered</th>
+                                    <th class="dt-no-sorting text-primary">Action</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -54,6 +66,7 @@ function displayDepartmentTable($pdo)
                                             
                                             <td class="text-success"><?php echo $department['id']; ?></td>
                                             <td class="text-primary"><?php echo $department['name']; ?></td>
+                                            <td class="text-primary"><?php echo $department['faculty_name']; ?></td>
                                             <td class=""><?php echo $department['dateRegistered']; ?></td>
                                             <td class="text-center">
                                                 <ul class="table-controls">
@@ -173,7 +186,7 @@ function displayDepartmentTable($pdo)
                                 </div>
                                 <div class="media-body">
                                     <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
-                                    <p>Admin</p>
+                                    <p>Super Admin</p>
                                 </div>
                             </div>
                         </div>
@@ -189,7 +202,7 @@ function displayDepartmentTable($pdo)
                         </div>
                         
                         <div class="dropdown-item">
-                            <a href="logout.php">
+                            <a href="../admin/logout.php">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> <span>Log Out</span>
                             </a>
                         </div>
@@ -236,7 +249,7 @@ function displayDepartmentTable($pdo)
                         </div>
                         <div class="profile-content">
                             <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
-                            <p class="">Admin</p>
+                            <p class="">Super Admin</p>
                         </div>
                     </div>
                 </div>
@@ -316,6 +329,19 @@ function displayDepartmentTable($pdo)
                                 </svg>
 
                                 <span>Assign Student</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+                    <li class="menu">
+                        <a href="./add_new_Faculty.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                </svg>
+                                <span>Add Faculty</span>
                             </div>
                         </a>
                     </li>
@@ -400,6 +426,19 @@ function displayDepartmentTable($pdo)
                                         <form method="post" action="" id="editDepartmentForm">
                                             <div class="modal-body">
                                                 <input type="hidden" name="edit_id" id="edit_id">
+
+
+                                                <div class="form-group">
+                                                    <label for="edit_faculty">Faculty</label>
+                                                    <select class="form-control" id="edit_faculty" name="faculty_id" required>
+                                                        <option value="">Select Faculty</option>
+                                                        <?php foreach ($faculties as $faculty): ?>
+                                                            <option value="<?php echo $faculty['id']; ?>"><?php echo $faculty['name']; ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+
+
                                                 <div class="form-group">
                                                     <label for="edit_name">Department Name</label>
                                                     <input type="text" class="form-control" id="edit_name" name="name" required>
@@ -425,7 +464,7 @@ function displayDepartmentTable($pdo)
                                 <div class="modal-dialog modal-dialog-centered" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New Department</h5>
+                                            <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Add New User</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                               <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                             </button>
@@ -443,6 +482,21 @@ function displayDepartmentTable($pdo)
                                                             <h2>TTS</h2>
                                                           
                                                         </div>
+
+                                                        <div class="col-md-12">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="faculty">Select Faculty:</label>
+                                                                <select class="form-control" name="faculty_id" id="faculty" required>
+                                                                    <option value="">Select Faculty</option>
+                                                                    <?php foreach ($faculties as $faculty): ?>
+                                                                        <option value="<?php echo $faculty['id']; ?>"><?php echo $faculty['name']; ?></option>
+                                                                    <?php endforeach; ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+
+
                                                         <div class="col-md-12">
                                                             <div class="mb-3">
                                                                 <label class="form-label" for="department">Department Name</label>
@@ -477,9 +531,11 @@ function displayDepartmentTable($pdo)
     <!-- END MAIN CONTAINER -->
      <!-- Edit User JavaScript -->
      <script>
-
+       //This modification uses event delegation ($(document).on('click', '.edit-department', function() {...}))
+       // which will capture click events on .edit-department elements even if they are added dynamically after 
+       //the initial page load. This should resolve the issue and allow the edit modal to show for all department IDs.
 $(document).ready(function() {
-    $('table').on('click', '.edit-department', function() {
+    $(document).on('click', '.edit-department', function() {
         var departmentId = $(this).data('id');
         $.ajax({
             url: 'get_department.php',
@@ -489,6 +545,7 @@ $(document).ready(function() {
             success: function(data) {
                 $('#edit_id').val(data.id);
                 $('#edit_name').val(data.name);
+                $('#edit_faculty').val(data.faculty_id);
                 $('#editDepartmentModal').modal('show');
             },
             error: function() {
@@ -497,6 +554,10 @@ $(document).ready(function() {
         });
     });
 });
+
+
+
+    
 
     </script>
 
@@ -617,11 +678,12 @@ require '../config.php';
 
 if (isset($_POST['add_department'])) {
     $department = $_POST['department'];
-    $sql = 'INSERT INTO departments (name) VALUES (?)';
+    $faculty_id = $_POST['faculty_id'];
+    $sql = 'INSERT INTO departments (name, faculty_id) VALUES (?, ?)';
     $stmt = $pdo->prepare($sql);
 
     try {
-        if ($stmt->execute([$department])) {
+        if ($stmt->execute([$department, $faculty_id])){
             
             
             ?>
@@ -692,11 +754,10 @@ if (isset($_GET['delete_id'])) {
 if (isset($_POST['edit_department'])) {
     $edit_id = $_POST['edit_id'];
     $name = $_POST['name'];
-    
+    $faculty_id = $_POST['faculty_id'];
 
-    // Prepare the update statement
-    $stmt = $pdo->prepare("UPDATE departments SET name = ? WHERE id = ?");
-    $stmt->execute([$name, $edit_id]);
+    $stmt = $pdo->prepare("UPDATE departments SET name = ?, faculty_id = ? WHERE id = ?");
+    $stmt->execute([$name, $faculty_id, $edit_id]);
 
     if ($stmt->rowCount() > 0) {
         ?>

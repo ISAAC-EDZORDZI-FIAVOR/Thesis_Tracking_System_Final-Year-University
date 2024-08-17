@@ -1,56 +1,57 @@
 <?php
 session_start();
-require_once '../config.php';
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "student") {
+include_once('../config.php');
+
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'student' && $_SESSION['role'] !== 'lecturer')) {
     header("Location: ../admin/auth-signin.php");
     exit();
 }
 
+$user_id = $_SESSION['user_id'];
+$role = $_SESSION['role'];
+$chapter_number = $_GET['chapter'] ?? 1;
 
-// Fetch student information
-$student_id = $_SESSION['user_id'];
-$stmt = $pdo->prepare("SELECT u.*, d.name  FROM Users u JOIN departments d ON u.department_id = d.id WHERE u.id = ?");
-$stmt->execute([$student_id]);
-$student = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $message = $_POST['message'];
+    $status = $role === 'lecturer' ? $_POST['status'] : 'pending';
+    $reply_to = $_POST['reply_to'] ?? null;
 
+    $query = "INSERT INTO chapter_progress (student_id, lecturer_id, chapter_number, message, sender_role, status, reply_to) 
+              VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([
+        $role === 'student' ? $user_id : $_POST['student_id'],
+        $role === 'lecturer' ? $user_id : null,
+        $chapter_number,
+        $message,
+        $role,
+        $status,
+        $reply_to
+    ]);
 
+    header("Location: chapter_progress.php?chapter=$chapter_number");
+    exit();
+}
+$query = "SELECT cp.*, 
+          TIMESTAMPDIFF(HOUR, cp_reply.submission_date, cp.submission_date) as hours_since_reply,
+          CASE WHEN cp.sender_role = 'lecturer' THEN l.fullname ELSE s.fullname END as fullname 
+          FROM chapter_progress cp 
+          LEFT JOIN chapter_progress cp_reply ON cp.reply_to = cp_reply.id
+          LEFT JOIN users l ON cp.lecturer_id = l.id
+          LEFT JOIN users s ON cp.student_id = s.id
+          WHERE cp.student_id = ? 
+          AND cp.chapter_number = ? 
+          ORDER BY cp.submission_date DESC";
 
-// Check if supervisor is assigned
-$stmt = $pdo->prepare("SELECT primary_supervisor_id AND secondary_supervisor_id1 AND secondary_supervisor_id2   FROM assignments WHERE student_id = ?");
-$stmt->execute([$student_id]);
-$supervisor = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-$stmt = $pdo->prepare("SELECT * FROM thesis_proposals WHERE student_id = ?");
-$stmt->execute([$student_id]);
-$thesis_proposal = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-
-// $stmt = $pdo->prepare("SELECT u.fullname AS lecturer_name, u.email AS lecturer_email FROM Users u JOIN assignments sla ON u.id = sla.primary_supervisor_id  WHERE sla.student_id = ?
-// ");
-// $stmt->execute([$student_id]);
-// $assigned_lecturer = $stmt->fetch(PDO::FETCH_ASSOC);
-
-$stmt = $pdo->prepare("SELECT u.fullname AS lecturer_name, u.email AS lecturer_email, 
-    CASE 
-        WHEN a.primary_supervisor_id = u.id THEN 'Primary'
-        WHEN a.secondary_supervisor_id1 = u.id THEN 'Secondary 1'
-        WHEN a.secondary_supervisor_id2 = u.id THEN 'Secondary 2'
-    END AS supervisor_type
-    FROM Users u 
-    JOIN assignments a ON (u.id = a.primary_supervisor_id OR u.id = a.secondary_supervisor_id1 OR u.id = a.secondary_supervisor_id2)
-    WHERE a.student_id = ?
-    ORDER BY CASE 
-        WHEN a.primary_supervisor_id = u.id THEN 1
-        WHEN a.secondary_supervisor_id1 = u.id THEN 2
-        WHEN a.secondary_supervisor_id2 = u.id THEN 3
-    END");
-
-$stmt->execute([$student_id]);
-$assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare($query);
+$stmt->execute([$user_id, $chapter_number]);
+$progress = $stmt->fetchAll();
 
 ?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -290,15 +291,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!--  END NAVBAR  -->
 
     <!--  BEGIN MAIN CONTAINER  -->
-/**
-     * This code represents the main content area of the student dashboard page. It includes the following functionality:
-     * - Displays the student's profile information, including their name, role, department, level, email, and registration date.
-     * - Checks if the student has been assigned a supervisor, and if not, displays a warning message.
-     * - If the student has not submitted a thesis proposal, displays a button to open a modal for submitting the proposal.
-     * - If the student has submitted a thesis proposal, displays the status of the proposal (pending, approved).
-     * - Includes JavaScript code to handle the submission of the thesis proposal form.
-     * - Loads various JavaScript libraries and plugins used in the application.
-     */
+
         <div class="main-container " id="container">
 
         <div class="overlay"></div>
@@ -353,141 +346,61 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                  <div class="middle-content container-xxl p-0">
                     
                     <div class="row layout-top-spacing">
-                        <div class="col-xl-12 col-lg-12 col-md-12">
+                    <div class="main-container" id="container">
+                    <div class="page-meta">
+                        <nav class="breadcrumb-style-one" aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#">Thesis</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Chapter <?php echo $chapter_number; ?> Progress</li>
+                            </ol>
+                        </nav>
+                    </div>
 
-                                    <style>
-                                        .list-group-item-primary {
-                                            background-color: #2731B4;
-                                            color: white;
-                                        }
-                                        .list-group-item-primary strong {
-                                            color: #f8f9fa;
-                                        }
-                                    </style>
-
-    
-                            <div class="row">
-    
-                                    <div class="col-xl-12 col-md-12">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <h2 class="card-title mb-4 text-center">Welcome, <?php echo htmlspecialchars($_SESSION['fullname']); ?></h2>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <ul class="list-group list-group-flush rounded  btn-primary">
-                                                            <li class="list-group-item btn-primary"><strong>Department:</strong> <?php echo htmlspecialchars($student['name']); ?></li>
-                                                            <li class="list-group-item list-group-item-primary"><strong>Username:</strong> <?php echo htmlspecialchars($_SESSION['username']); ?></li>
-                                                            <li class="list-group-item btn-primary"><strong>Role:</strong> <?php echo htmlspecialchars($_SESSION['role']); ?></li>
-                                                        </ul>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <ul class="list-group list-group-flush rounded btn-primary">
-                                                            <li class="list-group-item btn-primary"><strong>Level:</strong> <?php echo htmlspecialchars($_SESSION['StudentLevel']); ?></li>
-                                                            <li class="list-group-item list-group-item-primary"><strong>Email:</strong> <?php echo htmlspecialchars($_SESSION['email']); ?></li>
-                                                            <li class="list-group-item btn-primary"><strong>Date Registered:</strong> <?php echo htmlspecialchars($_SESSION['dateRegistered']); ?></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-
-                                                <?php if (!$supervisor): ?>
-                                                    <div class="alert alert-warning mt-4" role="alert">
-                                                        You have not been Assigned a supervisor yet. Contact the Administrator or Your HOD.
-                                                    </div>
-                                                <?php else: ?>
-                                                    <?php if (!$thesis_proposal): ?>
-                                                        
-                                                        <div class="mt-4">
-                                                            <h3 class="mb-3 text-center">Assigned Supervisors</h3>
-                                                            <div class="row">
-                                                                <?php foreach ($assigned_supervisors as $supervisor): ?>
-                                                                    <div class="col-md-4 mb-3">
-                                                                        <div class="card h-100 btn-primary text-white">
-                                                                            <div class="card-body text-white">
-                                                                                <h5 class="card-title text-white"><?php echo htmlspecialchars($supervisor['supervisor_type']); ?> Supervisor</h5>
-                                                                                <p class="card-text text-white"><strong>Name:</strong> <?php echo htmlspecialchars($supervisor['lecturer_name']); ?></p>
-                                                                                <p class="card-text text-white"><strong>Email:</strong> <?php echo htmlspecialchars($supervisor['lecturer_email']); ?></p>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                <?php endforeach; ?>
-                                                            </div>
-                                                        </div>
-
-
-                                                        
-                                                        
-                                                        <div class="mt-4">
-                                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#thesisProposalModal">
-                                                            Submit Thesis Proposal
-                                                        </button>
-
-                                                        </div>
-
-                                                    
-
-                                                        <?php elseif ($thesis_proposal['status'] == 'pending'): ?>
-                                                            <div class="card mt-4">
-                                                                <div class="card-header bg-info text-white">
-                                                                    <h2 class="mb-0">Thesis Proposal Status</h2>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <div class="alert alert-info" role="alert">
-                                                                        Your thesis proposal is pending approval.
-                                                                    </div>
-                                                                    <ul class="list-group">
-                                                                        <li class="list-group-item list-group-item-primary"><strong>Title:</strong> <?php echo htmlspecialchars($thesis_proposal['title']); ?></li>
-                                                                        <li class="list-group-item list-group-item-primary"><strong>Description:</strong> <?php echo htmlspecialchars($thesis_proposal['description']); ?></li>
-                                                                        <li class="list-group-item list-group-item-primary"><strong>Status:</strong> <span class="badge bg-warning text-dark"><?php echo htmlspecialchars($thesis_proposal['status']); ?></span></li>
-                                                                        <li class="list-group-item list-group-item-primary"><strong>Submitted Date:</strong> <?php echo htmlspecialchars($thesis_proposal['submission_date']); ?></li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        <?php elseif ($thesis_proposal['status'] == 'approved'): ?>
-                                                            <div class="card mt-4">
-                                                                <div class="card-header bg-success text-white">
-                                                                    <h2 class="mb-0">Thesis Progress</h2>
-                                                                </div>
-                                                                <div class="card-body">
-                                                                    <!-- Add chapter submission options here -->
-                                                                </div>
-                                                            </div>
-                                                        <?php endif; ?>
-                                                        <?php endif; ?>
-
-                                            </div>
-                                        </div>
+                    <div class="row layout-top-spacing">
+                        <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
+                            <div class="widget-content widget-content-area br-8">
+                                <form method="POST" class="row g-3">
+                                    <div class="col-md-12">
+                                        <label for="message" class="form-label">Message</label>
+                                        <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
                                     </div>
+                                    <?php if ($role === 'lecturer'): ?>
+                                        <div class="col-md-6">
+                                            <label for="status" class="form-label">Status</label>
+                                            <select class="form-select" id="status" name="status" required>
+                                                <option value="pending">Pending</option>
+                                                <option value="accepted">Accepted</option>
+                                                <option value="rejected">Rejected</option>
+                                            </select>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </form>
 
-                                         <!-- Modal -->
-                                         <div class="modal fade" id="thesisProposalModal" tabindex="-1" role="dialog" aria-labelledby="thesisProposalModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="thesisProposalModalLabel">Submit Thesis Proposal</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form id="thesisProposalForm" method="POST">
-                                                            <div class="form-group">
-                                                                <label for="title">Thesis Title:</label>
-                                                                <input type="text" class="form-control" id="title" name="title" required>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="description">Brief Description:</label>
-                                                                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                                                            </div>
-                                                            <button type="submit" class="btn btn-primary">Submit Proposal</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
+                                <div class="mt-4">
+                                    <h4>Progress History</h4>
+                                    <?php foreach ($progress as $entry): ?>
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><?php echo $entry['fullname']; ?> (<?php echo ucfirst($entry['sender_role']); ?>)</h5>
+                                                <h6 class="card-subtitle mb-2 text-muted">
+                                                    <?php echo $entry['submission_date']; ?>
+                                                    <?php if ($entry['hours_since_reply']): ?>
+                                                        (<?php echo $entry['hours_since_reply']; ?> hours since last message)
+                                                    <?php endif; ?>
+                                                </h6>
+                                                <p class="card-text"><?php echo htmlspecialchars($entry['message']); ?></p>
+                                                <p class="card-text"><small class="text-muted">Status: <?php echo ucfirst($entry['status']); ?></small></p>
                                             </div>
                                         </div>
-    
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-    
                         </div>
+                    </div>
+                </div>
                     </div>
 
                 </div>
@@ -546,44 +459,3 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 </body>
 </html>
-
-
-<?php
-
-require_once '../config.php';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $student_id = $_SESSION['user_id'];
-    $title = $_POST['title'];
-    $description = $_POST['description'];
-   
-    // Fetch the assigned supervisors for this student
-    $stmt = $pdo->prepare("SELECT primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2 FROM assignments WHERE student_id = ?");
-    $stmt->execute([$student_id]);
-    $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
-   
-    if ($assignment) {
-        $primary_supervisor_id = $assignment['primary_supervisor_id'];
-        $secondary_supervisor_id1 = $assignment['secondary_supervisor_id1'];
-        $secondary_supervisor_id2 = $assignment['secondary_supervisor_id2'];
-       
-        $stmt = $pdo->prepare("INSERT INTO thesis_proposals (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, title, description, status) VALUES (?, ?, ?, ?, ?, ?, 'pending')");
-        $stmt->execute([$student_id, $primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $title, $description]);
-
-        
-        ?>
-            <script>
-                swal("Thesis Tracking System.", "Thesis Proposal Submitted Successfully !!", "success");
-                            setTimeout(function() {
-                window.location.href = "student_dashboard.php";
-            }, 2000);
-            </script>
-        <?php
-    
-    } else {
-        echo "<script>
-            swal('Thesis Tracking System', 'No supervisors assigned. Please contact your administrator.', 'error');
-        </script>";
-    }
-}
-?>
