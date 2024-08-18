@@ -931,11 +931,6 @@ if (isset($_POST['update_Assigned'])) {
 
 
 
-
-
-
-
-
 if (isset($_GET['delete_id'])) {
     $assignmentId = $_GET['delete_id'];
 
