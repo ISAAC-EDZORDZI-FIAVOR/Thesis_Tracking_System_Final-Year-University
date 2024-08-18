@@ -47,7 +47,13 @@ function displayUsersTable($pdo)
                 <div class="col-lg-12">
                     <div class="statbox widget box box-shadow">
                         <div class="widget-content widget-content-area">
-                        <div class="text-center mt-4"><h2>List of Users in the System</h2></div>
+                        <div class="text-center mt-4"><h3>List of Users in  <?php
+                                                $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                                $stmt = $pdo->prepare($dept_query);
+                                                $stmt->execute([$_SESSION['department_id']]);
+                                                $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                                echo $department['name'];
+                                                ?></h3></div>
                             <table id="style-3" class="table style-3 dt-table-hover">
                                 <thead>
                                     <tr>
@@ -472,7 +478,7 @@ function displayUsersTable($pdo)
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                                                <button class="btn"  data-bs-dismiss="modal">Discard</button>
                                                 <button type="submit" name="edit_user" class="btn btn-primary">Save Changes</button>
                                             </div>
                                         </form>

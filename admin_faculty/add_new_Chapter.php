@@ -271,9 +271,9 @@ function displayChapterTable($pdo)
                             <li class="">
                                 <a href="./index.php"> Analytics </a>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="./index2.html"> Sales </a>
-                            </li>
+                            </li> -->
                         </ul>
                     </li>
 

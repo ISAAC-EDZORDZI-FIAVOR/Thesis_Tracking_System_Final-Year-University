@@ -589,48 +589,54 @@ $assignments = getAllAssignments($pdo, $faculty_id);
  
     
 
-
-    <script>
-$(document).ready(function() {
-    $('#department').change(function() {
+<script>
+    $(document).ready(function() {
+    $(document).on('change', '#department', function() {
         var departmentId = $(this).val();
-        if (departmentId) {
-            $.ajax({
-                url: 'get_users_by_department.php',
-                type: 'POST',
-                data: {department_id: departmentId, type: 'students'},
-                success: function(data) {
-                    $('#students').html(data);
-                }
-            });
+        updateUserSelects(departmentId);
+    });
 
-            $.ajax({
-                url: 'get_users_by_department.php',
-                type: 'POST',
-                data: {department_id: departmentId, type: 'supervisors'},
-                success: function(data) {
-                    $('#primary_supervisor').html(data);
-                    $('#secondary_supervisor1').html(data);
-                    $('#secondary_supervisor2').html(data);
-                }
-            });
-        } else {
-            $('#students').html('<option value="">Select Department first</option>');
-            $('#primary_supervisor').html('<option value="">Select Department first</option>');
-            $('#secondary_supervisor1').html('<option value="">Select Department first</option>');
-            $('#secondary_supervisor2').html('<option value="">Select Department first</option>');
-        }
+    $(document).on('change', '#students', function() {
+        var selectedStudents = $(this).val();
+        updateSelectedStudentsBadges(selectedStudents);
+    });
+
+    $(document).on('click', '.deselect-student', function() {
+        var studentId = $(this).data('id');
+        $('#students option[value="' + studentId + '"]').prop('selected', false);
+        $('#students').trigger('change');
+    });
+
+    $(document).on('click', '.edit-assignment', function() {
+        var assignmentId = $(this).data('id');
+        var departmentId = $(this).data('department');
+        fetchAssignmentDetails(assignmentId, departmentId);
     });
 });
-</script>
 
+function updateUserSelects(departmentId) {
+    if (departmentId) {
+        $.ajax({
+            url: 'get_users_by_department.php',
+            type: 'POST',
+            data: {department_id: departmentId, type: 'students'},
+            success: function(data) {
+                $('#students').html(data);
+            }
+        });
 
-
- <script>
-    $('#students').on('change', function() {
-    var selectedStudents = $(this).val();
-    updateSelectedStudentsBadges(selectedStudents);
-});
+        $.ajax({
+            url: 'get_users_by_department.php',
+            type: 'POST',
+            data: {department_id: departmentId, type: 'supervisors'},
+            success: function(data) {
+                $('#primary_supervisor, #secondary_supervisor1, #secondary_supervisor2').html(data);
+            }
+        });
+    } else {
+        $('#students, #primary_supervisor, #secondary_supervisor1, #secondary_supervisor2').html('<option value="">Select Department first</option>');
+    }
+}
 
 function updateSelectedStudentsBadges(selectedStudents) {
     var displayDiv = $('#selectedStudents');
@@ -638,65 +644,44 @@ function updateSelectedStudentsBadges(selectedStudents) {
     if (selectedStudents) {
         selectedStudents.forEach(function(studentId) {
             var studentName = $('#students option[value="' + studentId + '"]').text();
-            var badge = $('<span class="badge bg-primary me-1 mb-1">' + studentName + 
+            var badge = $('<span class="badge bg-primary me-1 mb-1">' + studentName +
                           ' <i class="fas fa-times deselect-student" data-id="' + studentId + '"></i></span>');
             displayDiv.append(badge);
         });
     }
 }
 
-$(document).on('click', '.deselect-student', function() {
-    var studentId = $(this).data('id');
-    $('#students option[value="' + studentId + '"]').prop('selected', false);
-    $('#students').trigger('change');
-});
-
- </script>
-
-
-
-    
-
-    <script>
-   
-    $(document).ready(function() {
-        $('.edit-assignment').click(function() {
-            var assignmentId = $(this).data('id');
-            var departmentId = $(this).data('department');
+function fetchAssignmentDetails(assignmentId, departmentId) {
+    $.ajax({
+        url: 'get_assignment_details.php',
+        type: 'POST',
+        data: {assignment_id: assignmentId},
+        success: function(response) {
+            var assignment = JSON.parse(response);
+            $('#edit_assignment_id').val(assignmentId);
             
-            // Fetch assignment details and populate the modal
             $.ajax({
-                url: 'get_assignment_details.php',
+                url: 'get_lecturers.php',
                 type: 'POST',
-                data: {assignment_id: assignmentId},
-                success: function(response) {
-                    var assignment = JSON.parse(response);
-                    $('#edit_assignment_id').val(assignmentId);
+                data: {department_id: departmentId},
+                success: function(lecturers) {
+                    $('#edit_primary_supervisor, #edit_secondary_supervisor1, #edit_secondary_supervisor2').html(lecturers);
                     
-                    // Fetch lecturers for the department
-                    $.ajax({
-                        url: 'get_lecturers.php',
-                        type: 'POST',
-                        data: {department_id: departmentId},
-                        success: function(lecturers) {
-                            $('#edit_primary_supervisor').html(lecturers);
-                            $('#edit_secondary_supervisor1').html(lecturers);
-                            $('#edit_secondary_supervisor2').html(lecturers);
-                            
-                            // Set selected supervisors
-                            $('#edit_primary_supervisor').val(assignment.primary_supervisor_id);
-                            $('#edit_secondary_supervisor1').val(assignment.secondary_supervisor_id1);
-                            $('#edit_secondary_supervisor2').val(assignment.secondary_supervisor_id2);
-                            
-                            $('#editAssignmentModal').modal('show');
-                        }
-                    });
+                    $('#edit_primary_supervisor').val(assignment.primary_supervisor_id);
+                    $('#edit_secondary_supervisor1').val(assignment.secondary_supervisor_id1);
+                    $('#edit_secondary_supervisor2').val(assignment.secondary_supervisor_id2);
+                    
+                    $('#editAssignmentModal').modal('show');
                 }
             });
-        });
+        }
     });
+}
 
-     </script> 
+</script>
+
+
+
 
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 
