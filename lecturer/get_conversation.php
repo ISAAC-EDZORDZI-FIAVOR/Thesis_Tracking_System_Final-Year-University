@@ -1,5 +1,5 @@
 <?php
-require_once '../config.php';
+  require '../config.php';
 
 if (isset($_GET['proposal_id'])) {
     $proposal_id = $_GET['proposal_id'];

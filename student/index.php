@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../config.php';
+  require '../config.php';
 if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "student") {
     header("Location: ../admin/auth-signin.php");
     exit();
@@ -626,7 +626,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php
 
-require_once '../config.php';
+  require '../config.php';
 
 
 if (isset($_POST['submit_Proposal'])) {
