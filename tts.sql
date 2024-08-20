@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 20, 2024 at 02:57 AM
+-- Generation Time: Aug 21, 2024 at 12:31 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -145,10 +145,27 @@ CREATE TABLE `chapter_five` (
   `department_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
+  `comment` text DEFAULT NULL,
   `file_path` varchar(255) DEFAULT NULL,
   `status` enum('pending','approved','rejected') DEFAULT 'pending',
   `submission_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `lecturer_comment_time` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chapter_five_interactions`
+--
+
+CREATE TABLE `chapter_five_interactions` (
+  `id` int(11) NOT NULL,
+  `chapter_five_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -167,10 +184,27 @@ CREATE TABLE `chapter_four` (
   `department_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
+  `comment` text DEFAULT NULL,
   `file_path` varchar(255) DEFAULT NULL,
   `status` enum('pending','approved','rejected') DEFAULT 'pending',
   `submission_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `lecturer_comment_time` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chapter_four_interactions`
+--
+
+CREATE TABLE `chapter_four_interactions` (
+  `id` int(11) NOT NULL,
+  `chapter_four_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -201,7 +235,8 @@ CREATE TABLE `chapter_one` (
 --
 
 INSERT INTO `chapter_one` (`id`, `student_id`, `primary_supervisor_id`, `secondary_supervisor_id1`, `secondary_supervisor_id2`, `faculty_id`, `department_id`, `title`, `description`, `comment`, `file_path`, `status`, `submission_date`, `lecturer_comment_time`) VALUES
-(1, 54, 57, 9, 34, 1, 1, 'The Use of Artificial Intelligence to improve on the learning of Mathematics in Basic School Level in Ghana', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, ', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, ', '../uploads/Chapter_One/202178843_EMILE_JOHN_DOE_chapter_One.pdf', 'approved', '2024-08-18 23:50:36', '2024-08-18 23:51:30');
+(1, 54, 57, 9, 34, 1, 1, 'The Use of Artificial Intelligence to improve on the learning of Mathematics in Basic School Level in Ghana', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, ', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', '../uploads/Chapter_One/202178843_EMILE_JOHN_DOE_chapter_One.pdf', 'rejected', '2024-08-18 23:50:36', '2024-08-20 16:00:58'),
+(5, 76, 9, 8, 33, 1, 1, 'The use of Smart shirt to improve upon the security of the visually impaired', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', '../uploads/Chapter_One/20784838_RITA_ALOMOTEY_EMEFA_chapter_One.pdf', 'approved', '2024-08-20 18:32:44', '2024-08-20 18:34:31');
 
 -- --------------------------------------------------------
 
@@ -227,7 +262,11 @@ INSERT INTO `chapter_one_interactions` (`id`, `chapter_one_id`, `user_id`, `titl
 (1, 1, 54, 'The Use of Artificial Intelligence to improve on the learning of Mathematics in Basic School Level in Ghana', 'urvived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publ', 'Sir Please I have Submitted Chapter One', '2024-08-18 21:27:59'),
 (2, 1, 9, 'Chapter One  Review', 'Status: rejected', 'urvived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publ', '2024-08-18 23:14:44'),
 (5, 1, 54, 'The Use of Artificial Intelligence to improve on the learning of Mathematics in Basic School Level in Ghana', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, ', 'Sir Please I have Submitted Chapter One', '2024-08-18 23:50:36'),
-(6, 1, 9, 'Chapter One  Review', 'Status: approved', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, ', '2024-08-18 23:51:30');
+(6, 1, 9, 'Chapter One  Review', 'Status: approved', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, ', '2024-08-18 23:51:30'),
+(7, 1, 9, 'Chapter One  Review', 'Status: rejected', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', '2024-08-20 16:00:58'),
+(8, 5, 76, 'The use of Smart shirt to improve upon the security of the visually impaired', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', 'Sir Please I have Submitted Chapter One', '2024-08-20 18:32:32'),
+(9, 5, 76, 'The use of Smart shirt to improve upon the security of the visually impaired', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', 'Sir Please I have Submitted Chapter One', '2024-08-20 18:32:44'),
+(10, 5, 9, 'Chapter One  Review', 'Status: approved', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', '2024-08-20 18:34:31');
 
 -- --------------------------------------------------------
 
@@ -273,10 +312,27 @@ CREATE TABLE `chapter_three` (
   `department_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
+  `comment` text DEFAULT NULL,
   `file_path` varchar(255) DEFAULT NULL,
   `status` enum('pending','approved','rejected') DEFAULT 'pending',
   `submission_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `lecturer_comment_time` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chapter_three_interactions`
+--
+
+CREATE TABLE `chapter_three_interactions` (
+  `id` int(11) NOT NULL,
+  `chapter_three_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -295,11 +351,42 @@ CREATE TABLE `chapter_two` (
   `department_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `description` text NOT NULL,
+  `comment` text DEFAULT NULL,
   `file_path` varchar(255) DEFAULT NULL,
   `status` enum('pending','approved','rejected') DEFAULT 'pending',
   `submission_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `lecturer_comment_time` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chapter_two`
+--
+
+INSERT INTO `chapter_two` (`id`, `student_id`, `primary_supervisor_id`, `secondary_supervisor_id1`, `secondary_supervisor_id2`, `faculty_id`, `department_id`, `title`, `description`, `comment`, `file_path`, `status`, `submission_date`, `lecturer_comment_time`) VALUES
+(1, 76, 9, 8, 33, 1, 1, 'The use of Smart shirt to improve upon the security of the visually impaired', 'ext ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop p', NULL, '../uploads/Chapter_Two/20784838_RITA_ALOMOTEY_EMEFA_chapter_two.pdf', 'pending', '2024-08-20 19:25:22', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chapter_two_interactions`
+--
+
+CREATE TABLE `chapter_two_interactions` (
+  `id` int(11) NOT NULL,
+  `chapter_two_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chapter_two_interactions`
+--
+
+INSERT INTO `chapter_two_interactions` (`id`, `chapter_two_id`, `user_id`, `title`, `description`, `message`, `created_at`) VALUES
+(1, 1, 76, 'The use of Smart shirt to improve upon the security of the visually impaired', 'ext ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop p', 'Sir Please I have Submitted Chapter Two', '2024-08-20 19:25:22');
 
 -- --------------------------------------------------------
 
@@ -483,7 +570,10 @@ INSERT INTO `thesis_interactions` (`id`, `thesis_proposal_id`, `user_id`, `title
 (8, 39, 9, 'Proposal Review', 'Status: approved', 'omes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32', '2024-08-17 17:51:41'),
 (9, 44, 76, 'The Use of Artificial Intelligence to improve on the learning of Mathematics in Basic School Level in Ghana', 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks ', 'Proposal submitted', '2024-08-18 13:48:05'),
 (10, 44, 9, 'Proposal Review', 'Status: rejected', 'professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum', '2024-08-18 14:04:01'),
-(11, 39, 9, 'Proposal Review', 'Status: rejected', 'urvived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publ', '2024-08-18 19:05:17');
+(11, 39, 9, 'Proposal Review', 'Status: rejected', 'urvived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publ', '2024-08-18 19:05:17'),
+(12, 44, 76, 'The use of Smart shirt to improve upon the security of the visually impaired', 'f type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishi', 'Sir Please I have Submitted the Thesis Proposal ', '2024-08-20 15:54:12'),
+(13, 33, 9, 'Proposal Review', 'Status: rejected', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', '2024-08-20 16:05:44'),
+(14, 44, 9, 'Proposal Review', 'Status: approved', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', '2024-08-20 18:32:00');
 
 -- --------------------------------------------------------
 
@@ -514,11 +604,11 @@ CREATE TABLE `thesis_proposals` (
 
 INSERT INTO `thesis_proposals` (`id`, `student_id`, `primary_supervisor_id`, `secondary_supervisor_id1`, `secondary_supervisor_id2`, `title`, `description`, `status`, `submission_date`, `comment`, `faculty_id`, `department_id`, `file_path`, `lecturer_comment_time`) VALUES
 (31, 56, 34, 33, 9, 'sdfghjkl;\';lkjhgfdsdfghjkl;;lkjhgfdfghjk', 'dfghjkl;\';lkjhgfdsdfghjkl;\'lk', 'pending', '2024-08-06 16:14:04', NULL, NULL, NULL, NULL, NULL),
-(33, 54, 57, 9, 34, 'ghjkl;\'uioptrytyrutyi', 'wesrdfghjlk;\';lkjhgfghl', 'approved', '2024-08-06 19:05:40', 'xxx', NULL, NULL, NULL, NULL),
+(33, 54, 57, 9, 34, 'ghjkl;\'uioptrytyrutyi', 'wesrdfghjlk;\';lkjhgfghl', 'rejected', '2024-08-06 19:05:40', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', NULL, NULL, NULL, '2024-08-20 16:05:44'),
 (34, 45, 57, 9, 34, 'God is Good', 'Aliquam luctus nunc id sagittis scelerisque. Suspendisse egestas eu tellus sit amet dapibus. Morbi lacinia erat et maximus dignissim. Nullam eu gravida purus. Aenean mollis non urna vitae consequat. Nulla interdum aliquet congue. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec hendrerit, nulla et accumsan vestibulum, eros libero interdum lacus, id congue ante leo et dolor. Morbi orci augue, sagittis at ultricies faucibus, faucibus eget est. Nullam viverra eu felis quis mattis. Fusce iaculis est sapien, quis tempus elit tempus non. Curabitur a urna non ante tempor viverra. Curabitur posuere arcu ac accumsan ornare. Nulla a egestas purus.', 'approved', '2024-08-08 01:08:23', 'I love this Proposal Topic', NULL, NULL, NULL, NULL),
 (35, 32, 57, 33, 9, 'fygkghfgdfg', 'ertjyu6iotuuterywertyreyeryryryr', 'rejected', '2024-08-07 18:01:49', 'asdfgjkl;;p[poiuytfdrseawSADFKJL;', NULL, NULL, NULL, NULL),
 (39, 75, 8, 9, 33, 'The Use of Artificial Intelligence to improve on the learning of Mathematics in Basic School Level in Ghana', 'omes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32', 'rejected', '2024-08-17 17:45:39', 'urvived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publ', 1, 1, '../uploads/proposals/984567748_CYNTHIA_NYOVI_MACHOKA_proposal.pdf', '2024-08-18 19:05:17'),
-(44, 76, 9, 8, 33, 'The Use of Artificial Intelligence to improve on the learning of Mathematics in Basic School Level in Ghana', 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn\'t anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks ', 'rejected', '2024-08-18 13:48:05', 'professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum', 1, 1, '../uploads/proposals/20784838_RITA_ALOMOTEY_EMEFA_proposal.pdf', '2024-08-18 14:04:01');
+(44, 76, 9, 8, 33, 'The use of Smart shirt to improve upon the security of the visually impaired', 'f type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishi', 'approved', '2024-08-20 15:54:12', 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through t', 1, 1, '../uploads/proposals/20784838_RITA_ALOMOTEY_EMEFA_proposal.pdf', '2024-08-20 18:32:00');
 
 -- --------------------------------------------------------
 
@@ -662,7 +752,7 @@ ALTER TABLE `chapters`
 --
 ALTER TABLE `chapter_five`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`),
+  ADD UNIQUE KEY `student_id` (`student_id`),
   ADD KEY `primary_supervisor_id` (`primary_supervisor_id`),
   ADD KEY `secondary_supervisor_id1` (`secondary_supervisor_id1`),
   ADD KEY `secondary_supervisor_id2` (`secondary_supervisor_id2`),
@@ -670,16 +760,32 @@ ALTER TABLE `chapter_five`
   ADD KEY `department_id` (`department_id`);
 
 --
+-- Indexes for table `chapter_five_interactions`
+--
+ALTER TABLE `chapter_five_interactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `chapter_five_id` (`chapter_five_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `chapter_four`
 --
 ALTER TABLE `chapter_four`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`),
+  ADD UNIQUE KEY `student_id` (`student_id`),
   ADD KEY `primary_supervisor_id` (`primary_supervisor_id`),
   ADD KEY `secondary_supervisor_id1` (`secondary_supervisor_id1`),
   ADD KEY `secondary_supervisor_id2` (`secondary_supervisor_id2`),
   ADD KEY `faculty_id` (`faculty_id`),
   ADD KEY `department_id` (`department_id`);
+
+--
+-- Indexes for table `chapter_four_interactions`
+--
+ALTER TABLE `chapter_four_interactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `chapter_four_id` (`chapter_four_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `chapter_one`
@@ -714,7 +820,8 @@ ALTER TABLE `chapter_progress`
 --
 ALTER TABLE `chapter_three`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`),
+  ADD UNIQUE KEY `student_id` (`student_id`),
+  ADD UNIQUE KEY `student_id_2` (`student_id`),
   ADD KEY `primary_supervisor_id` (`primary_supervisor_id`),
   ADD KEY `secondary_supervisor_id1` (`secondary_supervisor_id1`),
   ADD KEY `secondary_supervisor_id2` (`secondary_supervisor_id2`),
@@ -722,16 +829,34 @@ ALTER TABLE `chapter_three`
   ADD KEY `department_id` (`department_id`);
 
 --
+-- Indexes for table `chapter_three_interactions`
+--
+ALTER TABLE `chapter_three_interactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `chapter_three_id` (`chapter_three_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `chapter_two`
 --
 ALTER TABLE `chapter_two`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `student_id` (`student_id`),
+  ADD UNIQUE KEY `student_id` (`student_id`),
+  ADD UNIQUE KEY `student_id_2` (`student_id`),
+  ADD UNIQUE KEY `student_id_3` (`student_id`),
   ADD KEY `primary_supervisor_id` (`primary_supervisor_id`),
   ADD KEY `secondary_supervisor_id1` (`secondary_supervisor_id1`),
   ADD KEY `secondary_supervisor_id2` (`secondary_supervisor_id2`),
   ADD KEY `faculty_id` (`faculty_id`),
   ADD KEY `department_id` (`department_id`);
+
+--
+-- Indexes for table `chapter_two_interactions`
+--
+ALTER TABLE `chapter_two_interactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `chapter_two_id` (`chapter_two_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `chapter_type`
@@ -843,22 +968,34 @@ ALTER TABLE `chapter_five`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `chapter_five_interactions`
+--
+ALTER TABLE `chapter_five_interactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `chapter_four`
 --
 ALTER TABLE `chapter_four`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `chapter_four_interactions`
+--
+ALTER TABLE `chapter_four_interactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `chapter_one`
 --
 ALTER TABLE `chapter_one`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `chapter_one_interactions`
 --
 ALTER TABLE `chapter_one_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `chapter_progress`
@@ -873,10 +1010,22 @@ ALTER TABLE `chapter_three`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `chapter_three_interactions`
+--
+ALTER TABLE `chapter_three_interactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `chapter_two`
 --
 ALTER TABLE `chapter_two`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `chapter_two_interactions`
+--
+ALTER TABLE `chapter_two_interactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `chapter_type`
@@ -924,13 +1073,13 @@ ALTER TABLE `thesiscomments`
 -- AUTO_INCREMENT for table `thesis_interactions`
 --
 ALTER TABLE `thesis_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `thesis_proposals`
 --
 ALTER TABLE `thesis_proposals`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -978,6 +1127,13 @@ ALTER TABLE `chapter_five`
   ADD CONSTRAINT `chapter_five_ibfk_6` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`);
 
 --
+-- Constraints for table `chapter_five_interactions`
+--
+ALTER TABLE `chapter_five_interactions`
+  ADD CONSTRAINT `chapter_five_interactions_ibfk_1` FOREIGN KEY (`chapter_five_id`) REFERENCES `chapter_five` (`id`),
+  ADD CONSTRAINT `chapter_five_interactions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
 -- Constraints for table `chapter_four`
 --
 ALTER TABLE `chapter_four`
@@ -987,6 +1143,13 @@ ALTER TABLE `chapter_four`
   ADD CONSTRAINT `chapter_four_ibfk_4` FOREIGN KEY (`secondary_supervisor_id2`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `chapter_four_ibfk_5` FOREIGN KEY (`faculty_id`) REFERENCES `faculties` (`id`),
   ADD CONSTRAINT `chapter_four_ibfk_6` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`);
+
+--
+-- Constraints for table `chapter_four_interactions`
+--
+ALTER TABLE `chapter_four_interactions`
+  ADD CONSTRAINT `chapter_four_interactions_ibfk_1` FOREIGN KEY (`chapter_four_id`) REFERENCES `chapter_four` (`id`),
+  ADD CONSTRAINT `chapter_four_interactions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `chapter_one`
@@ -1025,6 +1188,13 @@ ALTER TABLE `chapter_three`
   ADD CONSTRAINT `chapter_three_ibfk_6` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`);
 
 --
+-- Constraints for table `chapter_three_interactions`
+--
+ALTER TABLE `chapter_three_interactions`
+  ADD CONSTRAINT `chapter_three_interactions_ibfk_1` FOREIGN KEY (`chapter_three_id`) REFERENCES `chapter_three` (`id`),
+  ADD CONSTRAINT `chapter_three_interactions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
 -- Constraints for table `chapter_two`
 --
 ALTER TABLE `chapter_two`
@@ -1034,6 +1204,13 @@ ALTER TABLE `chapter_two`
   ADD CONSTRAINT `chapter_two_ibfk_4` FOREIGN KEY (`secondary_supervisor_id2`) REFERENCES `users` (`id`),
   ADD CONSTRAINT `chapter_two_ibfk_5` FOREIGN KEY (`faculty_id`) REFERENCES `faculties` (`id`),
   ADD CONSTRAINT `chapter_two_ibfk_6` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`);
+
+--
+-- Constraints for table `chapter_two_interactions`
+--
+ALTER TABLE `chapter_two_interactions`
+  ADD CONSTRAINT `chapter_two_interactions_ibfk_1` FOREIGN KEY (`chapter_two_id`) REFERENCES `chapter_two` (`id`),
+  ADD CONSTRAINT `chapter_two_interactions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `departments`
