@@ -15,9 +15,9 @@ if (!$student_id) {
     die("No student specified");
 }
 
-// Fetch the thesis proposal for this student
+// Fetch the chapter One for this student
 $query = "SELECT tp.id, tp.title, tp.description, tp.status, tp.submission_date,tp.comment,tp.file_path, tp.lecturer_comment_time, u.fullname 
-          FROM thesis_proposals tp 
+          FROM chapter_one tp 
           JOIN users u ON tp.student_id = u.id 
           JOIN assignments a ON u.id = a.student_id 
           WHERE u.id = ? AND (a.primary_supervisor_id = ? OR a.secondary_supervisor_id1 = ? OR a.secondary_supervisor_id2 = ?) 
@@ -29,7 +29,7 @@ $stmt->bindParam(2, $lecturer_id, PDO::PARAM_INT);
 $stmt->bindParam(3, $lecturer_id, PDO::PARAM_INT);
 $stmt->bindParam(4, $lecturer_id, PDO::PARAM_INT);
 $stmt->execute();
-$proposals = $stmt->fetchAll();
+$chapter_one = $stmt->fetchAll();
 
 ?>
 
@@ -350,7 +350,7 @@ $proposals = $stmt->fetchAll();
 
                     
 
-                    <li class="menu active">
+                    <li class="menu">
                         <a href="./students_assignedList.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
@@ -371,7 +371,8 @@ $proposals = $stmt->fetchAll();
                         </a>
                     </li>
 
-                    <li class="menu">
+
+                    <li class="menu active">
                         <a href="./students_chapter_one.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -409,20 +410,20 @@ $proposals = $stmt->fetchAll();
                 <div class="row layout-spacing layout-top-spacing" id="cancel-row">
                     <div class="col-lg-12">
                         <div class="container py-5">
-                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Proposal Review</h2>
+                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Chapter One Review</h2>
                             
-                            <?php if (!empty($proposals)): ?>
-                                <?php foreach ($proposals as $proposal): ?>
+                            <?php if (!empty($chapter_one)): ?>
+                                <?php foreach ($chapter_one as $chapter): ?>
                                     <div class="card mb-4 proposal-card">
                                         <div class="card-header bg-primary text-white">
-                                            <h1 class="card-title h5 mb-0 text-center"><?php echo htmlspecialchars($proposal['title']); ?></h1>
+                                            <h1 class="card-title h5 mb-0 text-center"><?php echo htmlspecialchars($chapter['title']); ?></h1>
                                         </div>
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($proposal['fullname']); ?></span>
-                                                <span><i class="fas fa-calendar-alt"></i> <?php echo date('F j, Y, g:i a', strtotime($proposal['submission_date'])); ?></span>
-                                                <span class="badge bg-<?php echo strtolower($proposal['status']) == 'approved' ? 'success' : (strtolower($proposal['status']) == 'rejected' ? 'danger' : 'warning'); ?>">
-                                                    <?php echo ucfirst(htmlspecialchars($proposal['status'])); ?>
+                                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($chapter['fullname']); ?></span>
+                                                <span><i class="fas fa-calendar-alt"></i> <?php echo date('F j, Y, g:i a', strtotime($chapter['submission_date'])); ?></span>
+                                                <span class="badge bg-<?php echo strtolower($chapter['status']) == 'approved' ? 'success' : (strtolower($chapter['status']) == 'rejected' ? 'danger' : 'warning'); ?>">
+                                                    <?php echo ucfirst(htmlspecialchars($chapter['status'])); ?>
                                                 </span>
                                             </div>
                                             
@@ -434,17 +435,17 @@ $proposals = $stmt->fetchAll();
                                                                 <div class="media mb-4">
                                                                     <img src="../src/assets/img/profile-30.png" class="mr-3 rounded-circle" width="50" height="50" alt="Student">
                                                                     <div class="media-body">
-                                                                        <h5 class="mt-0"><?php echo htmlspecialchars($proposal['fullname']); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($proposal['submission_date'])); ?></small></h5>
-                                                                        <p class="bg-light p-3 rounded"><?php echo nl2br(htmlspecialchars($proposal['description'])); ?></p>
+                                                                        <h5 class="mt-0"><?php echo htmlspecialchars($chapter['fullname']); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($chapter['submission_date'])); ?></small></h5>
+                                                                        <p class="bg-light p-3 rounded"><?php echo nl2br(htmlspecialchars($chapter['description'])); ?></p>
                                                                     </div>
                                                                 </div>
 
-                                                                <?php if (!empty($proposal['comment'])): ?>
+                                                                <?php if (!empty($chapter['comment'])): ?>
                                                                     <div class="media mt-4">
                                                                         <img src="../src/assets/img/profile-30.png" class="mr-3 rounded-circle" width="50" height="50" alt="Lecturer">
                                                                         <div class="media-body">
-                                                                            <h5 class="mt-0"><?php echo htmlspecialchars($proposal['primary_supervisor_name'] ?? 'Supervisor'); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($proposal['lecturer_comment_time'] ?? $proposal['submission_date'])); ?></small></h5>
-                                                                            <p class="bg-light p-3 rounded"><?php echo nl2br(htmlspecialchars($proposal['comment'])); ?></p>
+                                                                            <h5 class="mt-0"><?php echo htmlspecialchars($chapter['primary_supervisor_name'] ?? 'Supervisor'); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($chapter['lecturer_comment_time'] ?? $chapter['submission_date'])); ?></small></h5>
+                                                                            <p class="bg-light p-3 rounded"><?php echo nl2br(htmlspecialchars($chapter['comment'])); ?></p>
                                                                         </div>
                                                                     </div>
                                                                 <?php endif; ?>
@@ -455,19 +456,19 @@ $proposals = $stmt->fetchAll();
                                             </div>
 
 
-                                            <?php if (!empty($proposal['file_path'])): ?>
+                                            <?php if (!empty($chapter['file_path'])): ?>
                                                 <div class="card mt-4">
                                                     <div class="card-header bg-primary text-white">
-                                                        <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Proposal Document</h5>
+                                                        <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Chapter One Document</h5>
                                                     </div>
                                                     <div class="card-body">
                                                         <div class="d-flex justify-content-between align-items-center">
-                                                            <span>Access the proposal document:</span>
+                                                            <span>Access the Chapter One document:</span>
                                                             <div>
-                                                                <a href="<?php echo $proposal['file_path']; ?>" download class="btn btn-outline-primary me-2">
+                                                                <a href="<?php echo $chapter['file_path']; ?>" download class="btn btn-outline-primary me-2">
                                                                     <i class="fas fa-download"></i> Download PDF
                                                                 </a>
-                                                                <a href="<?php echo $proposal['file_path']; ?>" target="_blank" class="btn btn-outline-secondary">
+                                                                <a href="<?php echo $chapter['file_path']; ?>" target="_blank" class="btn btn-outline-secondary">
                                                                     <i class="fas fa-external-link-alt"></i> Open in New Tab
                                                                 </a>
                                                                 
@@ -483,23 +484,23 @@ $proposals = $stmt->fetchAll();
 
 
                                             
-                                            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal<?php echo $proposal['id']; ?>">
-                                                <i class="fas fa-edit"></i> Review Proposal
+                                            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal<?php echo $chapter['id']; ?>">
+                                                <i class="fas fa-edit"></i> Review Chapter One
                                             </button>
                                         </div>
                                     </div>
 
                                     <!-- Review Modal -->
-                                    <div class="modal fade" id="reviewModal<?php echo $proposal['id']; ?>" tabindex="-1" aria-labelledby="reviewModalLabel<?php echo $proposal['id']; ?>" aria-hidden="true">
+                                    <div class="modal fade" id="reviewModal<?php echo $chapter['id']; ?>" tabindex="-1" aria-labelledby="reviewModalLabel<?php echo $chapter['id']; ?>" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="reviewModalLabel<?php echo $proposal['id']; ?>">Review Proposal</h5>
+                                                    <h5 class="modal-title" id="reviewModalLabel<?php echo $chapter['id']; ?>">Review Chapter One</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <form method="POST">
                                                     <div class="modal-body">
-                                                        <input type="hidden" name="proposal_id" value="<?php echo $proposal['id']; ?>">
+                                                        <input type="hidden" name="chapter_id" value="<?php echo $chapter['id']; ?>">
                                                         <div class="mb-3">
                                                             <label for="status" class="form-label">Status:</label>
                                                             <select name="status" id="status" class="form-select" required>
@@ -524,7 +525,7 @@ $proposals = $stmt->fetchAll();
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="alert alert-info" role="alert">
-                                    No thesis proposal found for this student.
+                                    No Chapter One Submission found for this student.
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -571,28 +572,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $pdo->beginTransaction();
 
-        $proposal_id = $_POST['proposal_id'];
+        $chapter_id = $_POST['chapter_id'];
         $status = $_POST['status'];
         $comment = $_POST['comment'];
         $supervisor_id = $_SESSION['user_id'];
 
         // Update thesis_proposals table
-        $update_query = "UPDATE thesis_proposals SET status = ?, comment = ?, lecturer_comment_time = CURRENT_TIMESTAMP WHERE id = ?";
+        $update_query = "UPDATE chapter_one SET status = ?, comment = ?, lecturer_comment_time = CURRENT_TIMESTAMP WHERE id = ?";
         $update_stmt = $pdo->prepare($update_query);
-        $update_stmt->execute([$status, $comment, $proposal_id]);
+        $update_stmt->execute([$status, $comment, $chapter_id]);
 
 
-        // Insert into thesis_interactions table
-        $insert_query = "INSERT INTO thesis_interactions (thesis_proposal_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)";
+        // Insert into chapter_interactions table
+        $insert_query = "INSERT INTO chapter_one_interactions (chapter_one_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)";
         $insert_stmt = $pdo->prepare($insert_query);
-        $insert_stmt->execute([$proposal_id, $supervisor_id, "Proposal Review", "Status: $status", $comment]);
+        $insert_stmt->execute([$chapter_id, $supervisor_id, "Chapter One  Review", "Status: $status", $comment]);
 
         $pdo->commit();
 
         echo "<script>
             swal('Thesis Tracking System', 'Review Submitted successfully!', 'success');
             setTimeout(function() {
-                window.location.href = 'view_student_proposal.php?student_id=" . $student_id . "';
+                window.location.href = 'view_student_chapter1.php?student_id=" . $student_id . "';
             }, 1000);
         </script>";
     } catch (PDOException $e) {

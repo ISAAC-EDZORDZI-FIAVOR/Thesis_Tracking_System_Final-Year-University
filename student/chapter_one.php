@@ -21,9 +21,9 @@ $stmt->execute([$student_id]);
 $supervisor = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-$stmt = $pdo->prepare("SELECT * FROM thesis_proposals WHERE student_id = ?");
+$stmt = $pdo->prepare("SELECT * FROM chapter_one WHERE student_id = ?");
 $stmt->execute([$student_id]);
-$thesis_proposal = $stmt->fetch(PDO::FETCH_ASSOC);
+$chapter_one = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
 
@@ -310,7 +310,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                     You have not been Assigned a supervisor yet. Contact the Administrator or Your HOD.
                                                                 </div>
                                                             <?php else: ?>
-                                                                <?php if (!$thesis_proposal): ?>
+                                                                <?php if (!$chapter_one): ?>
                                                                     
                                                                     <div class="mt-4">
                                                                         <h3 class="mb-3 text-center">Assigned Supervisors</h3>
@@ -331,87 +331,87 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                                                     <div class="mt-4">
                                                                     <div class="col-md-12 col-sm-12 col-12 text-center">
-                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Submit Thesis Proposal</a>
+                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Submit Your Chapter One</a>
                                                                         
                                                                     </div>
 
                                                                     </div>
 
-                                                                    <?php elseif ($thesis_proposal['status'] == 'pending'): ?>
+                                                                    <?php elseif ($chapter_one['status'] == 'pending'): ?>
                                                                         <div class="card mt-4">
                                                                             <div class="card-header bg-info text-white">
-                                                                                <h2 class="mb-0">Thesis Proposal Status</h2>
+                                                                                <h2 class="mb-0">Chapter One Submission Status</h2>
                                                                             </div>
                                                                             <div class="card-body">
                                                                                 <div class="alert alert-info" role="alert">
-                                                                                    Your Thesis proposal is Pending Approval.
+                                                                                    Your Chapter One is Pending Approval.
                                                                                 </div>
                                                                                 <ul class="list-group">
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Title:</strong> <?php echo htmlspecialchars($thesis_proposal['title']); ?></li>
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Description:</strong> <?php echo htmlspecialchars($thesis_proposal['description']); ?></li>
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Status:</strong> <span class="badge bg-warning text-dark"><?php echo ucfirst( htmlspecialchars($thesis_proposal['status'])); ?></span></li>
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($thesis_proposal['submission_date'])); ?></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Title:</strong> <?php echo htmlspecialchars($chapter_one['title']); ?></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Description:</strong> <?php echo htmlspecialchars($chapter_one['description']); ?></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Status:</strong> <span class="badge bg-warning text-dark"><?php echo ucfirst( htmlspecialchars($chapter_one['status'])); ?></span></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($chapter_one['submission_date'])); ?></li>
                                                                                 </ul>
 
-                                                                                <?php if (!empty($thesis_proposal['file_path'])): ?>
+                                                                                <?php if (!empty($chapter_one['file_path'])): ?>
                                                                                     <div class="card mt-4">
                                                                                         <div class="card-header bg-primary text-white">
-                                                                                            <h5 class="mb-0">Proposal Document</h5>
+                                                                                            <h5 class="mb-0">Chapter One Document</h5>
                                                                                         </div>
                                                                                         <div class="card-body">
-                                                                                            <p>View the proposal document: <a href="../lecturer/<?php echo $thesis_proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                            <p>View the Chapter One document: <a href="../lecturer/<?php echo $chapter_one['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
                                                                                         </div>
                                                                                     </div>
                                                                                 <?php endif; ?>
                                                                             </div>
                                                                         </div>
 
-                                                                    <?php elseif ($thesis_proposal['status'] == 'rejected'): ?>
+                                                                    <?php elseif ($chapter_one['status'] == 'rejected'): ?>
                                                                             <div class="card mt-4">
                                                                                 <div class="card-header bg-danger text-white">
-                                                                                    <h2 class="mb-0">Thesis Proposal Status</h2>
+                                                                                    <h2 class="mb-0">Chapter One Submission Status</h2>
                                                                                 </div>
                                                                                 <div class="card-body">
                                                                                     <div class="alert alert-danger" role="alert">
-                                                                                        Your Thesis Proposal has been Rejected. Please Review the Feedback and Resubmit.
+                                                                                        Your Chapter One Submission has been Rejected. Please Review the Feedback and Resubmit.
                                                                                     </div>
                                                                                     <ul class="list-group">
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Title:</strong> <?php echo htmlspecialchars($thesis_proposal['title']); ?></li>
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Description:</strong> <?php echo htmlspecialchars($thesis_proposal['description']); ?></li>
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Feedback:</strong> <?php echo htmlspecialchars($thesis_proposal['comment']); ?></li>
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($thesis_proposal['submission_date'])); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Title:</strong> <?php echo htmlspecialchars($chapter_one['title']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Description:</strong> <?php echo htmlspecialchars($chapter_one['description']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Feedback:</strong> <?php echo htmlspecialchars($chapter_one['comment']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($chapter_one['submission_date'])); ?></li>
                                                                                     </ul>
 
-                                                                                    <?php if (!empty($thesis_proposal['file_path'])): ?>
+                                                                                    <?php if (!empty($chapter_one['file_path'])): ?>
                                                                                     <div class="card mt-4">
                                                                                         <div class="card-header bg-primary text-white">
-                                                                                            <h5 class="mb-0">Proposal Document</h5>
+                                                                                            <h5 class="mb-0">Chapter One Document</h5>
                                                                                         </div>
                                                                                         <div class="card-body">
-                                                                                            <p>View the proposal document: <a href="../lecturer/<?php echo $thesis_proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                            <p>View Chapter One Document: <a href="../lecturer/<?php echo $chapter_one['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
                                                                                         </div>
                                                                                     </div>
                                                                                     <?php endif; ?>
                                                                                     
                                                                                     <div class="mt-4">
                                                                                     <div class="col-md-12 col-sm-12 col-12 text-center">
-                                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Resubmit Thesis Proposal</a>
+                                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Resubmit Your Chapter One</a>
                                                                                         
                                                                                     </div>
 
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <?php elseif ($thesis_proposal['status'] == 'approved'): ?>
+                                                                            <?php elseif ($chapter_one['status'] == 'approved'): ?>
                                                                                 <div class="card mt-4">
                                                                                     <div class="card-header bg-success text-white">
-                                                                                        <h2 class="mb-0 text-center">Thesis Proposal Accepted ! , Congrat !!! &#x1F44B;</h2>
+                                                                                        <h2 class="mb-0 text-center">Your Chapter One is  Accepted ! , Congrat !!! &#x1F44B;</h2>
                                                                                     </div>
                                                                                     <div class="card-body">
                                                                                         <h3>Chapters</h3>
                                                                                         <div class="d-grid gap-2">
-                                                                                            <a href="chapter_one.php" class="btn btn-primary">
-                                                                                                Submit Chapters <i class="fas fa-arrow-right"></i>
+                                                                                            <a href="chapter_two.php" class="btn btn-primary">
+                                                                                                Submit Chapter Two <i class="fas fa-arrow-right"></i>
                                                                                             </a>
                                                                                             
                                                                                         </div>
@@ -435,7 +435,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Submit Thesis Proposal</h5>
+                                                                <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Submit Chapter One</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                                                 </button>
@@ -467,13 +467,13 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                             </div>
 
                                                                             <div class="form-group">
-                                                                                <label for="proposal_file">Upload Thesis Proposal (PDF only)</label>
-                                                                                <input type="file" class="form-control" id="proposal_file" name="proposal_file" accept=".pdf">
+                                                                                <label for="chapter_file">Upload Chapter One (PDF only)</label>
+                                                                                <input type="file" class="form-control" id="chapter_file" name="chapter_file" accept=".pdf">
                                                                             </div>
                                                                         </div>
                                                                             <div class="modal-footer">
                                                                                 <button class="btn"  data-bs-dismiss="modal">Discard</button>
-                                                                                <button type="submit" id="" name="submit_Proposal" class="btn btn-primary">Submit Proposal</button>
+                                                                                <button type="submit" id="" name="submit_Chapter" class="btn btn-primary">Submit Chapter</button>
                                                                             </div>
                                                                         </form>
                                                                     </div>
@@ -629,7 +629,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
   require '../config.php';
 
 
-if (isset($_POST['submit_Proposal'])) {
+if (isset($_POST['submit_Chapter'])) {
     $student_id = $_SESSION['user_id'];
     $title = $_POST['title'];
     $description = $_POST['description'];
@@ -647,10 +647,10 @@ if (isset($_POST['submit_Proposal'])) {
         $secondary_supervisor_id2 = $assignment['secondary_supervisor_id2'];
 
         $file_path = null;
-        if (!empty($_FILES['proposal_file']['name'])) {
-            $file = $_FILES['proposal_file'];
-            $fileName = $_SESSION['username'] . '_' . str_replace(' ', '_', $_SESSION['fullname']) . '_proposal.pdf';
-            $uploadPath = '../uploads/proposals/' . $fileName;
+        if (!empty($_FILES['chapter_file']['name'])) {
+            $file = $_FILES['chapter_file'];
+            $fileName = $_SESSION['username'] . '_' . str_replace(' ', '_', $_SESSION['fullname']) . '_chapter_One.pdf';
+            $uploadPath = '../uploads/Chapter_One/' . $fileName;
            
             if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                 $file_path = $uploadPath;
@@ -660,7 +660,7 @@ if (isset($_POST['submit_Proposal'])) {
         $pdo->beginTransaction();
 
         try {
-            $stmt = $pdo->prepare("INSERT INTO thesis_proposals
+            $stmt = $pdo->prepare("INSERT INTO chapter_one
                 (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, title, description, file_path, faculty_id, department_id, status, submission_date)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
                 ON DUPLICATE KEY UPDATE
@@ -677,29 +677,30 @@ if (isset($_POST['submit_Proposal'])) {
 
             $stmt->execute([$student_id, $primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $title, $description, $file_path, $faculty_id, $department_id]);
 
-            // Fetch the proposal_id
-            $fetch_id_stmt = $pdo->prepare("SELECT id FROM thesis_proposals WHERE student_id = ? ORDER BY submission_date DESC LIMIT 1");
+            // Fetch the chapter_id
+            $fetch_id_stmt = $pdo->prepare("SELECT id FROM chapter_one WHERE student_id = ? ORDER BY submission_date DESC LIMIT 1");
             $fetch_id_stmt->execute([$student_id]);
-            $proposal_id = $fetch_id_stmt->fetchColumn();
+            $chapter_one_id = $fetch_id_stmt->fetchColumn();
 
-            $stmt = $pdo->prepare("INSERT INTO thesis_interactions (thesis_proposal_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$proposal_id, $student_id, $title, $description, "Sir Please I have Submitted the Thesis Proposal "]);
+            $stmt = $pdo->prepare("INSERT INTO chapter_one_interactions (chapter_one_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$chapter_one_id, $student_id, $title, $description, "Sir Please I have Submitted Chapter One"]);
 
             $pdo->commit();
 
                 ?>
             <script>
-                swal("Thesis Tracking System.", "Thesis Proposal Submitted Successfully !!", "success");
+                swal("Thesis Tracking System.", "Chapter One Submitted Successfully !!", "success");
                             setTimeout(function() {
-                window.location.href = "index.php";
-            }, 2000);
+                window.location.href = "chapter_one.php";
+            },1000);
             </script>
            <?php
-        } catch (Exception $e) {
-            $pdo->rollBack();
-            echo "<script>
-                swal('Thesis Tracking System', 'Error submitting proposal. Please try again.', 'error');
-            </script>";
+        } catch (PDOException $e) {
+            ?>
+            <script>
+                swal("Thesis Tracking System.", "<?php echo $e->getMessage(); ?>", "error");
+            </script>
+            <?php
         }
     } else {
         echo "<script>
