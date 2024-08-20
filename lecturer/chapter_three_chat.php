@@ -15,8 +15,8 @@
 
     // Fetch assigned students
         $stmt = $pdo->prepare("
-        SELECT DISTINCT tp.id AS proposal_id, u.fullname AS student_name
-        FROM thesis_proposals tp
+        SELECT DISTINCT tp.id AS chapter_id, u.fullname AS student_name
+        FROM chapter_three tp
         JOIN users u ON tp.student_id = u.id
         JOIN assignments a ON tp.student_id = a.student_id
         WHERE a.primary_supervisor_id = :primary_id
@@ -354,14 +354,15 @@
                         </a>
                     </li>
 
-                    <li class="menu active">
-                        <a href="./proposal_chat.php" aria-expanded="false" class="dropdown-toggle">
+                    <li class="menu ">
+                        <a href="./chapter_one_chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Proposal Details</span>
+                                <span>Chapter Details</span>
                             </div>
                         </a>
                     </li>
+
 
                     <li class="menu">
                         <a href="./students_chapter_one.php" aria-expanded="false" class="dropdown-toggle">
@@ -373,7 +374,7 @@
                     </li>
 
 
-                    <li class="menu ">
+                    <li class="menu active">
                         <a href="./chapter_one_chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -381,7 +382,6 @@
                             </div>
                         </a>
                     </li>
-
 
                     <li class="menu">
                         <a href="./students_chapter_two.php" aria-expanded="false" class="dropdown-toggle">
@@ -401,6 +401,7 @@
                             </div>
                         </a>
                     </li>
+
 
 
 
@@ -435,7 +436,7 @@
                                     </div>
                                     <div class="people">
                                         <?php foreach ($assigned_students as $student): ?>
-                                            <div class="person" data-chat="person<?php echo $student['proposal_id']; ?>" data-proposal-id="<?php echo $student['proposal_id']; ?>">
+                                            <div class="person" data-chat="person<?php echo $student['chapter_id']; ?>" data-chapter-id="<?php echo $student['chapter_id']; ?>">
                                                 <div class="user-info">
                                                     <div class="f-head">
                                                         <img src="../src/assets/img/profile-30.png" alt="avatar">
@@ -443,7 +444,7 @@
                                                     <div class="f-body">
                                                         <div class="meta-info">
                                                             <span class="user-name" data-name="<?php echo htmlspecialchars($student['student_name']); ?>"><?php echo htmlspecialchars($student['student_name']); ?></span>
-                                                            <!-- <span class="user-meta-time">Proposal ID: <?php echo $student['proposal_id']; ?></span> -->
+                                                            <!-- <span class="user-meta-time">Proposal ID: <?php echo $student['chapter_id']; ?></span> -->
                                                         </div>
                                                         <span class="preview">Click to view interactions</span>
                                                     </div>
@@ -521,17 +522,17 @@
     <script>
 document.querySelectorAll('.person').forEach(item => {
     item.addEventListener('click', event => {
-        const proposalId = event.currentTarget.dataset.proposalId;
-        loadConversation(proposalId);
+        const chapterId = event.currentTarget.dataset.chapterId;
+        loadConversation(chapterId);
     })
 });
 
-function loadConversation(proposalId) {
-    fetch(`get_conversation.php?proposal_id=${proposalId}`)
+function loadConversation(chapterId) {
+    fetch(`get_conversation_chapter_three.php?chapter_id=${chapterId}`)
         .then(response => response.text())
         .then(data => {
             document.querySelector('.chat-conversation-box-scroll').innerHTML = data;
-            document.querySelector('.chat-form input[name="proposal_id"]').value = proposalId;
+            document.querySelector('.chat-form input[name="chapter_id"]').value = chapterId;
         });
 }
 </script>

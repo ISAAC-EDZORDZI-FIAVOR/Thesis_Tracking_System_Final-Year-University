@@ -2,53 +2,36 @@
 session_start();
 include_once('../config.php');
 
-if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'student' && $_SESSION['role'] !== 'lecturer')) {
+// Check if user is logged in and is a lecturer
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'lecturer') {
     header("Location: ../admin/auth-signin.php");
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
-$role = $_SESSION['role'];
-$chapter_number = $_GET['chapter'] ?? 1;
+$lecturer_id = $_SESSION['user_id'];
+$student_id = $_GET['student_id'] ?? null;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $message = $_POST['message'];
-    $status = $role === 'lecturer' ? $_POST['status'] : 'pending';
-    $reply_to = $_POST['reply_to'] ?? null;
-
-    $query = "INSERT INTO chapter_progress (student_id, lecturer_id, chapter_number, message, sender_role, status, reply_to) 
-              VALUES (?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([
-        $role === 'student' ? $user_id : $_POST['student_id'],
-        $role === 'lecturer' ? $user_id : null,
-        $chapter_number,
-        $message,
-        $role,
-        $status,
-        $reply_to
-    ]);
-
-    header("Location: chapter_progress.php?chapter=$chapter_number");
-    exit();
+if (!$student_id) {
+    die("No student specified");
 }
-$query = "SELECT cp.*, 
-          TIMESTAMPDIFF(HOUR, cp_reply.submission_date, cp.submission_date) as hours_since_reply,
-          CASE WHEN cp.sender_role = 'lecturer' THEN l.fullname ELSE s.fullname END as fullname 
-          FROM chapter_progress cp 
-          LEFT JOIN chapter_progress cp_reply ON cp.reply_to = cp_reply.id
-          LEFT JOIN users l ON cp.lecturer_id = l.id
-          LEFT JOIN users s ON cp.student_id = s.id
-          WHERE cp.student_id = ? 
-          AND cp.chapter_number = ? 
-          ORDER BY cp.submission_date DESC";
+
+// Fetch the chapter One for this student
+$query = "SELECT tp.id, tp.title, tp.description, tp.status, tp.submission_date,tp.comment,tp.file_path, tp.lecturer_comment_time, u.fullname 
+          FROM chapter_three tp 
+          JOIN users u ON tp.student_id = u.id 
+          JOIN assignments a ON u.id = a.student_id 
+          WHERE u.id = ? AND (a.primary_supervisor_id = ? OR a.secondary_supervisor_id1 = ? OR a.secondary_supervisor_id2 = ?) 
+          ORDER BY tp.submission_date DESC";
 
 $stmt = $pdo->prepare($query);
-$stmt->execute([$user_id, $chapter_number]);
-$progress = $stmt->fetchAll();
+$stmt->bindParam(1, $student_id, PDO::PARAM_INT);
+$stmt->bindParam(2, $lecturer_id, PDO::PARAM_INT);
+$stmt->bindParam(3, $lecturer_id, PDO::PARAM_INT);
+$stmt->bindParam(4, $lecturer_id, PDO::PARAM_INT);
+$stmt->execute();
+$chapter_three = $stmt->fetchAll();
 
 ?>
-
 
 
 
@@ -58,7 +41,7 @@ $progress = $stmt->fetchAll();
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
-    <title>Thesis Tracking System </title>
+    <title>Thesis Tracking System</title>
     <link rel="icon" type="image/x-icon" href="../src/assets/img/logo.png"/>
     <link href="../layouts/vertical-dark-menu/css/light/loader.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/loader.css" rel="stylesheet" type="text/css" />
@@ -69,27 +52,23 @@ $progress = $stmt->fetchAll();
     <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
     <!-- END GLOBAL MANDATORY STYLES -->
-    
-    <!--  BEGIN CUSTOM STYLE FILE  -->
-    <link href="../src/plugins/src/notification/snackbar/snackbar.min.css" rel="stylesheet" type="text/css" />
-    <!-- <link href="../src/plugins/src/sweetalerts2/sweetalerts2.css" rel="stylesheet" type="text/css" /> -->
+
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="../src/assets/css/light/components/modal.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/apps/contacts.css" rel="stylesheet" type="text/css" />
+    <script src="../dist/js/jquery.min.js"></script>
+    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
     <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
 
-    <link href="../src/assets/css/light/components/modal.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" type="text/css" href="../src/plugins/css/light/editors/quill/quill.snow.css">
-    <link href="../src/assets/css/light/apps/mailbox.css" rel="stylesheet" type="text/css" />
-    <link href="../src/plugins/css/light/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
 
     <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/editors/quill/quill.snow.css">
-    <link href="../src/assets/css/dark/apps/mailbox.css" rel="stylesheet" type="text/css" />
-    <link href="../src/plugins/css/dark/sweetalerts2/custom-sweetalert.css" rel="stylesheet" type="text/css" />
-    
-    <!--  END CUSTOM STYLE FILE  -->
+    <link href="../src/assets/css/dark/apps/contacts.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- END PAGE LEVEL STYLES -->    
 </head>
-<body class="layout-boxed">
-
+<body>
+    
     <!-- BEGIN LOADER -->
     <div id="load_screen"> <div class="loader"> <div class="loader-content">
         <div class="spinner-grow align-self-center"></div>
@@ -118,7 +97,6 @@ $progress = $stmt->fetchAll();
             <ul class="navbar-item flex-row ms-lg-auto ms-0">
 
                 
-
                 <li class="nav-item theme-toggle-item">
                     <a href="javascript:void(0);" class="nav-link theme-toggle">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon dark-mode"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
@@ -257,8 +235,15 @@ $progress = $stmt->fetchAll();
                                     &#x1F44B;
                                 </div>
                                 <div class="media-body">
-                                <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
-                                <p class="">Student</p>
+                                <p><?php echo $_SESSION["fullname"]; ?> !</p>
+                                    <p>Lecturer</p>
+                                    <p><?php
+                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                    $stmt = $pdo->prepare($dept_query);
+                                    $stmt->execute([$_SESSION['department_id']]);
+                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $department['name'];
+                                    ?></p>
                                 </div>
                             </div>
                         </div>
@@ -291,11 +276,9 @@ $progress = $stmt->fetchAll();
     <!--  END NAVBAR  -->
 
     <!--  BEGIN MAIN CONTAINER  -->
-
-        <div class="main-container " id="container">
+    <div class="main-container " id="container">
 
         <div class="overlay"></div>
-        <div class="cs-overlay"></div>
         <div class="search-overlay"></div>
 
         <!--  BEGIN SIDEBAR  -->
@@ -307,7 +290,7 @@ $progress = $stmt->fetchAll();
                     <div class="nav-logo">
                         <div class="nav-item theme-logo">
                             <a href="./index.php">
-                                <img src="../src/assets/img/logo.png" class="navbar-logo" alt="logo">
+                                <img src="../src/assets/img/logo.png" class="" alt="logo">
                             </a>
                         </div>
                         <div class="nav-item theme-text">
@@ -326,13 +309,101 @@ $progress = $stmt->fetchAll();
                             <img src="../src/assets/img/profile-30.png" alt="avatar">
                         </div>
                         <div class="profile-content">
-                        <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
-                        <p class="">Student</p>
+                        <p><?php echo $_SESSION["fullname"]; ?> !</p>
+                                    <p>Lecturer</p>
+                                    <p><?php
+                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                    $stmt = $pdo->prepare($dept_query);
+                                    $stmt->execute([$_SESSION['department_id']]);
+                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    echo $department['name'];
+                                    ?></p>
                         </div>
                     </div>
                 </div>
                                 
-                
+                <div class="shadow-bottom"></div>
+                <ul class="list-unstyled menu-categories" id="accordionExample">
+                    <li class="menu ">
+                        <a href="#dashboard" data-bs-toggle="collapse" aria-expanded="true" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                <span>Dashboard</span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled show" id="dashboard" data-bs-parent="#accordionExample">
+                            <li class="active">
+                                <a href="./index.php"> Analytics </a>
+                            </li>
+                            <li>
+                                <!-- <a href="./index2.html"> Sales </a> -->
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="menu menu-heading">
+                        <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>SETTINGS</span></div>
+                    </li>
+
+                    
+
+                    <li class="menu">
+                        <a href="./students_assignedList.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                               <span>Assigned Students</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="menu">
+                        <a href="./proposal_chat.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                <span>Proposal Details</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+                    <li class="menu ">
+                        <a href="./students_chapter_one.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                <span>Chapter One</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+                    <li class="menu ">
+                        <a href="./chapter_one_chat.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                <span>Chapter One Details</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="menu active">
+                        <a href="./students_chapter_two.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                <span>Chapter Two</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+
+                    
+                </ul>
                 
             </nav>
 
@@ -343,65 +414,133 @@ $progress = $stmt->fetchAll();
         <div id="content" class="main-content">
             <div class="layout-px-spacing">
 
-                 <div class="middle-content container-xxl p-0">
-                    
-                    <div class="row layout-top-spacing">
-                    <div class="main-container" id="container">
-                    <div class="page-meta">
-                        <nav class="breadcrumb-style-one" aria-label="breadcrumb">
-                            <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Thesis</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Chapter <?php echo $chapter_number; ?> Progress</li>
-                            </ol>
-                        </nav>
-                    </div>
+                <div class="middle-content container-xxl p-0">
 
-                    <div class="row layout-top-spacing">
-                        <div class="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
-                            <div class="widget-content widget-content-area br-8">
-                                <form method="POST" class="row g-3">
-                                    <div class="col-md-12">
-                                        <label for="message" class="form-label">Message</label>
-                                        <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
-                                    </div>
-                                    <?php if ($role === 'lecturer'): ?>
-                                        <div class="col-md-6">
-                                            <label for="status" class="form-label">Status</label>
-                                            <select class="form-select" id="status" name="status" required>
-                                                <option value="pending">Pending</option>
-                                                <option value="accepted">Accepted</option>
-                                                <option value="rejected">Rejected</option>
-                                            </select>
+                <div class="row layout-spacing layout-top-spacing" id="cancel-row">
+                    <div class="col-lg-12">
+                        <div class="container py-5">
+                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Chapter One Review</h2>
+                            
+                            <?php if (!empty($chapter_three)): ?>
+                                <?php foreach ($chapter_three as $chapter): ?>
+                                    <div class="card mb-4 proposal-card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h1 class="card-title h5 mb-0 text-center"><?php echo htmlspecialchars($chapter['title']); ?></h1>
                                         </div>
-                                    <?php endif; ?>
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                </form>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($chapter['fullname']); ?></span>
+                                                <span><i class="fas fa-calendar-alt"></i> <?php echo date('F j, Y, g:i a', strtotime($chapter['submission_date'])); ?></span>
+                                                <span class="badge bg-<?php echo strtolower($chapter['status']) == 'approved' ? 'success' : (strtolower($chapter['status']) == 'rejected' ? 'danger' : 'warning'); ?>">
+                                                    <?php echo ucfirst(htmlspecialchars($chapter['status'])); ?>
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="container mt-4">
+                                                <div class="row">
+                                                    <div class="col-md-8 offset-md-2">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div class="media mb-4">
+                                                                    <img src="../src/assets/img/profile-30.png" class="mr-3 rounded-circle" width="50" height="50" alt="Student">
+                                                                    <div class="media-body">
+                                                                        <h5 class="mt-0"><?php echo htmlspecialchars($chapter['fullname']); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($chapter['submission_date'])); ?></small></h5>
+                                                                        <p class="bg-light p-3 rounded"><?php echo nl2br(htmlspecialchars($chapter['description'])); ?></p>
+                                                                    </div>
+                                                                </div>
 
-                                <div class="mt-4">
-                                    <h4>Progress History</h4>
-                                    <?php foreach ($progress as $entry): ?>
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <h5 class="card-title"><?php echo $entry['fullname']; ?> (<?php echo ucfirst($entry['sender_role']); ?>)</h5>
-                                                <h6 class="card-subtitle mb-2 text-muted">
-                                                    <?php echo $entry['submission_date']; ?>
-                                                    <?php if ($entry['hours_since_reply']): ?>
-                                                        (<?php echo $entry['hours_since_reply']; ?> hours since last message)
-                                                    <?php endif; ?>
-                                                </h6>
-                                                <p class="card-text"><?php echo htmlspecialchars($entry['message']); ?></p>
-                                                <p class="card-text"><small class="text-muted">Status: <?php echo ucfirst($entry['status']); ?></small></p>
+                                                                <?php if (!empty($chapter['comment'])): ?>
+                                                                    <div class="media mt-4">
+                                                                        <img src="../src/assets/img/profile-30.png" class="mr-3 rounded-circle" width="50" height="50" alt="Lecturer">
+                                                                        <div class="media-body">
+                                                                            <h5 class="mt-0"><?php echo htmlspecialchars($chapter['primary_supervisor_name'] ?? 'Supervisor'); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($chapter['lecturer_comment_time'] ?? $chapter['submission_date'])); ?></small></h5>
+                                                                            <p class="bg-light p-3 rounded"><?php echo nl2br(htmlspecialchars($chapter['comment'])); ?></p>
+                                                                        </div>
+                                                                    </div>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <?php if (!empty($chapter['file_path'])): ?>
+                                                <div class="card mt-4">
+                                                    <div class="card-header bg-primary text-white">
+                                                        <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Chapter Three Document</h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span>Access the Chapter Three document:</span>
+                                                            <div>
+                                                                <a href="<?php echo $chapter['file_path']; ?>" download class="btn btn-outline-primary me-2">
+                                                                    <i class="fas fa-download"></i> Download PDF
+                                                                </a>
+                                                                <a href="<?php echo $chapter['file_path']; ?>" target="_blank" class="btn btn-outline-secondary">
+                                                                    <i class="fas fa-external-link-alt"></i> Open in New Tab
+                                                                </a>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                        <div class="alert alert-info mt-3">
+                                                            <i class="fas fa-info-circle"></i> Preview not available. Please download or open in a new tab to view the document.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+
+
+
+                                            
+                                            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal<?php echo $chapter['id']; ?>">
+                                                <i class="fas fa-edit"></i> Review Chapter Three
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Review Modal -->
+                                    <div class="modal fade" id="reviewModal<?php echo $chapter['id']; ?>" tabindex="-1" aria-labelledby="reviewModalLabel<?php echo $chapter['id']; ?>" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="reviewModalLabel<?php echo $chapter['id']; ?>">Review Chapter Three</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <form method="POST">
+                                                    <div class="modal-body">
+                                                        <input type="hidden" name="chapter_id" value="<?php echo $chapter['id']; ?>">
+                                                        <div class="mb-3">
+                                                            <label for="status" class="form-label">Status:</label>
+                                                            <select name="status" id="status" class="form-select" required>
+                                                                <option value="">Choose Status..</option>
+                                                                <option value="approved">Approve</option>
+                                                                <option value="rejected">Reject</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="comment" class="form-label">Comment:</label>
+                                                            <textarea name="comment" id="comment" rows="4" class="form-control" ></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                                                    </div>
+                                                </form>
                                             </div>
                                         </div>
-                                    <?php endforeach; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="alert alert-info" role="alert">
+                                    No Chapter Three Submission found for this student.
                                 </div>
-                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-                    </div>
+
 
                 </div>
                 
@@ -420,29 +559,7 @@ $progress = $stmt->fetchAll();
         </div>
         <!--  END CONTENT AREA  -->
     </div>
-    <!-- END MAIN CONTAINER -->
-
-    <script>
-            $(document).ready(function() {
-        $('#thesisProposalForm').on('submit', function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: 'submit_proposal.php',
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function(response) {
-                    $('#thesisProposalModal').modal('hide');
-                    swal("Success", "Thesis Proposal Submitted Successfully!", "success");
-                    // Optionally, refresh the page or update the UI
-                },
-                error: function() {
-                    swal("Error", "Failed to submit thesis proposal", "error");
-                }
-            });
-        });
-    });
-
-    </script>
+        <!-- END MAIN CONTAINER -->
     
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     <script src="../src/plugins/src/global/vendors.min.js"></script>
@@ -451,11 +568,49 @@ $progress = $stmt->fetchAll();
     <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
     <script src="../src/plugins/src/waves/waves.min.js"></script>
     <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <script src="../src/assets/js/custom.js"></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
-    <script src="../src/plugins/src/editors/quill/quill.js"></script>
-    <script src="../src/plugins/src/sweetalerts2/sweetalerts2.min.js"></script>
-    <script src="../src/plugins/src/notification/snackbar/snackbar.min.js"></script>
-    <script src="../src/assets/js/apps/mailbox.js"></script>
-
+    <script src="../src/plugins/src/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../src/assets/js/apps/contact.js"></script>
+    
 </body>
 </html>
+
+<?php 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    try {
+        $pdo->beginTransaction();
+
+        $chapter_id = $_POST['chapter_id'];
+        $status = $_POST['status'];
+        $comment = $_POST['comment'];
+        $supervisor_id = $_SESSION['user_id'];
+
+        // Update thesis_proposals table
+        $update_query = "UPDATE chapter_three SET status = ?, comment = ?, lecturer_comment_time = CURRENT_TIMESTAMP WHERE id = ?";
+        $update_stmt = $pdo->prepare($update_query);
+        $update_stmt->execute([$status, $comment, $chapter_id]);
+
+
+        // Insert into chapter_interactions table
+        $insert_query = "INSERT INTO chapter_three_interactions (chapter_three_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)";
+        $insert_stmt = $pdo->prepare($insert_query);
+        $insert_stmt->execute([$chapter_id, $supervisor_id, "Chapter Three  Review", "Status: $status", $comment]);
+
+        $pdo->commit();
+
+        echo "<script>
+            swal('Thesis Tracking System', 'Review Submitted successfully!', 'success');
+            setTimeout(function() {
+                window.location.href = 'view_student_chapter3.php?student_id=" . $student_id . "';
+            }, 1000);
+        </script>";
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        echo "<script>
+            swal('Thesis Tracking System', '" . $e->getMessage() . "', 'error');
+        </script>";
+    }
+}
+
+ ?>
