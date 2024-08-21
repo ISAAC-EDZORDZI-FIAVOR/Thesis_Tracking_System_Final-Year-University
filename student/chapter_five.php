@@ -21,9 +21,9 @@ $stmt->execute([$student_id]);
 $supervisor = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-$stmt = $pdo->prepare("SELECT * FROM chapter_three WHERE student_id = ?");
+$stmt = $pdo->prepare("SELECT * FROM chapter_five WHERE student_id = ?");
 $stmt->execute([$student_id]);
-$chapter_three = $stmt->fetch(PDO::FETCH_ASSOC);
+$chapter_five = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
 
@@ -329,7 +329,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                     You have not been Assigned a supervisor yet. Contact the Administrator or Your HOD.
                                                                 </div>
                                                             <?php else: ?>
-                                                                <?php if (!$chapter_three): ?>
+                                                                <?php if (!$chapter_five): ?>
                                                                     
                                                                     <div class="mt-4">
                                                                         <h3 class="mb-3 text-center">Assigned Supervisors</h3>
@@ -350,87 +350,87 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                                                     <div class="mt-4">
                                                                     <div class="col-md-12 col-sm-12 col-12 text-center">
-                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Submit Your Chapter Three</a>
+                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Submit Your Chapter Five</a>
                                                                         
                                                                     </div>
 
                                                                     </div>
 
-                                                                    <?php elseif ($chapter_three['status'] == 'pending'): ?>
+                                                                    <?php elseif ($chapter_five['status'] == 'pending'): ?>
                                                                         <div class="card mt-4">
                                                                             <div class="card-header bg-info text-white">
-                                                                                <h2 class="mb-0">Chapter Three Submission Status</h2>
+                                                                                <h2 class="mb-0">Chapter Five Submission Status</h2>
                                                                             </div>
                                                                             <div class="card-body">
                                                                                 <div class="alert alert-info" role="alert">
-                                                                                    Your Chapter Three is Pending Approval.
+                                                                                    Your Chapter Five is Pending Approval.
                                                                                 </div>
                                                                                 <ul class="list-group">
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Title:</strong> <?php echo htmlspecialchars($chapter_three['title']); ?></li>
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Description:</strong> <?php echo htmlspecialchars($chapter_three['description']); ?></li>
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Status:</strong> <span class="badge bg-warning text-dark"><?php echo ucfirst( htmlspecialchars($chapter_three['status'])); ?></span></li>
-                                                                                    <li class="list-group-item list-group-item-primary"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($chapter_three['submission_date'])); ?></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Title:</strong> <?php echo htmlspecialchars($chapter_five['title']); ?></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Description:</strong> <?php echo htmlspecialchars($chapter_five['description']); ?></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Status:</strong> <span class="badge bg-warning text-dark"><?php echo ucfirst( htmlspecialchars($chapter_five['status'])); ?></span></li>
+                                                                                    <li class="list-group-item list-group-item-primary"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($chapter_five['submission_date'])); ?></li>
                                                                                 </ul>
 
-                                                                                <?php if (!empty($chapter_three['file_path'])): ?>
+                                                                                <?php if (!empty($chapter_five['file_path'])): ?>
                                                                                     <div class="card mt-4">
                                                                                         <div class="card-header bg-primary text-white">
-                                                                                            <h5 class="mb-0">Chapter Three Document</h5>
+                                                                                            <h5 class="mb-0">Chapter Five Document</h5>
                                                                                         </div>
                                                                                         <div class="card-body">
-                                                                                            <p>View the Chapter Three document: <a href="../lecturer/<?php echo $chapter_three['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                            <p>View the Chapter Five document: <a href="../lecturer/<?php echo $chapter_five['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
                                                                                         </div>
                                                                                     </div>
                                                                                 <?php endif; ?>
                                                                             </div>
                                                                         </div>
 
-                                                                    <?php elseif ($chapter_three['status'] == 'rejected'): ?>
+                                                                    <?php elseif ($chapter_five['status'] == 'rejected'): ?>
                                                                             <div class="card mt-4">
                                                                                 <div class="card-header bg-danger text-white">
-                                                                                    <h2 class="mb-0">Chapter Three Submission Status</h2>
+                                                                                    <h2 class="mb-0">Chapter Five Submission Status</h2>
                                                                                 </div>
                                                                                 <div class="card-body">
                                                                                     <div class="alert alert-danger" role="alert">
-                                                                                        Your Chapter Three Submission has been Rejected. Please Review the Feedback and Resubmit.
+                                                                                        Your Chapter Five Submission has been Rejected. Please Review the Feedback and Resubmit.
                                                                                     </div>
                                                                                     <ul class="list-group">
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Title:</strong> <?php echo htmlspecialchars($chapter_three['title']); ?></li>
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Description:</strong> <?php echo htmlspecialchars($chapter_three['description']); ?></li>
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Feedback:</strong> <?php echo htmlspecialchars($chapter_three['comment']); ?></li>
-                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($chapter_three['submission_date'])); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Title:</strong> <?php echo htmlspecialchars($chapter_five['title']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Description:</strong> <?php echo htmlspecialchars($chapter_five['description']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Feedback:</strong> <?php echo htmlspecialchars($chapter_five['comment']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($chapter_five['submission_date'])); ?></li>
                                                                                     </ul>
 
-                                                                                    <?php if (!empty($chapter_three['file_path'])): ?>
+                                                                                    <?php if (!empty($chapter_five['file_path'])): ?>
                                                                                     <div class="card mt-4">
                                                                                         <div class="card-header bg-primary text-white">
-                                                                                            <h5 class="mb-0">Chapter Three Document</h5>
+                                                                                            <h5 class="mb-0">Chapter Five Document</h5>
                                                                                         </div>
                                                                                         <div class="card-body">
-                                                                                            <p>View Chapter Three Document: <a href="../lecturer/<?php echo $chapter_three['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                            <p>View Chapter Five Document: <a href="../lecturer/<?php echo $chapter_five['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
                                                                                         </div>
                                                                                     </div>
                                                                                     <?php endif; ?>
                                                                                     
                                                                                     <div class="mt-4">
                                                                                     <div class="col-md-12 col-sm-12 col-12 text-center">
-                                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Resubmit Your Chapter Three</a>
+                                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Resubmit Your Chapter Five</a>
                                                                                         
                                                                                     </div>
 
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                            <?php elseif ($chapter_three['status'] == 'approved'): ?>
+                                                                            <?php elseif ($chapter_five['status'] == 'approved'): ?>
                                                                                 <div class="card mt-4">
                                                                                     <div class="card-header bg-success text-white">
-                                                                                        <h2 class="mb-0 text-center">Your Chapter Three is  Accepted ! , Congrat !!! &#x1F44B;</h2>
+                                                                                        <h2 class="mb-0 text-center">Your Chapter Five is  Accepted ! , Congrat !!! &#x1F44B;</h2>
                                                                                     </div>
                                                                                     <div class="card-body">
                                                                                         <h3>Chapters</h3>
                                                                                         <div class="d-grid gap-2">
-                                                                                            <a href="chapter_four.php" class="btn btn-primary">
-                                                                                                Submit Chapter Four <i class="fas fa-arrow-right"></i>
+                                                                                            <a href="chapter_five.php" class="btn btn-primary">
+                                                                                                Submit Chapter Five <i class="fas fa-arrow-right"></i>
                                                                                             </a>
                                                                                             
                                                                                         </div>
@@ -454,7 +454,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Submit Chapter Three</h5>
+                                                                <h5 class="modal-title add-title" id="notesMailModalTitleeLabel">Submit Chapter Five</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                                                                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                                                                 </button>
@@ -486,7 +486,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                             </div>
 
                                                                             <div class="form-group">
-                                                                                <label for="chapter_file">Upload Chapter Three (PDF only)</label>
+                                                                                <label for="chapter_file">Upload Chapter Five (PDF only)</label>
                                                                                 <input type="file" class="form-control" id="chapter_file" name="chapter_file" accept=".pdf">
                                                                             </div>
                                                                         </div>
@@ -668,8 +668,8 @@ if (isset($_POST['submit_Chapter'])) {
         $file_path = null;
         if (!empty($_FILES['chapter_file']['name'])) {
             $file = $_FILES['chapter_file'];
-            $fileName = $_SESSION['username'] . '_' . str_replace(' ', '_', $_SESSION['fullname']) . '_chapter_three.pdf';
-            $uploadPath = '../uploads/Chapter_Three/' . $fileName;
+            $fileName = $_SESSION['username'] . '_' . str_replace(' ', '_', $_SESSION['fullname']) . '_chapter_five.pdf';
+            $uploadPath = '../uploads/Chapter_Five/' . $fileName;
            
             if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
                 $file_path = $uploadPath;
@@ -679,7 +679,7 @@ if (isset($_POST['submit_Chapter'])) {
         $pdo->beginTransaction();
 
         try {
-            $stmt = $pdo->prepare("INSERT INTO chapter_three
+            $stmt = $pdo->prepare("INSERT INTO chapter_five
                 (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, title, description, file_path, faculty_id, department_id, status, submission_date)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
                 ON DUPLICATE KEY UPDATE
@@ -697,20 +697,20 @@ if (isset($_POST['submit_Chapter'])) {
             $stmt->execute([$student_id, $primary_supervisor_id, $secondary_supervisor_id1, $secondary_supervisor_id2, $title, $description, $file_path, $faculty_id, $department_id]);
 
             // Fetch the chapter_id
-            $fetch_id_stmt = $pdo->prepare("SELECT id FROM chapter_three WHERE student_id = ? ORDER BY submission_date DESC LIMIT 1");
+            $fetch_id_stmt = $pdo->prepare("SELECT id FROM chapter_five WHERE student_id = ? ORDER BY submission_date DESC LIMIT 1");
             $fetch_id_stmt->execute([$student_id]);
-            $chapter_three_id = $fetch_id_stmt->fetchColumn();
+            $chapter_five_id = $fetch_id_stmt->fetchColumn();
 
-            $stmt = $pdo->prepare("INSERT INTO chapter_three_interactions (chapter_three_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$chapter_three_id, $student_id, $title, $description, "Sir Please I have Submitted Chapter Three"]);
+            $stmt = $pdo->prepare("INSERT INTO chapter_five_interactions (chapter_five_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$chapter_five_id, $student_id, $title, $description, "Sir Please I have Submitted Chapter Five"]);
 
             $pdo->commit();
 
                 ?>
             <script>
-                swal("Thesis Tracking System.", "Chapter Three Submitted Successfully !!", "success");
+                swal("Thesis Tracking System.", "Chapter Five Submitted Successfully !!", "success");
                             setTimeout(function() {
-                window.location.href = "chapter_three.php";
+                window.location.href = "chapter_five.php";
             },1000);
             </script>
            <?php

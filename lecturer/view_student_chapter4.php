@@ -17,7 +17,7 @@ if (!$student_id) {
 
 // Fetch the chapter One for this student
 $query = "SELECT tp.id, tp.title, tp.description, tp.status, tp.submission_date,tp.comment,tp.file_path, tp.lecturer_comment_time, u.fullname 
-          FROM chapter_two tp 
+          FROM chapter_four tp 
           JOIN users u ON tp.student_id = u.id 
           JOIN assignments a ON u.id = a.student_id 
           WHERE u.id = ? AND (a.primary_supervisor_id = ? OR a.secondary_supervisor_id1 = ? OR a.secondary_supervisor_id2 = ?) 
@@ -29,7 +29,7 @@ $stmt->bindParam(2, $lecturer_id, PDO::PARAM_INT);
 $stmt->bindParam(3, $lecturer_id, PDO::PARAM_INT);
 $stmt->bindParam(4, $lecturer_id, PDO::PARAM_INT);
 $stmt->execute();
-$chapter_two = $stmt->fetchAll();
+$chapter_four = $stmt->fetchAll();
 
 ?>
 
@@ -419,10 +419,10 @@ $chapter_two = $stmt->fetchAll();
                 <div class="row layout-spacing layout-top-spacing" id="cancel-row">
                     <div class="col-lg-12">
                         <div class="container py-5">
-                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Chapter Two Review</h2>
+                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Chapter Four Review</h2>
                             
-                            <?php if (!empty($chapter_two)): ?>
-                                <?php foreach ($chapter_two as $chapter): ?>
+                            <?php if (!empty($chapter_four)): ?>
+                                <?php foreach ($chapter_four as $chapter): ?>
                                     <div class="card mb-4 proposal-card">
                                         <div class="card-header bg-primary text-white">
                                             <h1 class="card-title h5 mb-0 text-center"><?php echo htmlspecialchars($chapter['title']); ?></h1>
@@ -468,11 +468,11 @@ $chapter_two = $stmt->fetchAll();
                                             <?php if (!empty($chapter['file_path'])): ?>
                                                 <div class="card mt-4">
                                                     <div class="card-header bg-primary text-white">
-                                                        <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Chapter Two Document</h5>
+                                                        <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Chapter Four Document</h5>
                                                     </div>
                                                     <div class="card-body">
                                                         <div class="d-flex justify-content-between align-items-center">
-                                                            <span>Access the Chapter Two document:</span>
+                                                            <span>Access the Chapter Four document:</span>
                                                             <div>
                                                                 <a href="<?php echo $chapter['file_path']; ?>" download class="btn btn-outline-primary me-2">
                                                                     <i class="fas fa-download"></i> Download PDF
@@ -494,7 +494,7 @@ $chapter_two = $stmt->fetchAll();
 
                                             
                                             <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#reviewModal<?php echo $chapter['id']; ?>">
-                                                <i class="fas fa-edit"></i> Review Chapter Two
+                                                <i class="fas fa-edit"></i> Review Chapter Four
                                             </button>
                                         </div>
                                     </div>
@@ -504,7 +504,7 @@ $chapter_two = $stmt->fetchAll();
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="reviewModalLabel<?php echo $chapter['id']; ?>">Review Chapter Two</h5>
+                                                    <h5 class="modal-title" id="reviewModalLabel<?php echo $chapter['id']; ?>">Review Chapter Four</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <form method="POST">
@@ -534,7 +534,7 @@ $chapter_two = $stmt->fetchAll();
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <div class="alert alert-info" role="alert">
-                                    No Chapter Two Submission found for this student.
+                                    No Chapter Four Submission found for this student.
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -587,22 +587,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $supervisor_id = $_SESSION['user_id'];
 
         // Update thesis_proposals table
-        $update_query = "UPDATE chapter_two SET status = ?, comment = ?, lecturer_comment_time = CURRENT_TIMESTAMP WHERE id = ?";
+        $update_query = "UPDATE chapter_four SET status = ?, comment = ?, lecturer_comment_time = CURRENT_TIMESTAMP WHERE id = ?";
         $update_stmt = $pdo->prepare($update_query);
         $update_stmt->execute([$status, $comment, $chapter_id]);
 
 
         // Insert into chapter_interactions table
-        $insert_query = "INSERT INTO chapter_two_interactions (chapter_two_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)";
+        $insert_query = "INSERT INTO chapter_four_interactions (chapter_four_id, user_id, title, description, message) VALUES (?, ?, ?, ?, ?)";
         $insert_stmt = $pdo->prepare($insert_query);
-        $insert_stmt->execute([$chapter_id, $supervisor_id, "Chapter Two  Review", "Status: $status", $comment]);
+        $insert_stmt->execute([$chapter_id, $supervisor_id, "Chapter Four  Review", "Status: $status", $comment]);
 
         $pdo->commit();
 
         echo "<script>
             swal('Thesis Tracking System', 'Review Submitted successfully!', 'success');
             setTimeout(function() {
-                window.location.href = 'view_student_chapter2.php?student_id=" . $student_id . "';
+                window.location.href = 'view_student_chapter4.php?student_id=" . $student_id . "';
             }, 1000);
         </script>";
     } catch (PDOException $e) {

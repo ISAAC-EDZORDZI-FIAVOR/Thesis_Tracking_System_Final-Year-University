@@ -419,7 +419,7 @@ $chapter_three = $stmt->fetchAll();
                 <div class="row layout-spacing layout-top-spacing" id="cancel-row">
                     <div class="col-lg-12">
                         <div class="container py-5">
-                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Chapter One Review</h2>
+                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Thesis Chapter Three Review</h2>
                             
                             <?php if (!empty($chapter_three)): ?>
                                 <?php foreach ($chapter_three as $chapter): ?>
