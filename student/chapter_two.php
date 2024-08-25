@@ -238,14 +238,41 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="shadow-bottom"></div>
                 <ul class="list-unstyled menu-categories" id="accordionExample">
                
-                <li class="menu">
+
+                    <li class="menu">
+                        <a href="./index.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Proposal</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+
+                    <li class="menu">
                         <a href="./chapter_one.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
                                 <span>Chapter One</span>
                             </div>
                         </a>
                     </li>
+                    
+                    
+                </ul>
 
 
                     

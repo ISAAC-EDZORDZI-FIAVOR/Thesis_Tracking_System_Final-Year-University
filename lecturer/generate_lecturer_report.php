@@ -1,9 +1,11 @@
 <?php
+
 session_start();
+require '../config.php';
 
-
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "department_admin") {
-    header("Location: auth-signin.php");
+// Check if user is logged in and is a lecturer
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'lecturer') {
+    header("Location: ../admin/auth-signin.php");
     exit();
 }
 require '../vendor/autoload.php'; // Ensure this path is correct
@@ -13,7 +15,6 @@ class PDF extends FPDF
 {
     function Header()
     {
-        // Center the image
         $imagePath = './Thesis.png';
         $imageWidth = 30;
         $imageHeight = 30; // Set the height for the image
@@ -21,7 +22,6 @@ class PDF extends FPDF
         $x = ($pageWidth - $imageWidth) / 2;
         $this->Image($imagePath, $x, 10, $imageWidth, $imageHeight);
 
-        // School name centered
         $this->SetFont('Arial', 'B', 16);
         $this->SetY(50);
         $this->Cell(0, 10, 'Thesis Tracking System UEW', 0, 1, 'C');
@@ -90,78 +90,80 @@ $pdf->AddPage();
 // Data fetching
 require '../config.php'; // Ensure this path is correct
 
-$department_id = $_SESSION['department_id']; // Assuming the department_id is stored in the session
+$lecturer_id = $_SESSION['user_id']; // Assuming the lecturer's user_id is stored in the session
+
+// Fetch lecturer name
+$lecturer_query = "SELECT fullname FROM users WHERE id = ?";
+$stmt = $pdo->prepare($lecturer_query);
+$stmt->execute([$lecturer_id]);
+$lecturer = $stmt->fetch(PDO::FETCH_ASSOC);
+$lecturerName = $lecturer['fullname'] ?? 'Unknown Lecturer';
 
 // Fetch department name
-$department_query = "SELECT name FROM departments WHERE id = ?";
+$department_query = "SELECT d.name FROM departments d 
+                     JOIN users u ON d.id = u.department_id 
+                     WHERE u.id = ?";
 $stmt = $pdo->prepare($department_query);
-$stmt->execute([$department_id]);
+$stmt->execute([$lecturer_id]);
 $department = $stmt->fetch(PDO::FETCH_ASSOC);
 $departmentName = $department['name'] ?? 'Unknown Department';
 
 // Fetch data
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role = 'lecturer' AND department_id = ?");
-$stmt->execute([$department_id]);
-$totalLecturers = $stmt->fetchColumn();
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role = 'student' AND department_id = ?");
-$stmt->execute([$department_id]);
-$totalStudents = $stmt->fetchColumn();
-
-$stmt = $pdo->prepare("SELECT COUNT(DISTINCT a.student_id) FROM assignments a JOIN users u ON a.student_id = u.id WHERE u.department_id = ?");
-$stmt->execute([$department_id]);
+$stmt = $pdo->prepare("SELECT COUNT(DISTINCT student_id) FROM assignments WHERE primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?");
+$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
 $totalAssignedStudents = $stmt->fetchColumn();
 
-$stmt = $pdo->prepare("
-    SELECT COUNT(*)
-    FROM users
-    WHERE role = 'student'
-    AND department_id = ?
-    AND id NOT IN (SELECT DISTINCT student_id FROM assignments)
-");
-$stmt->execute([$department_id]);
-$totalUnassignedStudents = $stmt->fetchColumn();
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE department_id = ?");
-$stmt->execute([$department_id]);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?");
+$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
 $totalThesisSubmitted = $stmt->fetchColumn();
 
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'pending' AND department_id = ?");
-$stmt->execute([$department_id]);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE (primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?) AND status = 'pending'");
+$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
 $totalThesisSubmittedPending = $stmt->fetchColumn();
 
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'approved' AND department_id = ?");
-$stmt->execute([$department_id]);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE (primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?) AND status = 'approved'");
+$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
 $totalThesisSubmittedApproved = $stmt->fetchColumn();
 
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'rejected' AND department_id = ?");
-$stmt->execute([$department_id]);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE (primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?) AND status = 'rejected'");
+$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
 $totalThesisSubmittedRejected = $stmt->fetchColumn();
 
 // Fetch chapter data
 $chapters = ['one', 'two', 'three', 'four', 'five'];
 foreach ($chapters as $chapter) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_$chapter c JOIN users u ON c.student_id = u.id WHERE u.department_id = ?");
-    $stmt->execute([$department_id]);
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_{$chapter} c 
+        JOIN thesis_proposals tp ON c.student_id = tp.student_id 
+        WHERE tp.primary_supervisor_id = ? OR tp.secondary_supervisor_id1 = ? OR tp.secondary_supervisor_id2 = ?");
+    $stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
     ${"totalchapter_{$chapter}Submitted"} = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_$chapter c JOIN users u ON c.student_id = u.id WHERE u.department_id = ? AND c.status = 'pending'");
-    $stmt->execute([$department_id]);
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_{$chapter} c 
+        JOIN thesis_proposals tp ON c.student_id = tp.student_id 
+        WHERE (tp.primary_supervisor_id = ? OR tp.secondary_supervisor_id1 = ? OR tp.secondary_supervisor_id2 = ?) 
+        AND c.status = 'pending'");
+    $stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
     ${"totalchapter_{$chapter}SubmittedPending"} = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_$chapter c JOIN users u ON c.student_id = u.id WHERE u.department_id = ? AND c.status = 'approved'");
-    $stmt->execute([$department_id]);
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_{$chapter} c 
+        JOIN thesis_proposals tp ON c.student_id = tp.student_id 
+        WHERE (tp.primary_supervisor_id = ? OR tp.secondary_supervisor_id1 = ? OR tp.secondary_supervisor_id2 = ?) 
+        AND c.status = 'approved'");
+    $stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
     ${"totalchapter_{$chapter}SubmittedApproved"} = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_$chapter c JOIN users u ON c.student_id = u.id WHERE u.department_id = ? AND c.status = 'rejected'");
-    $stmt->execute([$department_id]);
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_{$chapter} c 
+        JOIN thesis_proposals tp ON c.student_id = tp.student_id 
+        WHERE (tp.primary_supervisor_id = ? OR tp.secondary_supervisor_id1 = ? OR tp.secondary_supervisor_id2 = ?) 
+        AND c.status = 'rejected'");
+    $stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
     ${"totalchapter_{$chapter}SubmittedRejected"} = $stmt->fetchColumn();
 }
 
 // Report generation
 $pdf->SetFont('Arial', 'B', 16);
 $pdf->SetTextColor(0, 0, 255); // Blue color for the main title
-$pdf->CenterText('Department Admin Report');
+$pdf->CenterText('Lecturer Report');
 $pdf->Ln(10);
 
 $pdf->SetFont('Arial', 'I', 10);
@@ -170,35 +172,36 @@ $pdf->CenterText("Report Date: " . date('F j, Y'));
 $pdf->CenterText('Generated on: ' . date('F j, Y, g:i a'));
 $pdf->Ln(10);
 
-// Add Department Name
 $pdf->SetFont('Arial', 'B', 14);
-$pdf->SetTextColor(0, 0, 255); // Blue color for department name
-$pdf->CenterText("Department: $departmentName");
+$pdf->SetTextColor(0, 0, 0); // Black color for the lecturer name
+$pdf->CenterText('Lecturer: ' . $lecturerName);
+$pdf->CenterText('Department: ' . $departmentName);
 $pdf->Ln(10);
 
-// System Overview
-$pdf->ChapterTitle('System Overview');
+// Assigned Students
+$pdf->ChapterTitle('Assigned Students');
 $pdf->CreateTable(
     ['Metric', 'Value'],
     [
-        ['Total Users', $totalStudents + $totalLecturers],
-        ['Student to Lecturer Ratio', ($totalLecturers ? round($totalStudents / $totalLecturers, 2) : 'N/A')],
+        ["Total Assigned Students", $totalAssignedStudents]
     ]
 );
+$pdf->Ln(10);
 
-// Thesis Progress Overview
-$pdf->ChapterTitle('Thesis Progress Overview');
+// Thesis Proposals
+$pdf->ChapterTitle('Thesis Proposals');
 $pdf->CreateTable(
     ['Metric', 'Value'],
     [
-        ['Completed Theses', $totalThesisSubmitted],
-        ['Pending Theses', $totalThesisSubmittedPending],
-        ['Approved Theses', $totalThesisSubmittedApproved],
-        ['Rejected Theses', $totalThesisSubmittedRejected],
+        ["Total Thesis Submitted", $totalThesisSubmitted],
+        ["Pending", $totalThesisSubmittedPending],
+        ["Approved", $totalThesisSubmittedApproved],
+        ["Rejected", $totalThesisSubmittedRejected],
     ]
 );
+$pdf->Ln(10);
 
-// Chapter Statistics
+// Chapter Submissions
 foreach ($chapters as $chapter) {
     $pdf->ChapterTitle("Chapter " . ucfirst($chapter) . " Statistics");
     $pdf->CreateTable(
@@ -210,8 +213,9 @@ foreach ($chapters as $chapter) {
             ["Rejected", ${"totalchapter_{$chapter}SubmittedRejected"}],
         ]
     );
+    $pdf->Ln(10);
 }
 
 // Output the PDF
-$pdf->Output('D', 'Department_Admin_Report.pdf');
+$pdf->Output('D', 'Lecturer_Report.pdf');
 ?>

@@ -238,20 +238,81 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="shadow-bottom"></div>
                 <ul class="list-unstyled menu-categories" id="accordionExample">
                
+                <li class="menu">
+                        <a href="./index.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Proposal</span>
+                            </div>
+                        </a>
+                    </li>
+
+
+
                     <li class="menu">
                         <a href="./chapter_one.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
                                 <span>Chapter One</span>
+                            </div>
+                        </a>
+                    </li>
+               
+                   
+
+                    <li class="menu">
+                        <a href="./chapter_two.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Chapter Two</span>
                             </div>
                         </a>
                     </li>
 
                     <li class="menu">
-                        <a href="./chapter_two.php" aria-expanded="false" class="dropdown-toggle">
+                        <a href="./chapter_three.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Two</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Chapter Three</span>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li class="menu">
+                        <a href="./chapter_four.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Chapter Four</span>
                             </div>
                         </a>
                     </li>
@@ -427,13 +488,37 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                         <h2 class="mb-0 text-center">Your Chapter Five is  Accepted ! , Congrat !!! &#x1F44B;</h2>
                                                                                     </div>
                                                                                     <div class="card-body">
-                                                                                        <h3>Chapters</h3>
-                                                                                        <div class="d-grid gap-2">
-                                                                                            <a href="chapter_five.php" class="btn btn-primary">
-                                                                                                Submit Chapter Five <i class="fas fa-arrow-right"></i>
-                                                                                            </a>
-                                                                                            
-                                                                                        </div>
+                                                                                    <div class="mt-4">
+                                                                                        <h4>Submit Compiled Thesis</h4>
+                                                                                        <form action="" method="post" enctype="multipart/form-data">
+                                                                                            <div class="form-group">
+                                                                                                <label for="compiled_file">Upload Compiled Thesis (PDF)</label>
+                                                                                                <input type="file" class="form-control-file" id="compiled_file" name="compiled_file" accept=".pdf" required>
+                                                                                            </div>
+                                                                                            <button type="submit" name="submit_Compile" class="btn btn-primary">Submit Compiled Thesis</button>
+                                                                                        </form>
+                                                                                    </div>
+
+                                                                                    <?php
+
+                                                                                        // Display uploaded file if exists
+                                                                                        $stmt = $pdo->prepare("SELECT file_path FROM compiled_thesis WHERE student_id = ?");
+                                                                                        $stmt->execute([$_SESSION['user_id']]);
+                                                                                        $compiledThesis = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                                                                                        if ($compiledThesis) {
+                                                                                            echo '<div class="mt-4 card">';
+                                                                                            echo '<div class="card-header bg-primary text-white">';
+                                                                                            echo '<h4 class="mb-0">Uploaded Compiled Thesis</h4>';
+                                                                                            echo '</div>';
+                                                                                            echo '<div class="card-body">';
+                                                                                            echo '<div class="d-flex align-items-center">';
+                                                                                            echo '<i class="fas fa-file-pdf text-danger fa-3x mr-3"></i>';
+                                                                                            echo '<a href="' . $compiledThesis['file_path'] . '" target="_blank" class="btn btn-outline-primary">View Uploaded Thesis</a>';
+                                                                                            echo '</div>';
+                                                                                            echo '</div>';
+                                                                                            echo '</div>';
+                                                                                        }?>
                                                                                     </div>
                                                                                 </div>
                                                                             <?php endif; ?>
@@ -729,3 +814,92 @@ if (isset($_POST['submit_Chapter'])) {
 }
 ?>
 
+
+
+
+
+
+<?php
+
+require '../config.php';
+
+if (isset($_POST['submit_Compile']))  {
+    $student_id = $_SESSION['user_id'];
+
+    // Check if student has already submitted
+    $stmt = $pdo->prepare("SELECT id FROM compiled_thesis WHERE student_id = ?");
+    $stmt->execute([$student_id]);
+    if ($stmt->rowCount() > 0) {
+       
+        echo "<script>
+        swal('Thesis Tracking System', 'You have already submitted your compiled thesis', 'error');
+    </script>";
+        exit();
+    }
+
+    $file_tmp = $_FILES['compiled_file']['tmp_name'];
+    $file_ext = strtolower(pathinfo($_FILES['compiled_file']['name'], PATHINFO_EXTENSION));
+
+    // Get student's fullname and username
+    $stmt = $pdo->prepare("SELECT fullname, username FROM users WHERE id = ?");
+    $stmt->execute([$student_id]);
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+    $stmt = $pdo->prepare("SELECT primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2 FROM assignments WHERE student_id = ?");
+    $stmt->execute([$student_id]);
+    $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
+    $primary_supervisor_id = $assignment['primary_supervisor_id'];
+    $secondary_supervisor_id1 = $assignment['secondary_supervisor_id1'];
+    $secondary_supervisor_id2 = $assignment['secondary_supervisor_id2'];
+
+    if ($file_ext == "pdf") {
+        $upload_path = "../uploads/Compiled_thesis/";
+        $new_file_name = str_replace(' ', '_', $student['fullname']) . '_' . $student['username'] . '_' . date('Ymd') . '.' . $file_ext;
+        
+        if (move_uploaded_file($file_tmp, $upload_path . $new_file_name)) {
+            try {
+                $stmt = $pdo->prepare("INSERT INTO compiled_thesis (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, file_path, faculty_id, department_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([
+                    $student_id,
+                    $primary_supervisor_id,
+                    $secondary_supervisor_id1,
+                    $secondary_supervisor_id2,
+                    $upload_path . $new_file_name,
+                    $_SESSION['faculty_id'],
+                    $_SESSION['department_id']
+                ]);
+                
+                ?>
+            <script>
+                swal("Thesis Tracking System.", "Compile Thesis Submitted Successfully !!", "success");
+                            setTimeout(function() {
+                window.location.href = "chapter_five.php";
+            },1000);
+            </script>
+           <?php
+            } catch (PDOException $e) {
+                if ($e->getCode() == '23000') {
+                    echo "<script>
+                            swal('Thesis Tracking System', 'You have already submitted your compiled thesis', 'error');
+                        </script>";
+                } else {
+                    
+                    echo "<script>
+                            swal('Thesis Tracking System', 'An error occurred while submitting your thesis', 'error');
+                        </script>";
+                }
+            }
+        } else {
+           
+            echo "<script>
+                            swal('Thesis Tracking System', 'File upload failed', 'error');
+                        </script>";
+        }
+    } else {
+        
+        echo "<script>
+        swal('Thesis Tracking System', 'Only PDF files are allowed', 'error');
+    </script>";
+    }
+}

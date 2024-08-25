@@ -411,7 +411,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                         <h3>Chapters</h3>
                                                                                         <div class="d-grid gap-2">
                                                                                             <a href="chapter_one.php" class="btn btn-primary">
-                                                                                                Submit Chapters <i class="fas fa-arrow-right"></i>
+                                                                                                Submit Chapter One <i class="fas fa-arrow-right"></i>
                                                                                             </a>
                                                                                             
                                                                                         </div>

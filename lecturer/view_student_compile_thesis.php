@@ -1,37 +1,40 @@
 <?php
-    session_start();
-    require '../config.php';
+session_start();
+include_once('../config.php');
 
-    // Check if user is logged in and is a lecturer
-    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'lecturer') {
-        header("Location: ../admin/auth-signin.php");
-        exit();
-    }
+// Check if user is logged in and is a lecturer
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'lecturer') {
+    header("Location: ../admin/auth-signin.php");
+    exit();
+}
+
+$lecturer_id = $_SESSION['user_id'];
+$student_id = $_GET['student_id'] ?? null;
+
+if (!$student_id) {
+    die("No student specified");
+}
+
+// Fetch the chapter One for this student
+$query = "SELECT tp.id,  tp.status, tp.submission_date,tp.file_path, u.fullname 
+          FROM compiled_thesis tp 
+          JOIN users u ON tp.student_id = u.id 
+          JOIN assignments a ON u.id = a.student_id 
+          WHERE u.id = ? AND (a.primary_supervisor_id = ? OR a.secondary_supervisor_id1 = ? OR a.secondary_supervisor_id2 = ?) 
+          ORDER BY tp.submission_date DESC";
+
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(1, $student_id, PDO::PARAM_INT);
+$stmt->bindParam(2, $lecturer_id, PDO::PARAM_INT);
+$stmt->bindParam(3, $lecturer_id, PDO::PARAM_INT);
+$stmt->bindParam(4, $lecturer_id, PDO::PARAM_INT);
+$stmt->execute();
+$compiled_thesis = $stmt->fetchAll();
+
 ?>
 
-<?php
-    $lecturer_id = $_SESSION['user_id'];
-    
 
-    // Fetch assigned students
-        $stmt = $pdo->prepare("
-        SELECT DISTINCT tp.id AS chapter_id, u.fullname AS student_name
-        FROM chapter_four tp
-        JOIN users u ON tp.student_id = u.id
-        JOIN assignments a ON tp.student_id = a.student_id
-        WHERE a.primary_supervisor_id = :primary_id
-        OR a.secondary_supervisor_id1 = :secondary_id1
-        OR a.secondary_supervisor_id2 = :secondary_id2
-    ");
 
-    $stmt->execute([
-        'primary_id' => $lecturer_id,
-        'secondary_id1' => $lecturer_id,
-        'secondary_id2' => $lecturer_id
-    ]);
-
-    $assigned_students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -51,15 +54,21 @@
     <!-- END GLOBAL MANDATORY STYLES -->
 
     <!-- BEGIN PAGE LEVEL STYLES -->
-    <link href="../src/assets/css/light/apps/chat.css" rel="stylesheet" type="text/css" />
-    <link href="../src/assets/css/dark/apps/chat.css" rel="stylesheet" type="text/css" />
-    <!-- END PAGE LEVEL STYLES -->
+    <link href="../src/assets/css/light/components/modal.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/light/apps/contacts.css" rel="stylesheet" type="text/css" />
+    <script src="../dist/js/jquery.min.js"></script>
+    <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
     <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+
+
+    <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
+    <link href="../src/assets/css/dark/apps/contacts.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    
+    <!-- END PAGE LEVEL STYLES -->    
 </head>
 <body>
+    
     <!-- BEGIN LOADER -->
     <div id="load_screen"> <div class="loader"> <div class="loader-content">
         <div class="spinner-grow align-self-center"></div>
@@ -270,7 +279,6 @@
     <div class="main-container " id="container">
 
         <div class="overlay"></div>
-        <div class="cs-overlay"></div>
         <div class="search-overlay"></div>
 
         <!--  BEGIN SIDEBAR  -->
@@ -457,7 +465,7 @@
                     </li>
 
 
-                    <li class="menu active">
+                    <li class="menu ">
                         <a href="./chapter_four_chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
@@ -469,7 +477,7 @@
                     
 
 
-                    <li class="menu">
+                    <li class="menu ">
                         <a href="./students_chapter_five.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -507,7 +515,8 @@
 
 
                     
-                    <li class="menu ">
+
+                    <li class="menu active">
                         <a href="./students_compile_thesis.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
@@ -516,6 +525,8 @@
                             </div>
                         </a>
                     </li>
+                    
+
 
 
                     
@@ -532,92 +543,108 @@
 
                 <div class="middle-content container-xxl p-0">
 
-                    <div class="chat-section layout-top-spacing">
-                        <div class="row">
-    
-                            <div class="col-xl-12 col-lg-12 col-md-12">
-    
-                                
-
-                            <div class="chat-system">
-                                <div class="hamburger">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu mail-menu d-lg-none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                                </div>
-                                <div class="user-list-box">
-                                    <div class="search">
-                                        <input type="text" class="form-control" placeholder="Search Student" />
-                                    </div>
-                                    <div class="people">
-                                        <?php foreach ($assigned_students as $student): ?>
-                                            <div class="person" data-chat="person<?php echo $student['chapter_id']; ?>" data-chapter-id="<?php echo $student['chapter_id']; ?>">
-                                                <div class="user-info">
-                                                    <div class="f-head">
-                                                        <img src="../src/assets/img/profile-30.png" alt="avatar">
-                                                    </div>
-                                                    <div class="f-body">
-                                                        <div class="meta-info">
-                                                            <span class="user-name" data-name="<?php echo htmlspecialchars($student['student_name']); ?>"><?php echo htmlspecialchars($student['student_name']); ?></span>
-                                                            <!-- <span class="user-meta-time">Proposal ID: <?php echo $student['chapter_id']; ?></span> -->
-                                                        </div>
-                                                        <span class="preview">Click to view interactions</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                                <div class="chat-box">
-                                    <div class="chat-not-selected">
-                                        <p> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Student and Supervisor Interactions</p>
+                <div class="row layout-spacing layout-top-spacing" id="cancel-row">
+                    <div class="col-lg-12">
+                        <div class="container py-5">
+                            <h2 class="text-center mb-5"><i class="fas fa-file-alt"></i> Final Compiled Thesis Submission</h2>
+                            
+                            <?php if (!empty($compiled_thesis)): ?>
+                                <?php foreach ($compiled_thesis as $chapter): ?>
+                                    <div class="card mb-4 proposal-card">
                                         
-                                    </div>
-                                    <div class="chat-box-inner">
-                                        <div class="chat-meta-user">
-                                            <div class="current-chat-user-name"><span><img src="../src/assets/img/90x90.jpg" alt="dynamic-image"><span class="name"></span></span></div>
-                                            <div class="chat-action-btn align-self-center">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-phone  phone-call-screen"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-video video-call-screen"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-                                                    <div class="dropdown d-inline-block">
-                                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink-2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-vertical"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
-                                                        </a>
-    
-                                                        <div class="dropdown-menu left" aria-labelledby="dropdownMenuLink-2">
-                                                            <a class="dropdown-item" href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Settings</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg> Mail</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg> Delete</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share-2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg> Share</a>
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <span><i class="fas fa-user"></i> <?php echo htmlspecialchars($chapter['fullname']); ?></span>
+                                                <span><i class="fas fa-calendar-alt"></i> <?php echo date('F j, Y, g:i a', strtotime($chapter['submission_date'])); ?></span>
+                                                <span class="badge bg-<?php echo strtolower($chapter['status']) == 'submitted' ? 'success' : (strtolower($chapter['status']) == 'not submitted' ? 'danger' : 'warning'); ?>">
+                                                    <?php echo ucfirst(htmlspecialchars($chapter['status'])); ?>
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="container mt-4">
+                                                <div class="row">
+                                                    <div class="col-md-8 offset-md-2">
+                                                        <div class="card">
+                                                            <div class="card-body">
+                                                                <div class="media mb-4">
+                                                                    <img src="../src/assets/img/profile-30.png" class="mr-3 rounded-circle" width="50" height="50" alt="Student">
+                                                                    <div class="media-body">
+                                                                        <h5 class="mt-0"><?php echo htmlspecialchars($chapter['fullname']); ?> <small class="text-muted"><?php echo date('F j, Y, g:i a', strtotime($chapter['submission_date'])); ?></small></h5>
+                                                                       
+                                                                    </div>
+                                                                </div>
+
+                                                                
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                        </div>
-                                        <div class="chat-conversation-box">
-                                            <div id="chat-conversation-box-scroll" class="chat-conversation-box-scroll">
-                                                <!-- Conversations will be loaded here dynamically -->
                                             </div>
-                                        </div>
-                                        
-                                    </div>
-                                </div>
-                            </div>
 
-    
-                            </div>
+
+                                            <?php if (!empty($chapter['file_path'])): ?>
+                                                <div class="card mt-4">
+                                                    <div class="card-header bg-primary text-white">
+                                                        <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Compiled Thesis </h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span>Access the Compiled Thesis  document:</span>
+                                                            <div>
+                                                                <a href="<?php echo $chapter['file_path']; ?>" download class="btn btn-outline-primary me-2">
+                                                                    <i class="fas fa-download"></i> Download PDF
+                                                                </a>
+                                                                <a href="<?php echo $chapter['file_path']; ?>" target="_blank" class="btn btn-outline-secondary">
+                                                                    <i class="fas fa-external-link-alt"></i> Open in New Tab
+                                                                </a>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                        <div class="alert alert-info mt-3">
+                                                            <i class="fas fa-info-circle"></i> Preview not available. Please download or open in a new tab to view the document.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+
+
+
+                                            
+                                           
+                                        </div>
+                                    </div>
+
+                               
+                                    
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <div class="alert alert-info" role="alert">
+                                    No Chapter Five Submission found for this student.
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
+                </div>
+
 
                 </div>
                 
             </div>
 
             <!--  BEGIN FOOTER  -->
-            
+            <div class="footer-wrapper mt-0">
+                <div class="footer-section f-section-1">
+                    <p class="">Copyright © <span class="dynamic-year">2024</span> <a target="_blank" href="https://BlackCode Cyberzone.com/equation/">BlackCode Cyberzone</a>, All rights reserved.</p>
+                </div>
+                <div class="footer-section f-section-2">
+                    <p class="">Coded with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></p>
+                </div>
+            </div>
             <!--  END FOOTER  -->
         </div>
         <!--  END CONTENT AREA  -->
     </div>
-    <!-- END MAIN CONTAINER -->
+        <!-- END MAIN CONTAINER -->
     
     <!-- BEGIN GLOBAL MANDATORY SCRIPTS -->
     <script src="../src/plugins/src/global/vendors.min.js"></script>
@@ -626,29 +653,11 @@
     <script src="../src/plugins/src/mousetrap/mousetrap.min.js"></script>
     <script src="../src/plugins/src/waves/waves.min.js"></script>
     <script src="../layouts/vertical-dark-menu/app.js"></script>
+    <script src="../src/assets/js/custom.js"></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
-
-    <!-- BEGIN PAGE LEVEL SCRIPTS -->
-    <script src="../src/assets/js/apps/chat.js"></script>
-    <!-- END PAGE LEVEL SCRIPTS -->
-
-    <script>
-document.querySelectorAll('.person').forEach(item => {
-    item.addEventListener('click', event => {
-        const chapterId = event.currentTarget.dataset.chapterId;
-        loadConversation(chapterId);
-    })
-});
-
-function loadConversation(chapterId) {
-    fetch(`get_conversation_chapter_four.php?chapter_id=${chapterId}`)
-        .then(response => response.text())
-        .then(data => {
-            document.querySelector('.chat-conversation-box-scroll').innerHTML = data;
-            document.querySelector('.chat-form input[name="chapter_id"]').value = chapterId;
-        });
-}
-</script>
+    <script src="../src/plugins/src/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../src/assets/js/apps/contact.js"></script>
     
 </body>
 </html>
+

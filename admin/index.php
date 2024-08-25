@@ -509,676 +509,676 @@ $totalchapter_fiveSubmittedRejected = $stmt->fetchColumn();
 
                         
                         
-                       
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Name Of Faculty: </p>
-                <p class=""><?php 
-                                    $faculty_query = "SELECT name FROM faculties WHERE id = ?";
-                                    $stmt = $pdo->prepare($faculty_query);
-                                    $stmt->execute([$_SESSION['faculty_id']]);
-                                    $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $faculty['name'];?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Name Of Department: </p>
-                <p class=""><?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></p>
-            </div>
-        </div>
-        
-      
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-orders">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Number of Lecturers</p>
-                <p class="widget-numeric-value"><?php echo $totalLecturers; ?></p>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-customers">
-        <div class="media">
-            <div class="icon ml-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Number of Students</p>
-                <p class="widget-numeric-value"><?php echo $totalStudents; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-income">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Total Assigned Students:</p>
-                <p class="widget-numeric-value"><?php echo $totalAssignedStudents; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-orders">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Unassigned Students:</p>
-                <p class="widget-numeric-value"><?php echo $totalUnassignedStudents; ?></p>
-            </div>
-        </div>
-        
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Thesis Proposal Submitted: </p>
-                <p class="widget-numeric-value"><?php echo $totalThesisSubmitted; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Thesis Proposal Pending: </p>
-                <p class="widget-numeric-value"><?php echo $totalThesisSubmittedPending; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-income">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Thesis Proposal Approved:</p>
-                <p class="widget-numeric-value"><?php echo $totalThesisSubmittedApproved; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-customers">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Thesis Proposal Rejected:</p>
-                <p class="widget-numeric-value"><?php echo $totalThesisSubmittedRejected; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                </svg>
-
-
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter One Submitted: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmitted; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                </svg>
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter One Pending: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmittedPending; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-income">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter One Approved:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmittedApproved; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-customers">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter One Rejected:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmittedRejected; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                <line x1="12" y1="6" x2="18" y2="6"></line>
-                <line x1="12" y1="10" x2="18" y2="10"></line>
-                <line x1="12" y1="14" x2="18" y2="14"></line>
-                </svg>
-
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter Two Submitted: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmitted; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                <line x1="12" y1="6" x2="18" y2="6"></line>
-                <line x1="12" y1="10" x2="18" y2="10"></line>
-                <line x1="12" y1="14" x2="18" y2="14"></line>
-                </svg>
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter Two Pending: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmittedPending; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-income">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                <line x1="12" y1="6" x2="18" y2="6"></line>
-                <line x1="12" y1="10" x2="18" y2="10"></line>
-                <line x1="12" y1="14" x2="18" y2="14"></line>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter Two Approved:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmittedApproved; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-customers">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                <line x1="12" y1="6" x2="18" y2="6"></line>
-                <line x1="12" y1="10" x2="18" y2="10"></line>
-                <line x1="12" y1="14" x2="18" y2="14"></line>
-                </svg>
-
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter Two Rejected:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmittedRejected; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter Three Submitted: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmitted; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter Three Pending: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmittedPending; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-income">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter Three Approved:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmittedApproved; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-customers">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter Three Rejected:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmittedRejected; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter Four Submitted: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmitted; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter Four Pending: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmittedPending; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-income">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter Four Approved:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmittedApproved; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-customers">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter Four Rejected:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmittedRejected; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                <line x1="12" y1="6" x2="18" y2="6"></line>
-                <line x1="12" y1="10" x2="18" y2="10"></line>
-                <line x1="12" y1="14" x2="18" y2="14"></line>
-                </svg>
-
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter Five Submitted: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmitted; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-sales">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                <line x1="12" y1="6" x2="18" y2="6"></line>
-                <line x1="12" y1="10" x2="18" y2="10"></line>
-                <line x1="12" y1="14" x2="18" y2="14"></line>
-                </svg>
-
-            </div>
-            <div class="media-body">
-            <p class="widget-text">Chapter Five Pending: </p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmittedPending; ?></p>
-            </div>
-        </div>
-        
-        
-        
-    </div>
-</div>
-
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-income">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                <line x1="12" y1="6" x2="18" y2="6"></line>
-                <line x1="12" y1="10" x2="18" y2="10"></line>
-                <line x1="12" y1="14" x2="18" y2="14"></line>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter Five Approved:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmittedApproved; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
-
-
-<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
-    <div class="widget widget-t-sales-widget widget-m-customers">
-        <div class="media">
-            <div class="icon ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                <line x1="12" y1="6" x2="18" y2="6"></line>
-                <line x1="12" y1="10" x2="18" y2="10"></line>
-                <line x1="12" y1="14" x2="18" y2="14"></line>
-                </svg>
-            </div>
-            <div class="media-body">
-                <p class="widget-text">Chapter Five Rejected:</p>
-                <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmittedRejected; ?></p>
-            </div>
-        </div>
-       
-        
-    </div>
-</div>
+                                            
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Name Of Faculty: </p>
+                                        <p class=""><?php 
+                                                            $faculty_query = "SELECT name FROM faculties WHERE id = ?";
+                                                            $stmt = $pdo->prepare($faculty_query);
+                                                            $stmt->execute([$_SESSION['faculty_id']]);
+                                                            $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+                                                            echo $faculty['name'];?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Name Of Department: </p>
+                                        <p class=""><?php
+                                                            $dept_query = "SELECT name FROM departments WHERE id = ?";
+                                                            $stmt = $pdo->prepare($dept_query);
+                                                            $stmt->execute([$_SESSION['department_id']]);
+                                                            $department = $stmt->fetch(PDO::FETCH_ASSOC);
+                                                            echo $department['name'];
+                                                            ?></p>
+                                    </div>
+                                </div>
+                                
+                            
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-orders">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Number of Lecturers</p>
+                                        <p class="widget-numeric-value"><?php echo $totalLecturers; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-customers">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Number of Students</p>
+                                        <p class="widget-numeric-value"><?php echo $totalStudents; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-income">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Total Assigned Students:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalAssignedStudents; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-orders">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Unassigned Students:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalUnassignedStudents; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Thesis Proposal Submitted: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalThesisSubmitted; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Thesis Proposal Pending: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalThesisSubmittedPending; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-income">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Thesis Proposal Approved:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalThesisSubmittedApproved; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-customers">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Thesis Proposal Rejected:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalThesisSubmittedRejected; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open">
+                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                        </svg>
+
+
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter One Submitted: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmitted; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open">
+                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter One Pending: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmittedPending; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-income">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open">
+                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter One Approved:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmittedApproved; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-customers">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open">
+                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter One Rejected:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmittedRejected; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        <line x1="12" y1="6" x2="18" y2="6"></line>
+                                        <line x1="12" y1="10" x2="18" y2="10"></line>
+                                        <line x1="12" y1="14" x2="18" y2="14"></line>
+                                        </svg>
+
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter Two Submitted: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmitted; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        <line x1="12" y1="6" x2="18" y2="6"></line>
+                                        <line x1="12" y1="10" x2="18" y2="10"></line>
+                                        <line x1="12" y1="14" x2="18" y2="14"></line>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter Two Pending: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmittedPending; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-income">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        <line x1="12" y1="6" x2="18" y2="6"></line>
+                                        <line x1="12" y1="10" x2="18" y2="10"></line>
+                                        <line x1="12" y1="14" x2="18" y2="14"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter Two Approved:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmittedApproved; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-customers">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        <line x1="12" y1="6" x2="18" y2="6"></line>
+                                        <line x1="12" y1="10" x2="18" y2="10"></line>
+                                        <line x1="12" y1="14" x2="18" y2="14"></line>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter Two Rejected:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmittedRejected; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter Three Submitted: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmitted; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter Three Pending: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmittedPending; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-income">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter Three Approved:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmittedApproved; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-customers">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter Three Rejected:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmittedRejected; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter Four Submitted: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmitted; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter Four Pending: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmittedPending; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-income">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter Four Approved:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmittedApproved; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-customers">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter Four Rejected:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmittedRejected; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        <line x1="12" y1="6" x2="18" y2="6"></line>
+                                        <line x1="12" y1="10" x2="18" y2="10"></line>
+                                        <line x1="12" y1="14" x2="18" y2="14"></line>
+                                        </svg>
+
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter Five Submitted: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmitted; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-sales">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        <line x1="12" y1="6" x2="18" y2="6"></line>
+                                        <line x1="12" y1="10" x2="18" y2="10"></line>
+                                        <line x1="12" y1="14" x2="18" y2="14"></line>
+                                        </svg>
+
+                                    </div>
+                                    <div class="media-body">
+                                    <p class="widget-text">Chapter Five Pending: </p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmittedPending; ?></p>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-income">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        <line x1="12" y1="6" x2="18" y2="6"></line>
+                                        <line x1="12" y1="10" x2="18" y2="10"></line>
+                                        <line x1="12" y1="14" x2="18" y2="14"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter Five Approved:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmittedApproved; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
+
+
+                        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+                            <div class="widget widget-t-sales-widget widget-m-customers">
+                                <div class="media">
+                                    <div class="icon ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                        <line x1="12" y1="6" x2="18" y2="6"></line>
+                                        <line x1="12" y1="10" x2="18" y2="10"></line>
+                                        <line x1="12" y1="14" x2="18" y2="14"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="widget-text">Chapter Five Rejected:</p>
+                                        <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmittedRejected; ?></p>
+                                    </div>
+                                </div>
+                            
+                                
+                            </div>
+                        </div>
 
 
 
