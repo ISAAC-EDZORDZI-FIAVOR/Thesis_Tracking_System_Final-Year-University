@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 21, 2024 at 12:31 AM
+-- Generation Time: Aug 25, 2024 at 07:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -50,7 +50,6 @@ INSERT INTO `assignments` (`id`, `student_id`, `primary_supervisor_id`, `seconda
 (47, 32, 57, 33, 9, 1, '2024-08-07 18:00:22.01', 1),
 (48, 7, 8, 9, 33, 1, '2024-08-15 12:16:40.73', 1),
 (50, 68, 9, 34, 8, 1, '2024-08-16 18:41:31.73', NULL),
-(51, 74, 9, 34, 8, 1, '2024-08-16 18:41:31.74', NULL),
 (52, 4, 57, 8, 34, 1, '2024-08-16 18:42:05.79', NULL),
 (54, 76, 9, 8, 33, 1, '2024-08-18 13:43:11.36', 1);
 
@@ -152,6 +151,13 @@ CREATE TABLE `chapter_five` (
   `lecturer_comment_time` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `chapter_five`
+--
+
+INSERT INTO `chapter_five` (`id`, `student_id`, `primary_supervisor_id`, `secondary_supervisor_id1`, `secondary_supervisor_id2`, `faculty_id`, `department_id`, `title`, `description`, `comment`, `file_path`, `status`, `submission_date`, `lecturer_comment_time`) VALUES
+(1, 76, 9, 8, 33, 1, 1, 'lkjhgfoiuytrewq87uy6trew', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', NULL, 'approved', '2024-08-25 01:21:40', '2024-08-25 01:22:17');
+
 -- --------------------------------------------------------
 
 --
@@ -167,6 +173,14 @@ CREATE TABLE `chapter_five_interactions` (
   `message` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chapter_five_interactions`
+--
+
+INSERT INTO `chapter_five_interactions` (`id`, `chapter_five_id`, `user_id`, `title`, `description`, `message`, `created_at`) VALUES
+(1, 1, 76, 'lkjhgfoiuytrewq87uy6trew', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', 'Sir Please I have Submitted Chapter Five', '2024-08-25 01:21:40'),
+(2, 1, 9, 'Chapter Five  Review', 'Status: approved', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', '2024-08-25 01:22:17');
 
 -- --------------------------------------------------------
 
@@ -191,6 +205,13 @@ CREATE TABLE `chapter_four` (
   `lecturer_comment_time` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `chapter_four`
+--
+
+INSERT INTO `chapter_four` (`id`, `student_id`, `primary_supervisor_id`, `secondary_supervisor_id1`, `secondary_supervisor_id2`, `faculty_id`, `department_id`, `title`, `description`, `comment`, `file_path`, `status`, `submission_date`, `lecturer_comment_time`) VALUES
+(1, 76, 9, 8, 33, 1, 1, 'asdfghjkl;\'lkjhgfdsdfghjkl;\';lkjhgfdbhdhjkhlfdg', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', '../uploads/Chapter_Four/20784838_RITA_ALOMOTEY_EMEFA_chapter_four.pdf', 'approved', '2024-08-25 01:16:28', '2024-08-25 01:16:58');
+
 -- --------------------------------------------------------
 
 --
@@ -206,6 +227,16 @@ CREATE TABLE `chapter_four_interactions` (
   `message` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chapter_four_interactions`
+--
+
+INSERT INTO `chapter_four_interactions` (`id`, `chapter_four_id`, `user_id`, `title`, `description`, `message`, `created_at`) VALUES
+(1, 1, 76, 'wasdfghjkl,;lkjhgfdsdfghjkl;\'lkjhugtfdghjkl;lkjhgfdfghujikopl;\'lkjihuygt', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', 'Sir Please I have Submitted Chapter Four', '2024-08-25 01:15:08'),
+(2, 1, 9, 'Chapter Four  Review', 'Status: rejected', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', '2024-08-25 01:15:51'),
+(3, 1, 76, 'asdfghjkl;\'lkjhgfdsdfghjkl;\';lkjhgfdbhdhjkhlfdg', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', 'Sir Please I have Submitted Chapter Four', '2024-08-25 01:16:28'),
+(4, 1, 9, 'Chapter Four  Review', 'Status: approved', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', '2024-08-25 01:16:58');
 
 -- --------------------------------------------------------
 
@@ -319,6 +350,13 @@ CREATE TABLE `chapter_three` (
   `lecturer_comment_time` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `chapter_three`
+--
+
+INSERT INTO `chapter_three` (`id`, `student_id`, `primary_supervisor_id`, `secondary_supervisor_id1`, `secondary_supervisor_id2`, `faculty_id`, `department_id`, `title`, `description`, `comment`, `file_path`, `status`, `submission_date`, `lecturer_comment_time`) VALUES
+(1, 76, 9, 8, 33, 1, 1, 'asdfghjnkm,l.;\';lkjhgfdsadfghjkl;kjuyhtrfedsfhgjkljhgfdfghj', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', NULL, 'approved', '2024-08-25 01:12:10', '2024-08-25 01:12:49');
+
 -- --------------------------------------------------------
 
 --
@@ -334,6 +372,14 @@ CREATE TABLE `chapter_three_interactions` (
   `message` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `chapter_three_interactions`
+--
+
+INSERT INTO `chapter_three_interactions` (`id`, `chapter_three_id`, `user_id`, `title`, `description`, `message`, `created_at`) VALUES
+(1, 1, 76, 'asdfghjnkm,l.;\';lkjhgfdsadfghjkl;kjuyhtrfedsfhgjkljhgfdfghj', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', 'Sir Please I have Submitted Chapter Three', '2024-08-25 01:12:10'),
+(2, 1, 9, 'Chapter Three  Review', 'Status: approved', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', '2024-08-25 01:12:49');
 
 -- --------------------------------------------------------
 
@@ -363,7 +409,7 @@ CREATE TABLE `chapter_two` (
 --
 
 INSERT INTO `chapter_two` (`id`, `student_id`, `primary_supervisor_id`, `secondary_supervisor_id1`, `secondary_supervisor_id2`, `faculty_id`, `department_id`, `title`, `description`, `comment`, `file_path`, `status`, `submission_date`, `lecturer_comment_time`) VALUES
-(1, 76, 9, 8, 33, 1, 1, 'The use of Smart shirt to improve upon the security of the visually impaired', 'ext ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop p', NULL, '../uploads/Chapter_Two/20784838_RITA_ALOMOTEY_EMEFA_chapter_two.pdf', 'pending', '2024-08-20 19:25:22', NULL);
+(1, 76, 9, 8, 33, 1, 1, 'The use of Smart shirt to improve upon the security of the visually impaired', 'ext ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop p', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', '../uploads/Chapter_Two/20784838_RITA_ALOMOTEY_EMEFA_chapter_two.pdf', 'approved', '2024-08-20 19:25:22', '2024-08-25 01:10:34');
 
 -- --------------------------------------------------------
 
@@ -386,7 +432,8 @@ CREATE TABLE `chapter_two_interactions` (
 --
 
 INSERT INTO `chapter_two_interactions` (`id`, `chapter_two_id`, `user_id`, `title`, `description`, `message`, `created_at`) VALUES
-(1, 1, 76, 'The use of Smart shirt to improve upon the security of the visually impaired', 'ext ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop p', 'Sir Please I have Submitted Chapter Two', '2024-08-20 19:25:22');
+(1, 1, 76, 'The use of Smart shirt to improve upon the security of the visually impaired', 'ext ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop p', 'Sir Please I have Submitted Chapter Two', '2024-08-20 19:25:22'),
+(2, 1, 9, 'Chapter Two  Review', 'Status: approved', 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, a', '2024-08-25 01:10:34');
 
 -- --------------------------------------------------------
 
@@ -413,6 +460,32 @@ INSERT INTO `chapter_type` (`id`, `chapter_name`, `dateRegistered`) VALUES
 (6, 'Chapter 5: Conclusion and Recommendations', '2024-07-03 22:48:02'),
 (7, 'References', '2024-07-03 22:48:02'),
 (8, 'Appendicesaa', '2024-07-03 22:48:02');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `compiled_thesis`
+--
+
+CREATE TABLE `compiled_thesis` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `primary_supervisor_id` int(11) NOT NULL,
+  `secondary_supervisor_id1` int(11) DEFAULT NULL,
+  `secondary_supervisor_id2` int(11) DEFAULT NULL,
+  `file_path` varchar(255) NOT NULL,
+  `faculty_id` int(11) NOT NULL,
+  `department_id` int(11) NOT NULL,
+  `submission_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('Submitted','Approved','Rejected') NOT NULL DEFAULT 'Submitted'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `compiled_thesis`
+--
+
+INSERT INTO `compiled_thesis` (`id`, `student_id`, `primary_supervisor_id`, `secondary_supervisor_id1`, `secondary_supervisor_id2`, `file_path`, `faculty_id`, `department_id`, `submission_date`, `status`) VALUES
+(1, 76, 9, 8, 33, '../uploads/Compiled_thesis/RITA_ALOMOTEY_EMEFA_20784838_20240825.pdf', 1, 1, '2024-08-25 16:48:56', 'Submitted');
 
 -- --------------------------------------------------------
 
@@ -670,7 +743,8 @@ INSERT INTO `users` (`id`, `username`, `fullname`, `password`, `role`, `departme
 (72, '74555', 'OKAKAI ALFRED AMAQ', '$2y$10$WrkBg9hoEl1g/De1M0fUx.CmY.EC.gyd5Mv9QGz8Wpjv5bTMPcFFO', 'student', 8, '2024-08-16 10:42:48', '5th Years', 1),
 (74, '2035767485', 'YADIA BAABA YAO', '$2y$10$OqBClnfVOBLN5RhjEyfLTul9AfpT6rQ6hLOSNIPjErJN7FG8lZDvi', 'student', 1, '2024-08-16 15:47:20', '5th Years', 1),
 (75, '984567748', 'CYNTHIA NYOVI MACHOKA', '$2y$10$ASMQflDqU707AZFcXp9WWepE2ZG4SQ0a3lWHrJvBBQ8Wh.JtdkLhK', 'student', 1, '2024-08-16 19:11:35', '5th Year', 1),
-(76, '20784838', 'RITA ALOMOTEY EMEFA', '$2y$10$sCHOMyfTw5DXiiamXZ9/bu.zlEd2jCP5EHVg0nn6MGZqvhtyvhw.C', 'student', 1, '2024-08-18 13:33:47', '5th Year', 1);
+(76, '20784838', 'RITA ALOMOTEY EMEFA', '$2y$10$sCHOMyfTw5DXiiamXZ9/bu.zlEd2jCP5EHVg0nn6MGZqvhtyvhw.C', 'student', 1, '2024-08-18 13:33:47', '5th Year', 1),
+(77, '202188734', 'CAROLINE PAKADY AMU', '$2y$10$Ga.JMYeeDbn49Oh8GoNFtuQExv15Ab0ucMznjvY8eXN4/DgQYPWtm', 'student', 2, '2024-08-23 13:55:31', '5th Year', 1);
 
 -- --------------------------------------------------------
 
@@ -866,6 +940,19 @@ ALTER TABLE `chapter_type`
   ADD UNIQUE KEY `chapter_name` (`chapter_name`);
 
 --
+-- Indexes for table `compiled_thesis`
+--
+ALTER TABLE `compiled_thesis`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_student` (`student_id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `primary_supervisor_id` (`primary_supervisor_id`),
+  ADD KEY `secondary_supervisor_id1` (`secondary_supervisor_id1`),
+  ADD KEY `secondary_supervisor_id2` (`secondary_supervisor_id2`),
+  ADD KEY `faculty_id` (`faculty_id`),
+  ADD KEY `department_id` (`department_id`);
+
+--
 -- Indexes for table `departments`
 --
 ALTER TABLE `departments`
@@ -965,25 +1052,25 @@ ALTER TABLE `chapters`
 -- AUTO_INCREMENT for table `chapter_five`
 --
 ALTER TABLE `chapter_five`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `chapter_five_interactions`
 --
 ALTER TABLE `chapter_five_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `chapter_four`
 --
 ALTER TABLE `chapter_four`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `chapter_four_interactions`
 --
 ALTER TABLE `chapter_four_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `chapter_one`
@@ -1007,13 +1094,13 @@ ALTER TABLE `chapter_progress`
 -- AUTO_INCREMENT for table `chapter_three`
 --
 ALTER TABLE `chapter_three`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `chapter_three_interactions`
 --
 ALTER TABLE `chapter_three_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `chapter_two`
@@ -1025,13 +1112,19 @@ ALTER TABLE `chapter_two`
 -- AUTO_INCREMENT for table `chapter_two_interactions`
 --
 ALTER TABLE `chapter_two_interactions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `chapter_type`
 --
 ALTER TABLE `chapter_type`
   MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `compiled_thesis`
+--
+ALTER TABLE `compiled_thesis`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -1085,7 +1178,7 @@ ALTER TABLE `thesis_proposals`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `uuu`
@@ -1211,6 +1304,17 @@ ALTER TABLE `chapter_two`
 ALTER TABLE `chapter_two_interactions`
   ADD CONSTRAINT `chapter_two_interactions_ibfk_1` FOREIGN KEY (`chapter_two_id`) REFERENCES `chapter_two` (`id`),
   ADD CONSTRAINT `chapter_two_interactions_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `compiled_thesis`
+--
+ALTER TABLE `compiled_thesis`
+  ADD CONSTRAINT `compiled_thesis_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `compiled_thesis_ibfk_2` FOREIGN KEY (`primary_supervisor_id`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `compiled_thesis_ibfk_3` FOREIGN KEY (`secondary_supervisor_id1`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `compiled_thesis_ibfk_4` FOREIGN KEY (`secondary_supervisor_id2`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `compiled_thesis_ibfk_5` FOREIGN KEY (`faculty_id`) REFERENCES `faculties` (`id`),
+  ADD CONSTRAINT `compiled_thesis_ibfk_6` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`);
 
 --
 -- Constraints for table `departments`
