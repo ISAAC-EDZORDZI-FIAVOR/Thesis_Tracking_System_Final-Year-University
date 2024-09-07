@@ -420,7 +420,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                     <?php elseif ($chapter_five['status'] == 'pending'): ?>
                                                                         <div class="card mt-4">
                                                                             <div class="card-header bg-info text-white">
-                                                                                <h2 class="mb-0">Chapter Five Submission Status</h2>
+                                                                                <h2 class="mb-0 text-white">Chapter Five Submission Status</h2>
                                                                             </div>
                                                                             <div class="card-body">
                                                                                 <div class="alert alert-info" role="alert">
@@ -436,7 +436,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                 <?php if (!empty($chapter_five['file_path'])): ?>
                                                                                     <div class="card mt-4">
                                                                                         <div class="card-header bg-primary text-white">
-                                                                                            <h5 class="mb-0">Chapter Five Document</h5>
+                                                                                            <h5 class="mb-0 text-white">Chapter Five Document</h5>
                                                                                         </div>
                                                                                         <div class="card-body">
                                                                                             <p>View the Chapter Five document: <a href="../lecturer/<?php echo $chapter_five['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
@@ -449,7 +449,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                     <?php elseif ($chapter_five['status'] == 'rejected'): ?>
                                                                             <div class="card mt-4">
                                                                                 <div class="card-header bg-danger text-white">
-                                                                                    <h2 class="mb-0">Chapter Five Submission Status</h2>
+                                                                                    <h2 class="mb-0 text-white">Chapter Five Submission Status</h2>
                                                                                 </div>
                                                                                 <div class="card-body">
                                                                                     <div class="alert alert-danger" role="alert">
@@ -465,7 +465,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                     <?php if (!empty($chapter_five['file_path'])): ?>
                                                                                     <div class="card mt-4">
                                                                                         <div class="card-header bg-primary text-white">
-                                                                                            <h5 class="mb-0">Chapter Five Document</h5>
+                                                                                            <h5 class="mb-0 text-white">Chapter Five Document</h5>
                                                                                         </div>
                                                                                         <div class="card-body">
                                                                                             <p>View Chapter Five Document: <a href="../lecturer/<?php echo $chapter_five['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
@@ -482,10 +482,53 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+
+
+
+                                                                            <?php elseif ($chapter_five['status'] == 'revise'): ?>
+                                                                            <div class="card mt-4">
+                                                                                <div class="card-header bg-primary text-white">
+                                                                                    <h2 class="mb-0 text-white">Chapter Five Submission Status</h2>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="alert alert-danger" role="alert">
+                                                                                        Your Chapter Five Submission has been Partially Accepted with Few Correction. Please Review the Feedback and Resubmit.
+                                                                                    </div>
+                                                                                    <ul class="list-group">
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Title:</strong> <?php echo htmlspecialchars($chapter_five['title']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Description:</strong> <?php echo htmlspecialchars($chapter_five['description']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Feedback:</strong> <?php echo htmlspecialchars($chapter_five['comment']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($chapter_five['submission_date'])); ?></li>
+                                                                                    </ul>
+
+                                                                                    <?php if (!empty($chapter_five['file_path'])): ?>
+                                                                                    <div class="card mt-4">
+                                                                                        <div class="card-header bg-primary text-white">
+                                                                                            <h5 class="mb-0 text-white">Chapter Five Document</h5>
+                                                                                        </div>
+                                                                                        <div class="card-body">
+                                                                                            <p>View Chapter Five Document: <a href="../lecturer/<?php echo $chapter_five['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <?php endif; ?>
+                                                                                    
+                                                                                    <div class="mt-4">
+                                                                                    <div class="col-md-12 col-sm-12 col-12 text-center">
+                                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Resubmit Your Chapter Five</a>
+                                                                                        
+                                                                                    </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+
+
+
                                                                             <?php elseif ($chapter_five['status'] == 'approved'): ?>
                                                                                 <div class="card mt-4">
                                                                                     <div class="card-header bg-success text-white">
-                                                                                        <h2 class="mb-0 text-center">Your Chapter Five is  Accepted ! , Congrat !!! &#x1F44B;</h2>
+                                                                                        <h2 class="mb-0 text-center text-white">Your Chapter Five is  Accepted ! , Congrats !!! &#x1F44B;</h2>
                                                                                     </div>
                                                                                     <div class="card-body">
                                                                                     <div class="mt-4">
@@ -495,7 +538,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                                 <label for="compiled_file">Upload Compiled Thesis (PDF)</label>
                                                                                                 <input type="file" class="form-control-file" id="compiled_file" name="compiled_file" accept=".pdf" required>
                                                                                             </div>
-                                                                                            <button type="submit" name="submit_Compile" class="btn btn-primary">Submit Compiled Thesis</button>
+                                                                                            <button type="submit" name="submit_Compile" class="btn btn-primary mt-4">Submit Compiled Thesis</button>
                                                                                         </form>
                                                                                     </div>
 
@@ -509,11 +552,11 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                         if ($compiledThesis) {
                                                                                             echo '<div class="mt-4 card">';
                                                                                             echo '<div class="card-header bg-primary text-white">';
-                                                                                            echo '<h4 class="mb-0">Uploaded Compiled Thesis</h4>';
+                                                                                            echo '<h4 class="mb-0 text-white">Uploaded Compiled Thesis</h4>';
                                                                                             echo '</div>';
                                                                                             echo '<div class="card-body">';
                                                                                             echo '<div class="d-flex align-items-center">';
-                                                                                            echo '<i class="fas fa-file-pdf text-danger fa-3x mr-3"></i>';
+                                                                                            echo '<i class="fas fa-file-pdf text-danger fa-3x p-1"></i>';
                                                                                             echo '<a href="' . $compiledThesis['file_path'] . '" target="_blank" class="btn btn-outline-primary">View Uploaded Thesis</a>';
                                                                                             echo '</div>';
                                                                                             echo '</div>';
@@ -631,6 +674,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     <script src="../src/assets/js/custom.js"></script>
+    <script src="../src/assets/js/form-validation.js"></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 
     <!-- BEGIN PAGE LEVEL SCRIPTS -->

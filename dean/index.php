@@ -1,73 +1,146 @@
 <?php
 session_start();
 require '../config.php';
-if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "lecturer") {
-    header("Location: auth-signin.php");
+
+if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "dean") {
+    header("Location: ../admin/auth-signin.php");
     exit();
 }
 
 
 
+$faculty_id = $_SESSION['faculty_id']; // Assuming the faculty_id is stored in the session
 
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM departments WHERE faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalDepartments = $stmt->fetchColumn();
 
-$lecturer_id = $_SESSION['user_id']; // Assuming the lecturer's user_id is stored in the session
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role = 'lecturer' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalLecturers = $stmt->fetchColumn();
 
-// Count total assigned students
-$stmt = $pdo->prepare("SELECT COUNT(DISTINCT student_id) FROM assignments WHERE primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?");
-$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role = 'student' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalStudents = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(DISTINCT a.student_id) FROM assignments a JOIN users u ON a.student_id = u.id WHERE u.faculty_id = ?");
+$stmt->execute([$faculty_id]);
 $totalAssignedStudents = $stmt->fetchColumn();
 
-// Count total thesis proposals
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?");
-$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
+$stmt = $pdo->prepare("
+    SELECT COUNT(*)
+    FROM users
+    WHERE role = 'student'
+    AND faculty_id = ?
+    AND id NOT IN (SELECT DISTINCT student_id FROM assignments)
+");
+$stmt->execute([$faculty_id]);
+$totalUnassignedStudents = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE faculty_id = ?");
+$stmt->execute([$faculty_id]);
 $totalThesisSubmitted = $stmt->fetchColumn();
 
-// Count pending thesis proposals
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE (primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?) AND status = 'pending'");
-$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'pending' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
 $totalThesisSubmittedPending = $stmt->fetchColumn();
 
-// Count approved thesis proposals
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE (primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?) AND status = 'approved'");
-$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'approved' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
 $totalThesisSubmittedApproved = $stmt->fetchColumn();
 
-// Count rejected thesis proposals
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE (primary_supervisor_id = ? OR secondary_supervisor_id1 = ? OR secondary_supervisor_id2 = ?) AND status = 'rejected'");
-$stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'rejected' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
 $totalThesisSubmittedRejected = $stmt->fetchColumn();
 
-// Similar queries for each chapter
-$chapters = ['one', 'two', 'three', 'four', 'five'];
+// Similar modifications for chapter_one, chapter_two, chapter_three, chapter_four, and chapter_five queries
 
-foreach ($chapters as $chapter) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_{$chapter} c 
-        JOIN thesis_proposals tp ON c.student_id = tp.student_id 
-        WHERE tp.primary_supervisor_id = ? OR tp.secondary_supervisor_id1 = ? OR tp.secondary_supervisor_id2 = ?");
-    $stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
-    ${"totalchapter_{$chapter}Submitted"} = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_{$chapter} c 
-        JOIN thesis_proposals tp ON c.student_id = tp.student_id 
-        WHERE (tp.primary_supervisor_id = ? OR tp.secondary_supervisor_id1 = ? OR tp.secondary_supervisor_id2 = ?) 
-        AND c.status = 'pending'");
-    $stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
-    ${"totalchapter_{$chapter}SubmittedPending"} = $stmt->fetchColumn();
+// Thesis chapter One query in the dashboard
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_one c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalchapter_oneSubmitted = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_{$chapter} c 
-        JOIN thesis_proposals tp ON c.student_id = tp.student_id 
-        WHERE (tp.primary_supervisor_id = ? OR tp.secondary_supervisor_id1 = ? OR tp.secondary_supervisor_id2 = ?) 
-        AND c.status = 'approved'");
-    $stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
-    ${"totalchapter_{$chapter}SubmittedApproved"} = $stmt->fetchColumn();
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_one c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'pending'");
+$stmt->execute([$faculty_id]);
+$totalchapter_oneSubmittedPending = $stmt->fetchColumn();
 
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_{$chapter} c 
-        JOIN thesis_proposals tp ON c.student_id = tp.student_id 
-        WHERE (tp.primary_supervisor_id = ? OR tp.secondary_supervisor_id1 = ? OR tp.secondary_supervisor_id2 = ?) 
-        AND c.status = 'rejected'");
-    $stmt->execute([$lecturer_id, $lecturer_id, $lecturer_id]);
-    ${"totalchapter_{$chapter}SubmittedRejected"} = $stmt->fetchColumn();
-}
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_one c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'approved'");
+$stmt->execute([$faculty_id]);
+$totalchapter_oneSubmittedApproved = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_one c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'rejected'");
+$stmt->execute([$faculty_id]);
+$totalchapter_oneSubmittedRejected = $stmt->fetchColumn();
+
+// Thesis chapter Two query in the dashboard
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_two c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalchapter_twoSubmitted = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_two c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'pending'");
+$stmt->execute([$faculty_id]);
+$totalchapter_twoSubmittedPending = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_two c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'approved'");
+$stmt->execute([$faculty_id]);
+$totalchapter_twoSubmittedApproved = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_two c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'rejected'");
+$stmt->execute([$faculty_id]);
+$totalchapter_twoSubmittedRejected = $stmt->fetchColumn();
+
+// Thesis chapter Three query in the dashboard
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_three c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalchapter_threeSubmitted = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_three c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'pending'");
+$stmt->execute([$faculty_id]);
+$totalchapter_threeSubmittedPending = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_three c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'approved'");
+$stmt->execute([$faculty_id]);
+$totalchapter_threeSubmittedApproved = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_three c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'rejected'");
+$stmt->execute([$faculty_id]);
+$totalchapter_threeSubmittedRejected = $stmt->fetchColumn();
+
+// Thesis chapter Four query in the dashboard
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_four c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalchapter_fourSubmitted = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_four c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'pending'");
+$stmt->execute([$faculty_id]);
+$totalchapter_fourSubmittedPending = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_four c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'approved'");
+$stmt->execute([$faculty_id]);
+$totalchapter_fourSubmittedApproved = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_four c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'rejected'");
+$stmt->execute([$faculty_id]);
+$totalchapter_fourSubmittedRejected = $stmt->fetchColumn();
+
+// Thesis chapter Five query in the dashboard
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_five c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalchapter_fiveSubmitted = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_five c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'pending'");
+$stmt->execute([$faculty_id]);
+$totalchapter_fiveSubmittedPending = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_five c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'approved'");
+$stmt->execute([$faculty_id]);
+$totalchapter_fiveSubmittedApproved = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_five c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'rejected'");
+$stmt->execute([$faculty_id]);
+$totalchapter_fiveSubmittedRejected = $stmt->fetchColumn();
+
 
 
 ?>
@@ -263,15 +336,8 @@ foreach ($chapters as $chapter) {
                                     &#x1F44B;
                                 </div>
                                 <div class="media-body">
-                                <p><?php echo $_SESSION["fullname"]; ?> !</p>
-                                    <p>Lecturer</p>
-                                    <p><?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></p>
+                                    <h5><?php echo $_SESSION["fullname"]; ?> !</h5>
+                                    <p>Faculty Dean</p>
                                 </div>
                             </div>
                         </div>
@@ -333,17 +399,9 @@ foreach ($chapters as $chapter) {
                             <img src="../src/assets/img/profile-30.png" alt="avatar">
                         </div>
                         <div class="profile-content">
-                        <p><?php echo $_SESSION["fullname"]; ?> !</p>
-                                    <p>Lecturer</p>
-                                    <p><?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></p>
-                         </div>
-                    
+                            <p class=""><?php echo $_SESSION["fullname"]; ?>!</p>
+                            <p class="">Faculty Dean</p>
+                        </div>
                     </div>
                 </div>
                                 
@@ -369,321 +427,32 @@ foreach ($chapters as $chapter) {
                         </ul>
                     </li>
 
+                    <li class="menu menu-heading">
+                        <div class="heading"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg><span>SETTINGS</span></div>
+                    </li>
+
+                    
+
+                    <li class="menu">
+                        <a href="./overview.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                               <span>Thesis Overview</span>
+                            </div>
+                        </a>
+                    </li>
+
                    
 
 
-
-
-
                     <li class="menu">
-                        <a href="#invoice" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Proposal </span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="invoice" data-bs-parent="#accordionExample">
-                                <li class="menu">
-                                    <a href="./students_assignedList.php" aria-expanded="false" class="dropdown-toggle">
-                                        <div class="">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="12" cy="7" r="4"></circle>
-                                                </svg>
-                                        <span>Proposal List</span>
-                                        </div>
-                                    </a>
-                                </li>
-
-                                <li class="menu">
-                                    <a href="./proposal_chat.php" aria-expanded="false" class="dropdown-toggle">
-                                        <div class="">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                            <span>Proposal Details</span>
-                                        </div>
-                                    </a>
-                                </li>               
-                        </ul>
-                    </li>
-
-
-
-
-
-
-
-                    <li class="menu">
-                        <a href="#invoice1" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter One </span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="invoice1" data-bs-parent="#accordionExample">
-                        <li class="menu">
-                        <a href="./students_chapter_one.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter List</span>
-                            </div>
-                        </a>
-                    </li>
-
-
-                    <li class="menu ">
-                        <a href="./chapter_one_chat.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Details</span>
-                            </div>
-                        </a>
-                    </li>
-            
-                        </ul>
-                    </li>
-
-                    
-
-                    
-
-
-
-
-
-
-
-                    <li class="menu">
-                        <a href="#invoice2" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter Two </span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="invoice2" data-bs-parent="#accordionExample">
-                        <li class="menu">
-                        <a href="./students_chapter_two.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter List</span>
-                            </div>
-                        </a>
-                    </li>
-
-
-                    <li class="menu ">
-                        <a href="./chapter_two_chat.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Details</span>
-                            </div>
-                        </a>
-                    </li>
-            
-                        </ul>
-                    </li>
-
-
-
-
-
-
-
-                    <li class="menu">
-                        <a href="#invoice3" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter Three </span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="invoice3" data-bs-parent="#accordionExample">
-                        <li class="menu">
-                        <a href="./students_chapter_three.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter List</span>
-                            </div>
-                        </a>
-                    </li>
-
-
-                    <li class="menu ">
-                        <a href="./chapter_three_chat.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Details</span>
-                            </div>
-                        </a>
-                    </li>
-                        </ul>
-                    </li>
-                    
-
-
-
-
-
-
-                    <li class="menu">
-                        <a href="#invoice4" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter Four </span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="invoice4" data-bs-parent="#accordionExample">
-                        <li class="menu">
-                        <a href="./students_chapter_four.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter List</span>
-                            </div>
-                        </a>
-                    </li>
-
-
-                    <li class="menu ">
-                        <a href="./chapter_four_chat.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Details</span>
-                            </div>
-                        </a>
-                    </li>             
-                        </ul>
-                    </li>
-
-
-
-
-
-                    <li class="menu">
-                        <a href="#invoice5" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter Five </span>
-                            </div>
-                            <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </a>
-                        <ul class="collapse submenu list-unstyled" id="invoice5" data-bs-parent="#accordionExample">
-                        <li class="menu">
-                        <a href="./students_chapter_five.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                            <line x1="12" y1="6" x2="18" y2="6"></line>
-                            <line x1="12" y1="10" x2="18" y2="10"></line>
-                            <line x1="12" y1="14" x2="18" y2="14"></line>
-                            </svg>
-                                <span>Chapter List</span>
-                            </div>
-                        </a>
-                    </li>
-
-
-                     <li class="menu ">
-                        <a href="./chapter_five_chat.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Details</span>
-                            </div>
-                        </a>
-                    </li>           
-                        </ul>
-                    </li>
-
-
-                    <li class="menu ">
-                        <a href="./students_compile_thesis.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-
-                                <span>Compiled Thesis</span>
-                            </div>
-                        </a>
-                    </li>
-
-
-
-                    <li class="menu ">
-                        <a href="./generate_lecturer_report.php" aria-expanded="false" class="dropdown-toggle">
+                        <a href="./generate_admin_report.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
 
@@ -691,10 +460,7 @@ foreach ($chapters as $chapter) {
                             </div>
                         </a>
                     </li>
-
-
-                    
-                    
+ 
                 </ul>
                 
             </nav>
@@ -713,9 +479,6 @@ foreach ($chapters as $chapter) {
 
                 <div class="row layout-top-spacing">
 
-                        
-                        
-                                            
 <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
     <div class="widget widget-t-sales-widget widget-m-sales">
         <div class="media">
@@ -752,25 +515,57 @@ foreach ($chapters as $chapter) {
 
             </div>
             <div class="media-body">
-            <p class="widget-text">Name Of Department: </p>
-                <p class=""><?php
-                                    $dept_query = "SELECT name FROM departments WHERE id = ?";
-                                    $stmt = $pdo->prepare($dept_query);
-                                    $stmt->execute([$_SESSION['department_id']]);
-                                    $department = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    echo $department['name'];
-                                    ?></p>
+            <p class="widget-text">Number Of Departments: </p>
+                <p class="widget-numeric-value"><?php echo $totalDepartments; ?></p>
             </div>
         </div>
         
-    
+      
         
     </div>
 </div>
 
+<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+    <div class="widget widget-t-sales-widget widget-m-orders">
+        <div class="media">
+            <div class="icon ml-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
 
+            </div>
+            <div class="media-body">
+                <p class="widget-text">Number of Lecturers</p>
+                <p class="widget-numeric-value"><?php echo $totalLecturers; ?></p>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
 
+<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+    <div class="widget widget-t-sales-widget widget-m-customers">
+        <div class="media">
+            <div class="icon ml-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
 
+            </div>
+            <div class="media-body">
+                <p class="widget-text">Number of Students</p>
+                <p class="widget-numeric-value"><?php echo $totalStudents; ?></p>
+            </div>
+        </div>
+       
+        
+    </div>
+</div>
 
 <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
     <div class="widget widget-t-sales-widget widget-m-income">
@@ -786,13 +581,30 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalAssignedStudents; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
 
 
-
+<div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
+    <div class="widget widget-t-sales-widget widget-m-orders">
+        <div class="media">
+            <div class="icon ml-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
+            <div class="media-body">
+                <p class="widget-text">Unassigned Students:</p>
+                <p class="widget-numeric-value"><?php echo $totalUnassignedStudents; ?></p>
+            </div>
+        </div>
+        
+        
+    </div>
+</div>
 
 
 <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 layout-spacing">
@@ -854,7 +666,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalThesisSubmittedApproved; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -874,7 +686,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalThesisSubmittedRejected; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -941,7 +753,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmittedApproved; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -961,7 +773,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_oneSubmittedRejected; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -1035,7 +847,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmittedApproved; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -1059,7 +871,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_twoSubmittedRejected; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -1124,7 +936,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmittedApproved; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -1144,7 +956,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_threeSubmittedRejected; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -1209,7 +1021,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmittedApproved; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -1229,7 +1041,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_fourSubmittedRejected; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -1303,7 +1115,7 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmittedApproved; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
@@ -1326,10 +1138,18 @@ foreach ($chapters as $chapter) {
                 <p class="widget-numeric-value"><?php echo $totalchapter_fiveSubmittedRejected; ?></p>
             </div>
         </div>
-    
+       
         
     </div>
 </div>
+
+
+
+
+
+
+
+
 
 
 

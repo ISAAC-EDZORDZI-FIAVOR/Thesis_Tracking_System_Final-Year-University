@@ -402,10 +402,53 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+
+
+
+                                                                            <?php elseif ($thesis_proposal['status'] == 'revise'): ?>
+                                                                            <div class="card mt-4">
+                                                                                <div class="card-header badge bg-primary text-white">
+                                                                                    <h2 class="mb-0 text-white">Thesis Proposal Status</h2>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="alert alert-danger" role="alert">
+                                                                                        Your Thesis Proposal has been Partially Accepted with Few Correction. Please Review the Feedback and Resubmit.
+                                                                                    </div>
+                                                                                    <ul class="list-group">
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Title:</strong> <?php echo htmlspecialchars($thesis_proposal['title']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Description:</strong> <?php echo htmlspecialchars($thesis_proposal['description']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Feedback:</strong> <?php echo htmlspecialchars($thesis_proposal['comment']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($thesis_proposal['submission_date'])); ?></li>
+                                                                                    </ul>
+
+                                                                                    <?php if (!empty($thesis_proposal['file_path'])): ?>
+                                                                                    <div class="card mt-4">
+                                                                                        <div class="card-header bg-primary text-white">
+                                                                                            <h5 class="mb-0">Proposal Document</h5>
+                                                                                        </div>
+                                                                                        <div class="card-body">
+                                                                                            <p>View the proposal document: <a href="../lecturer/<?php echo $thesis_proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <?php endif; ?>
+                                                                                    
+                                                                                    <div class="mt-4">
+                                                                                    <div class="col-md-12 col-sm-12 col-12 text-center">
+                                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Resubmit Thesis Proposal</a>
+                                                                                        
+                                                                                    </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+
+
+
                                                                             <?php elseif ($thesis_proposal['status'] == 'approved'): ?>
                                                                                 <div class="card mt-4">
                                                                                     <div class="card-header bg-success text-white">
-                                                                                        <h2 class="mb-0 text-center">Thesis Proposal Accepted ! , Congrat !!! &#x1F44B;</h2>
+                                                                                        <h2 class="mb-0 text-center text-white">Thesis Proposal Accepted ! , Congrats !!! &#x1F44B;</h2>
                                                                                     </div>
                                                                                     <div class="card-body">
                                                                                         <h3>Chapters</h3>
@@ -527,6 +570,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     <script src="../src/assets/js/custom.js"></script>
+    <script src="../src/assets/js/form-validation.js"></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 
     <!-- BEGIN PAGE LEVEL SCRIPTS -->

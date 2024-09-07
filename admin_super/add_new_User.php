@@ -468,6 +468,20 @@ function displayUsersTable($pdo)
                                                 <div class="form-group">
                                                     <label for="password">Password</label>
                                                     <input type="password" class="form-control" id="edit_password" name="password" required>
+                                                    <style>
+                                                                    form i {
+                                                                
+                                                                    cursor: pointer;
+                                                                    color: black;
+                                                                    font-size: 20px;
+                                                                    position: relative;
+                                                                    top: -40px;
+                                                                    float: right;
+                                                                    right: 20px;
+                                                                    
+                                                                }
+                                                                </style>
+                                                                <i class="bi bi-eye-slash" id="togglePassword1"></i>
                                                 </div>
                                                 <div class="form-group">
                                                     <label for="role">Role</label>
@@ -682,9 +696,24 @@ function displayUsersTable($pdo)
     </div>
     <!-- END MAIN CONTAINER -->
      <script>
-        const togglePassword = document
-            .querySelector('#togglePassword');
+        const togglePassword = document.querySelector('#togglePassword');
         const password = document.querySelector('#password');
+        togglePassword.addEventListener('click', () => {
+            // Toggle the type attribute using
+            // getAttribure() method
+            const type = password
+                .getAttribute('type') === 'password' ?
+                'text' : 'password';
+            password.setAttribute('type', type);
+            // Toggle the eye and bi-eye icon
+            this.classList.toggle('bi-eye');
+        });
+    </script>
+
+
+    <script>
+        const togglePassword = document.querySelector('#togglePassword1');
+        const password = document.querySelector('#edit_password');
         togglePassword.addEventListener('click', () => {
             // Toggle the type attribute using
             // getAttribure() method
@@ -821,6 +850,9 @@ function displayUsersTable($pdo)
 
 
     <script src="../src/assets/js/custom.js"></script>
+    <script src="../src/assets/js/form-validation.js"></script>
+   
+
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
@@ -924,13 +956,16 @@ require '../config.php';
 
 // Delete User
 if (isset($_GET['delete_id'])) {
-    $delete_id = $_GET['delete_id'];
     
-    // Prepare the delete statement
-    $stmt = $pdo->prepare("DELETE FROM Users WHERE id = ?");
-    $stmt->execute([$delete_id]);
-     
     try {
+    
+       $delete_id = $_GET['delete_id'];
+    
+        // Prepare the delete statement
+        $stmt = $pdo->prepare("DELETE FROM Users WHERE id = ?");
+        $stmt->execute([$delete_id]);
+     
+    
         
     
         if ($stmt->rowCount() > 0) {
@@ -982,9 +1017,10 @@ if (isset($_POST['edit_user'])) {
     $department_id = $_POST['department_id'];
     $student_level = ($role === 'student') ? $_POST['student_level'] : null;
 
-    $stmt = $pdo->prepare("UPDATE users SET username = ?, fullname = ?, password = ?, role = ?, department_id = ?, faculty_id = ? WHERE id = ?");
-    $stmt->execute([$username, $fullname, $password, $role, $department_id, $faculty_id, $edit_id]);
     try {
+        $stmt = $pdo->prepare("UPDATE users SET username = ?, fullname = ?, password = ?, role = ?, department_id = ?, faculty_id = ?,student_level =? WHERE id = ?");
+        $stmt->execute([$username, $fullname, $password, $role, $department_id, $faculty_id,$student_level, $edit_id]);
+        
         
         if ($stmt->rowCount() > 0) {
             ?>

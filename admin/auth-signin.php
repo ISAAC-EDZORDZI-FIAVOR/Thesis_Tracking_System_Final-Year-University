@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $redirect_url = '../hod/hod_dashboard.php';
                     break;
                 case 'dean':
-                    $redirect_url = '../dean/dean_dashboard.php';
+                    $redirect_url = '../dean/index.php';
                     break;
                 case 'department_admin':
                     $redirect_url = 'index.php';
@@ -155,7 +155,7 @@ $pdo = null;
                                                  form i {
                                                
                                                 cursor: pointer;
-                                                color: white;
+                                                color: black;       
                                                 font-size: 20px;
                                                 position: relative;
                                                 top: -40px;

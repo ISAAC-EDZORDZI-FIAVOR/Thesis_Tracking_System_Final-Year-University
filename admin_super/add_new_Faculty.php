@@ -463,7 +463,7 @@ function displayFacultiesTable($pdo)
                                                         <div class="col-md-12">
                                                             <div class="mb-3">
                                                                 <label class="form-label" for="department">Faculty Name</label>
-                                                                <input type="text" id="department" name="department" class="form-control" placeholder="Enter Faculty Name Here..." required>
+                                                                <input type="text" id="department" name="departmentname" class="form-control" placeholder="Enter Faculty Name Here..." required>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
@@ -528,6 +528,7 @@ $(document).ready(function() {
 
 
     <script src="../src/assets/js/custom.js"></script>
+    <script src="../src/assets/js/form-validation.js"></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
@@ -633,7 +634,7 @@ $(document).ready(function() {
 require '../config.php';
 
 if (isset($_POST['add_department'])) {
-    $faculty = $_POST['department'];
+    $faculty = $_POST['departmentname'];
     $sql = 'INSERT INTO faculties (name) VALUES (?)';
     $stmt = $pdo->prepare($sql);
 

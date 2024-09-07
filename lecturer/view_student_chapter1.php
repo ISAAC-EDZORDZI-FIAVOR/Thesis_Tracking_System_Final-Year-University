@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once('../config.php');
+require '../config.php';
 
 // Check if user is logged in and is a lecturer
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'lecturer') {
@@ -346,31 +346,74 @@ $chapter_one = $stmt->fetchAll();
 
                    
 
-                    
+
+
+
 
                     <li class="menu">
-                        <a href="./students_assignedList.php" aria-expanded="false" class="dropdown-toggle">
+                        <a href="#invoice" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                    </svg>
-                               <span>Assigned Students</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Proposal </span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </a>
+                        <ul class="collapse submenu list-unstyled" id="invoice" data-bs-parent="#accordionExample">
+                                <li class="menu">
+                                    <a href="./students_assignedList.php" aria-expanded="false" class="dropdown-toggle">
+                                        <div class="">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="12" cy="7" r="4"></circle>
+                                                </svg>
+                                        <span>Proposal List</span>
+                                        </div>
+                                    </a>
+                                </li>
+
+                                <li class="menu">
+                                    <a href="./proposal_chat.php" aria-expanded="false" class="dropdown-toggle">
+                                        <div class="">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                            <span>Proposal Details</span>
+                                        </div>
+                                    </a>
+                                </li>               
+                        </ul>
                     </li>
+
+
+
+
+
+
 
                     <li class="menu">
-                        <a href="./proposal_chat.php" aria-expanded="false" class="dropdown-toggle">
+                        <a href="#invoice1" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Proposal Details</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Chapter One </span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
                             </div>
                         </a>
-                    </li>
-
-
-                    <li class="menu active">
+                        <ul class="collapse submenu list-unstyled" id="invoice1" data-bs-parent="#accordionExample">
+                        <li class="menu">
                         <a href="./students_chapter_one.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -380,7 +423,7 @@ $chapter_one = $stmt->fetchAll();
                             <line x1="12" y1="10" x2="18" y2="10"></line>
                             <line x1="12" y1="14" x2="18" y2="14"></line>
                             </svg>
-                                <span>Chapter One</span>
+                                <span>Chapter List</span>
                             </div>
                         </a>
                     </li>
@@ -390,13 +433,42 @@ $chapter_one = $stmt->fetchAll();
                         <a href="./chapter_one_chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter One Details</span>
+                                <span>Chapter Details</span>
                             </div>
                         </a>
                     </li>
+            
+                        </ul>
+                    </li>
+
+                    
+
+                    
+
+
+
+
+
 
 
                     <li class="menu">
+                        <a href="#invoice2" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Chapter Two </span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled" id="invoice2" data-bs-parent="#accordionExample">
+                        <li class="menu">
                         <a href="./students_chapter_two.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -406,7 +478,7 @@ $chapter_one = $stmt->fetchAll();
                             <line x1="12" y1="10" x2="18" y2="10"></line>
                             <line x1="12" y1="14" x2="18" y2="14"></line>
                             </svg>
-                                <span>Chapter Two</span>
+                                <span>Chapter List</span>
                             </div>
                         </a>
                     </li>
@@ -416,13 +488,38 @@ $chapter_one = $stmt->fetchAll();
                         <a href="./chapter_two_chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Two Details</span>
+                                <span>Chapter Details</span>
                             </div>
                         </a>
                     </li>
+            
+                        </ul>
+                    </li>
+
+
+
+
+
 
 
                     <li class="menu">
+                        <a href="#invoice3" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Chapter Three </span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled" id="invoice3" data-bs-parent="#accordionExample">
+                        <li class="menu">
                         <a href="./students_chapter_three.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -432,7 +529,7 @@ $chapter_one = $stmt->fetchAll();
                             <line x1="12" y1="10" x2="18" y2="10"></line>
                             <line x1="12" y1="14" x2="18" y2="14"></line>
                             </svg>
-                                <span>Chapter Three</span>
+                                <span>Chapter List</span>
                             </div>
                         </a>
                     </li>
@@ -442,14 +539,37 @@ $chapter_one = $stmt->fetchAll();
                         <a href="./chapter_three_chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Three Details</span>
+                                <span>Chapter Details</span>
                             </div>
                         </a>
                     </li>
+                        </ul>
+                    </li>
+                    
+
+
+
 
 
 
                     <li class="menu">
+                        <a href="#invoice4" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Chapter Four </span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled" id="invoice4" data-bs-parent="#accordionExample">
+                        <li class="menu">
                         <a href="./students_chapter_four.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -459,7 +579,7 @@ $chapter_one = $stmt->fetchAll();
                             <line x1="12" y1="10" x2="18" y2="10"></line>
                             <line x1="12" y1="14" x2="18" y2="14"></line>
                             </svg>
-                                <span>Chapter Four</span>
+                                <span>Chapter List</span>
                             </div>
                         </a>
                     </li>
@@ -469,15 +589,35 @@ $chapter_one = $stmt->fetchAll();
                         <a href="./chapter_four_chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Four Details</span>
+                                <span>Chapter Details</span>
                             </div>
                         </a>
+                    </li>             
+                        </ul>
                     </li>
 
-                    
+
+
 
 
                     <li class="menu">
+                        <a href="#invoice5" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            <line x1="12" y1="6" x2="18" y2="6"></line>
+                            <line x1="12" y1="10" x2="18" y2="10"></line>
+                            <line x1="12" y1="14" x2="18" y2="14"></line>
+                            </svg>
+                                <span>Chapter Five </span>
+                            </div>
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+                        </a>
+                        <ul class="collapse submenu list-unstyled" id="invoice5" data-bs-parent="#accordionExample">
+                        <li class="menu">
                         <a href="./students_chapter_five.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -487,7 +627,7 @@ $chapter_one = $stmt->fetchAll();
                             <line x1="12" y1="10" x2="18" y2="10"></line>
                             <line x1="12" y1="14" x2="18" y2="14"></line>
                             </svg>
-                                <span>Chapter Five</span>
+                                <span>Chapter List</span>
                             </div>
                         </a>
                     </li>
@@ -497,10 +637,24 @@ $chapter_one = $stmt->fetchAll();
                         <a href="./chapter_five_chat.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                                <span>Chapter Five Details</span>
+                                <span>Chapter Details</span>
+                            </div>
+                        </a>
+                    </li>           
+                        </ul>
+                    </li>
+
+
+                    <li class="menu ">
+                        <a href="./students_compile_thesis.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+
+                                <span>Compiled Thesis</span>
                             </div>
                         </a>
                     </li>
+
 
 
                     <li class="menu ">
@@ -515,20 +669,6 @@ $chapter_one = $stmt->fetchAll();
 
 
                     
-
-                    <li class="menu ">
-                        <a href="./students_compile_thesis.php" aria-expanded="false" class="dropdown-toggle">
-                            <div class="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-
-                                <span>Compiled Thesis</span>
-                            </div>
-                        </a>
-                    </li>
-                    
-
-
-
                     
                 </ul>
                 
@@ -552,7 +692,7 @@ $chapter_one = $stmt->fetchAll();
                                 <?php foreach ($chapter_one as $chapter): ?>
                                     <div class="card mb-4 proposal-card">
                                         <div class="card-header bg-primary text-white">
-                                            <h1 class="card-title h5 mb-0 text-center"><?php echo htmlspecialchars($chapter['title']); ?></h1>
+                                            <h1 class="card-title h5 text-white mb-0 text-center"><?php echo htmlspecialchars($chapter['title']); ?></h1>
                                         </div>
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -595,7 +735,7 @@ $chapter_one = $stmt->fetchAll();
                                             <?php if (!empty($chapter['file_path'])): ?>
                                                 <div class="card mt-4">
                                                     <div class="card-header bg-primary text-white">
-                                                        <h5 class="mb-0"><i class="fas fa-file-pdf"></i> Chapter One Document</h5>
+                                                        <h5 class="mb-0 text-white"><i class="fas fa-file-pdf"></i> Chapter One Document</h5>
                                                     </div>
                                                     <div class="card-body">
                                                         <div class="d-flex justify-content-between align-items-center">
@@ -642,6 +782,7 @@ $chapter_one = $stmt->fetchAll();
                                                             <select name="status" id="status" class="form-select" required>
                                                                 <option value="">Choose Status..</option>
                                                                 <option value="approved">Approve</option>
+                                                                <option value="revise">Revise</option>
                                                                 <option value="rejected">Reject</option>
                                                             </select>
                                                         </div>
@@ -676,7 +817,9 @@ $chapter_one = $stmt->fetchAll();
             <!--  BEGIN FOOTER  -->
             <div class="footer-wrapper mt-0">
                 <div class="footer-section f-section-1">
-                    <p class="">Copyright © <span class="dynamic-year">2024</span> <a target="_blank" href="https://BlackCode Cyberzone.com/equation/">BlackCode Cyberzone</a>, All rights reserved.</p>
+                    <p class="">Copyright © <script>
+                document.write(new Date().getFullYear());
+              </script> <a target="_blank" href="https://BlackCode Cyberzone.com/equation/">BlackCode Cyberzone</a>, All rights reserved.</p>
                 </div>
                 <div class="footer-section f-section-2">
                     <p class="">Coded with <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></p>
@@ -696,6 +839,7 @@ $chapter_one = $stmt->fetchAll();
     <script src="../src/plugins/src/waves/waves.min.js"></script>
     <script src="../layouts/vertical-dark-menu/app.js"></script>
     <script src="../src/assets/js/custom.js"></script>
+    <script src="../src/assets/js/form-validation.js"></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
     <script src="../src/plugins/src/jquery-ui/jquery-ui.min.js"></script>
     <script src="../src/assets/js/apps/contact.js"></script>

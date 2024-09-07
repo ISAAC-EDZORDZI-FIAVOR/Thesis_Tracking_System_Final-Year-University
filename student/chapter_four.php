@@ -468,10 +468,55 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
+
+
+
+                                                                            
+                                                                    <?php elseif ($chapter_four['status'] == 'revise'): ?>
+                                                                            <div class="card mt-4">
+                                                                                <div class="card-header bg-primary text-white">
+                                                                                    <h2 class="mb-0 text-white">Chapter Four Submission Status</h2>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="alert alert-danger" role="alert">
+                                                                                        Your Chapter Four Submission has been Partially Accepted with Few Correction. Please Review the Feedback and Resubmit.
+                                                                                    </div>
+                                                                                    <ul class="list-group">
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Title:</strong> <?php echo htmlspecialchars($chapter_four['title']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Description:</strong> <?php echo htmlspecialchars($chapter_four['description']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Feedback:</strong> <?php echo htmlspecialchars($chapter_four['comment']); ?></li>
+                                                                                        <li class="list-group-item list-group-item-danger"><strong>Submitted Date:</strong> <?php echo date('F j, Y, g:i a', strtotime($chapter_four['submission_date'])); ?></li>
+                                                                                    </ul>
+
+                                                                                    <?php if (!empty($chapter_four['file_path'])): ?>
+                                                                                    <div class="card mt-4">
+                                                                                        <div class="card-header bg-primary text-white">
+                                                                                            <h5 class="mb-0 text-white">Chapter Four Document</h5>
+                                                                                        </div>
+                                                                                        <div class="card-body">
+                                                                                            <p>View Chapter Four Document: <a href="../lecturer/<?php echo $chapter_four['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <?php endif; ?>
+                                                                                    
+                                                                                    <div class="mt-4">
+                                                                                    <div class="col-md-12 col-sm-12 col-12 text-center">
+                                                                                        <a id="btn-add-notes" class="btn btn-primary" href="javascript:void(0);">Resubmit Your Chapter Four</a>
+                                                                                        
+                                                                                    </div>
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+
+
+
+
                                                                             <?php elseif ($chapter_four['status'] == 'approved'): ?>
                                                                                 <div class="card mt-4">
                                                                                     <div class="card-header bg-success text-white">
-                                                                                        <h2 class="mb-0 text-center">Your Chapter Four is  Accepted ! , Congrat !!! &#x1F44B;</h2>
+                                                                                        <h2 class="mb-0 text-center text-white">Your Chapter Four is  Accepted ! , Congrats !!! &#x1F44B;</h2>
                                                                                     </div>
                                                                                     <div class="card-body">
                                                                                         <h3>Chapters</h3>
@@ -593,6 +638,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
     <script src="../src/assets/js/custom.js"></script>
+    <script src="../src/assets/js/form-validation.js"></script>
     <!-- END GLOBAL MANDATORY SCRIPTS -->
 
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
