@@ -637,6 +637,7 @@ function displayUsersTable($pdo)
                                                                 <option value="6th Year">6th Year</option>
                                                                 
                                                             </select>
+                                                            <i class="bi bi-chevron-down"></i>
                                                         </div>
 
 
@@ -650,6 +651,7 @@ function displayUsersTable($pdo)
                                                                         <option value="<?php echo $faculty['id']; ?>"><?php echo $faculty['name']; ?></option>
                                                                     <?php endforeach; ?>
                                                                 </select>
+                                                                <i class="bi bi-chevron-down"></i>
 
                                                             </div>
                                                         </div>

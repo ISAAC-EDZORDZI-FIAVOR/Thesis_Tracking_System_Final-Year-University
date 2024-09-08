@@ -340,7 +340,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                     <?php elseif ($thesis_proposal['status'] == 'pending'): ?>
                                                                         <div class="card mt-4">
                                                                             <div class="card-header bg-info text-white">
-                                                                                <h2 class="mb-0">Thesis Proposal Status</h2>
+                                                                                <h2 class="mb-0 text-white">Thesis Proposal Status</h2>
                                                                             </div>
                                                                             <div class="card-body">
                                                                                 <div class="alert alert-info" role="alert">
@@ -356,7 +356,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                 <?php if (!empty($thesis_proposal['file_path'])): ?>
                                                                                     <div class="card mt-4">
                                                                                         <div class="card-header bg-primary text-white">
-                                                                                            <h5 class="mb-0">Proposal Document</h5>
+                                                                                            <h5 class="mb-0 text-white">Proposal Document</h5>
                                                                                         </div>
                                                                                         <div class="card-body">
                                                                                             <p>View the proposal document: <a href="../lecturer/<?php echo $thesis_proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>
@@ -369,7 +369,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                     <?php elseif ($thesis_proposal['status'] == 'rejected'): ?>
                                                                             <div class="card mt-4">
                                                                                 <div class="card-header bg-danger text-white">
-                                                                                    <h2 class="mb-0">Thesis Proposal Status</h2>
+                                                                                    <h2 class="mb-0 text-white">Thesis Proposal Status</h2>
                                                                                 </div>
                                                                                 <div class="card-body">
                                                                                     <div class="alert alert-danger" role="alert">
@@ -385,7 +385,7 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                     <?php if (!empty($thesis_proposal['file_path'])): ?>
                                                                                     <div class="card mt-4">
                                                                                         <div class="card-header bg-primary text-white">
-                                                                                            <h5 class="mb-0">Proposal Document</h5>
+                                                                                            <h5 class="mb-0 text-white">Proposal Document</h5>
                                                                                         </div>
                                                                                         <div class="card-body">
                                                                                             <p>View the proposal document: <a href="../lecturer/<?php echo $thesis_proposal['file_path']; ?>" target="_blank" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-pdf"></i> Open PDF</a></p>

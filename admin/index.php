@@ -39,6 +39,7 @@ $stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE department_id
 $stmt->execute([$department_id]);
 $totalThesisSubmitted = $stmt->fetchColumn();
 
+
 $stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'pending' AND department_id = ?");
 $stmt->execute([$department_id]);
 $totalThesisSubmittedPending = $stmt->fetchColumn();

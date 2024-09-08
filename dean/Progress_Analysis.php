@@ -7,9 +7,63 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "dean") {
 }
 
 require_once '../config.php';
-$stmt = $pdo->prepare("SELECT * FROM departments WHERE faculty_id = ?");
-$stmt->execute([$_SESSION['faculty_id']]);
-$departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+
+// Fetch all department data initially
+$stmt = $pdo->prepare("SELECT u.department_id, d.name as department_name, tp.status as proposal_status, 
+    c1.status as chapter_one_status, 
+    c2.status as chapter_two_status, 
+    c3.status as chapter_three_status, 
+    c4.status as chapter_four_status, 
+    c5.status as chapter_five_status 
+    FROM users u 
+    JOIN departments d ON u.department_id = d.id
+    LEFT JOIN thesis_proposals tp ON u.id = tp.student_id 
+    LEFT JOIN chapter_one c1 ON u.id = c1.student_id 
+    LEFT JOIN chapter_two c2 ON u.id = c2.student_id 
+    LEFT JOIN chapter_three c3 ON u.id = c3.student_id 
+    LEFT JOIN chapter_four c4 ON u.id = c4.student_id 
+    LEFT JOIN chapter_five c5 ON u.id = c5.student_id 
+    WHERE u.role = 'student'");
+$stmt->execute();
+$allStudents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$departmentData = [];
+foreach ($allStudents as $student) {
+    $dept_id = $student['department_id'];
+    if (!isset($departmentData[$dept_id])) {
+        $departmentData[$dept_id] = [
+            'name' => $student['department_name'],
+            'proposal' => 0,
+            'chapter_one' => 0,
+            'chapter_two' => 0,
+            'chapter_three' => 0,
+            'chapter_four' => 0,
+            'chapter_five' => 0,
+            'total' => 0
+        ];
+    }
+    $departmentData[$dept_id]['total']++;
+    foreach (['proposal', 'chapter_one', 'chapter_two', 'chapter_three', 'chapter_four', 'chapter_five'] as $stage) {
+        if ($student[$stage . '_status'] == 'approved') {
+            $departmentData[$dept_id][$stage]++;
+        }
+    }
+}
+
+$initialData = [];
+foreach ($departmentData as $dept_id => $data) {
+    $initialData[$dept_id] = [
+        'name' => $data['name'],
+        'percentages' => []
+    ];
+    foreach (['proposal', 'chapter_one', 'chapter_two', 'chapter_three', 'chapter_four', 'chapter_five'] as $stage) {
+        $initialData[$dept_id]['percentages'][$stage] = $data['total'] > 0 ? round(($data[$stage] / $data['total']) * 100, 2) : 0;
+    }
+}
+
+$lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'")->fetchAll(PDO::FETCH_ASSOC);
 
 
 
@@ -30,8 +84,7 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     <script src="../dist/js/jquery.min.js"></script>
     <!-- <script src="../dist/js/sweetalert.min.js"></script> -->
-    <script src="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://common.olemiss.edu/_js/sweet-alert/sweet-alert.css">
+   
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
@@ -59,6 +112,32 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/dt-global_style.css">
     <link rel="stylesheet" type="text/css" href="../src/plugins/css/dark/table/datatable/custom_dt_custom.css">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/custom.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { background-color: #f8f9fa; }
+        .dashboard-header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        .department-card {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        .department-card:hover { box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+        .chart-container {
+            position: relative;
+            margin: auto;
+            height: 300px;
+            width: 100%;
+        }
+    </style>
     
 
 </head>
@@ -225,7 +304,7 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                     
 
-                    <li class="menu active">
+                    <li class="menu">
                         <a href="./overview.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -239,11 +318,7 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             </div>
                         </a>
                     </li>
-
-                   
-
-
-                    <li class="menu ">
+                    <li class="menu active">
                         <a href="./Progress_Analysis.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -258,6 +333,19 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </a>
                     </li>
 
+                   
+
+
+                    <!-- <li class="menu">
+                        <a href="./generate_admin_report.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+
+                                <span>Generate Report</span>
+                            </div>
+                        </a>
+                    </li> -->
+ 
                     
                     
                     
@@ -288,183 +376,75 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
                                     <div class="app-note-overlay"></div>
     
-                                    <style>
-                                            form i {
-                                        
-                                            cursor: pointer;
-                                            color: black;
-                                            font-size: 15px;
-                                            position: relative;
-                                            top: -40px;
-                                            float: right;
-                                            right: 5px;
-                                            
-                                        }
-                                    </style>
+                                    
                               
                                    
 
-                                    <form id="filterForm" class="mb-4 ">
-                                        <div class="row  ">
-                                            <div class="col-md-4 ">
-                                                <select id="departmentFilter" name="department" class="form-control ">
-                                                    <option value="">All Departments</option>
-                                                    <?php foreach ($departments as $dept): ?>
-                                                        <option value="<?php echo $dept['id']; ?>"><?php echo $dept['name']; ?></option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                                <i class="bi bi-chevron-down"></i>
-                                                
-                                            </div>
-                                            <div class="col-md-4 ">
-                                                <select id="lecturerFilter" name="lecturer" class="form-control custom-select">
-                                                    <option value="">All Lecturers</option>
-                                                </select>
-                                                <i class="bi bi-chevron-down"></i>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <button type="submit" class="btn btn-primary">Apply Filters</button>
-                                            </div>
-                                        </div>
-                                    </form>
+                                    
     
                                 </div>
 
 
                                 <!-- this is where all the display will be rendered -->
                                 <div class="table-responsive mb-2 mt-4">
-                                <div id="dashboardContent">
-            <!-- Initial dashboard content will be loaded here -->
-           
-            <?php
-                // Fetch all departments in the faculty
-                $stmt = $pdo->prepare("SELECT * FROM departments WHERE faculty_id = ?");
-                $stmt->execute([$_SESSION['faculty_id']]);
-                $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                foreach ($departments as $department) {
-                    echo "<div class='card mb-4'>";
-                    echo "<div class='card-header bg-primary  text-white'><h4 class='text-white'>{$department['name']}</h4></div>";
-                    echo "<div class='card-body'>";
 
-                    // Fetch lecturers in this department
-                    $stmt = $pdo->prepare("SELECT * FROM users WHERE role = 'lecturer' AND department_id = ?");
-                    $stmt->execute([$department['id']]);
-                    $lecturers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    foreach ($lecturers as $lecturer) {
-                        echo "<div class='card mb-3'>";
-                        echo "<div class='card-header bg-secondary text-white'><p class='text-white'>{$lecturer['fullname']}</p></div>";
-                        echo "<div class='card-body'>";
-                        echo "<table class='table table-striped'>";
-                        echo "<thead><tr><th>ID</th><th>Student Name</th><th>Proposal</th><th>Chapter 1</th><th>Chapter 2</th><th>Chapter 3</th><th>Chapter 4</th><th>Chapter 5</th><th>Last Interaction</th></tr></thead>";
-                        echo "<tbody>";
-                    
-                        // Updated query to fetch assigned students and last interaction
-                        $stmt = $pdo->prepare("
-                            SELECT 
-                                u.id AS student_id,
-                                u.username as student_username,
-                                u.fullname AS student_name,
-                                tp.status as proposal_status,
-                                tp.submission_date as proposal_submission_date,
-                                c1.status as chapter_one_status,
-                                c2.status as chapter_two_status,
-                                c3.status as chapter_three_status,
-                                c4.status as chapter_four_status,
-                                c5.status as chapter_five_status,
-                                GREATEST(
-                                    COALESCE(tp.submission_date, '1970-01-01'),
-                                    COALESCE(tp.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c1.submission_date, '1970-01-01'),
-                                    COALESCE(c1.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c2.submission_date, '1970-01-01'),
-                                    COALESCE(c2.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c3.submission_date, '1970-01-01'),
-                                    COALESCE(c3.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c4.submission_date, '1970-01-01'),
-                                    COALESCE(c4.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c5.submission_date, '1970-01-01'),
-                                    COALESCE(c5.lecturer_comment_time, '1970-01-01')
-                                ) AS last_interaction_date,
-                                DATEDIFF(CURDATE(), 
-                                    GREATEST(
-                                        COALESCE(tp.submission_date, '1970-01-01'),
-                                        COALESCE(tp.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c1.submission_date, '1970-01-01'),
-                                        COALESCE(c1.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c2.submission_date, '1970-01-01'),
-                                        COALESCE(c2.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c3.submission_date, '1970-01-01'),
-                                        COALESCE(c3.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c4.submission_date, '1970-01-01'),
-                                        COALESCE(c4.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c5.submission_date, '1970-01-01'),
-                                        COALESCE(c5.lecturer_comment_time, '1970-01-01')
-                                    )
-                                ) AS days_since_last_interaction
-                            FROM 
-                                users u
-                            LEFT JOIN thesis_proposals tp ON u.id = tp.student_id
-                            LEFT JOIN chapter_one c1 ON u.id = c1.student_id
-                            LEFT JOIN chapter_two c2 ON u.id = c2.student_id
-                            LEFT JOIN chapter_three c3 ON u.id = c3.student_id
-                            LEFT JOIN chapter_four c4 ON u.id = c4.student_id
-                            LEFT JOIN chapter_five c5 ON u.id = c5.student_id
-                            JOIN assignments a ON u.id = a.student_id
-                            WHERE 
-                                a.primary_supervisor_id = ? OR a.secondary_supervisor_id1 = ? OR a.secondary_supervisor_id2 = ?
-                        ");
-                        $stmt->execute([$lecturer['id'], $lecturer['id'], $lecturer['id']]);
-                        $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    
-                        foreach ($students as $student) {
-                            echo "<tr>";
-                            echo "<td>{$student['student_username']}</td>";
-                            echo "<td>{$student['student_name']}</td>";
-                            echo "<td>" . getStatusBadge($student['proposal_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_one_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_two_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_three_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_four_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_five_status']) . "</td>";
-                            
-                            if ($student['proposal_submission_date']) {
-                                $interactionClass = $student['days_since_last_interaction'] > 30 ? 'text-danger' : '';
-                                echo "<td class='{$interactionClass}'>{$student['days_since_last_interaction']} days ago</td>";
-                            } else {
-                                echo "<td class='text-danger'>Proposal not submitted</td>";
-                            }
-                            
-                            echo "</tr>";
-                        }
-                        
-                    
-                        echo "</tbody></table>";
-                        echo "</div></div>";
-                    }
+                                <div class="container mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <form id="filterForm">
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <select id="departmentFilter" name="department" class="form-select">
+                                                        <option value="">All Departments</option>
+                                                        <?php foreach ($departmentData as $dept_id => $dept): ?>
+                                                            <option value="<?php echo $dept_id; ?>"><?php echo htmlspecialchars($dept['name']); ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-5">
+                                                <select id="lecturerFilter" name="lecturer" class="form-select" disabled>
+                                                    <option value="">All Lecturers</option>
+                                                </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
-                    echo "</div></div>";
-                }
+                            <div class="container" id="chartsContainer">
+                                <?php foreach ($initialData as $dept_id => $dept): ?>
+                                    <div class="card department-card">
+                                        <div class="card-header bg-primary text-white">
+                                            <h4 class="text-white"><i class="fas fa-building"></i> <?php echo htmlspecialchars($dept['name']); ?></h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="chart-container">
+                                                        <canvas id="bar-chart-<?php echo $dept_id; ?>"></canvas>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="chart-container">
+                                                        <canvas id="pie-chart-<?php echo $dept_id; ?>"></canvas>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
 
-                function getStatusBadge($status) {
-                    switch ($status) {
-                        case 'approved':
-                            return '<span class="badge bg-success">Approved</span>';
-                        case 'pending':
-                            return '<span class="badge bg-warning">Pending</span>';
-                        case 'revise':
-                            return '<span class="badge bg-warning">Revise</span>';
-                        case 'rejected':
-                            return '<span class="badge bg-danger">Rejected</span>';
-                        default:
-                            return '<span class="badge bg-secondary">Not Started</span>';
-                    }
-                }
-            ?>
+    
 
-                
-        </div>
+
+                                </div>
                             </div>
 
 
@@ -507,42 +487,184 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
     <script src="../src/assets/js/apps/notes.js"></script>
     <!-- END PAGE LEVEL SCRIPTS -->
+
+
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/custom.js"></script> -->
     <script>
-        $(document).ready(function() 
-        {
-            // Load initial dashboard content
-            // loadDashboardContent();
+    var initialChartData = <?php echo json_encode($initialData); ?>;
 
-            $('#departmentFilter').change(function() {
-                var departmentId = $(this).val();
-                $.ajax({
-                    url: 'get_lecturers.php',
-                    method: 'POST',
-                    data: { department_id: departmentId },
-                    success: function(response) {
-                        $('#lecturerFilter').html(response);
+    $(document).ready(function() {
+
+
+        $('#departmentFilter').on('change', function() {
+        var departmentId = $(this).val();
+        if (departmentId) {
+            $.ajax({
+                url: 'get_lecturer1.php',
+                type: 'POST',
+                data: { department_id: departmentId },
+                dataType: 'json',
+                success: function(lecturers) {
+                    var options = '<option value="">All Lecturers</option>';
+                    $.each(lecturers, function(id, name) {
+                        options += '<option value="' + id + '">' + name + '</option>';
+                    });
+                    $('#lecturerFilter').html(options).prop('disabled', false);
+                },
+                error: function() {
+                    console.error("Error fetching lecturers");
+                }
+            });
+        } else {
+            $('#lecturerFilter').html('<option value="">All Lecturers</option>').prop('disabled', true);
+        }
+    });
+
+
+
+        function initializeCharts(data) {
+            Object.keys(data).forEach(function(departmentId) {
+                var departmentName = data[departmentId].name;
+                var percentages = data[departmentId].percentages;
+                var labels = ['Proposal', 'Chapter 1', 'Chapter 2', 'Chapter 3', 'Chapter 4', 'Chapter 5'];
+                var values = Object.values(percentages);
+                
+                var barCtx = document.getElementById('bar-chart-' + departmentId).getContext('2d');
+                new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Completion Percentage',
+                            data: values,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)',
+                                'rgba(153, 102, 255, 0.7)',
+                                'rgba(255, 159, 64, 0.7)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Student Progress (Bar Chart) - ' + departmentName
+                            },
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+
+                var pieCtx = document.getElementById('pie-chart-' + departmentId).getContext('2d');
+                new Chart(pieCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(255, 206, 86, 0.7)',
+                                'rgba(75, 192, 192, 0.7)',
+                                'rgba(153, 102, 255, 0.7)',
+                                'rgba(255, 159, 64, 0.7)'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Student Progress (Pie Chart) - ' + departmentName
+                            }
+                        }
                     }
                 });
             });
+        }
 
-            $('#filterForm').submit(function(e) {
-                e.preventDefault();
-                loadDashboardContent();
+        function updateCharts(data) {
+    // Hide all department cards initially
+    $('.department-card').hide();
+
+    Object.keys(data).forEach(function(departmentId) {
+        var barChart = Chart.getChart('bar-chart-' + departmentId);
+        var pieChart = Chart.getChart('pie-chart-' + departmentId);
+        
+        if (barChart && pieChart) {
+            var newData = Object.values(data[departmentId].percentages);
+            
+            barChart.data.datasets[0].data = newData;
+            pieChart.data.datasets[0].data = newData;
+
+            barChart.options.animation = false;
+            pieChart.options.animation = false;
+            barChart.update('none');
+            pieChart.update('none');
+
+            // Show the relevant department card
+            $('#bar-chart-' + departmentId).closest('.department-card').show();
+
+            console.log("Charts updated for department:", departmentId);
+        }
+    });
+}
+
+
+        $('#filterForm').on('submit', function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+            console.log("tsfsfssfs");
+            
+            
+            $.ajax({
+                url: 'fetch_filtered_data.php',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    console.log("Received data:", response);
+                    updateCharts(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                }
             });
-
-            function loadDashboardContent() {
-                $.ajax({
-                    url: 'filter_dashboard.php',
-                    method: 'POST',
-                    data: $('#filterForm').serialize(),
-                    success: function(response) {
-                        $('#dashboardContent').html(response);
-                    }
-                });
-            }
         });
 
+        // Initialize charts with the initial data
+        initializeCharts(initialChartData);
+    });
     </script>
+
+    
 
 </body>
 
