@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $redirect_url = '../lecturer/index.php';
                     break;
                 case 'hod':
-                    $redirect_url = '../hod/hod_dashboard.php';
+                    $redirect_url = '../hod/index.php';
                     break;
                 case 'dean':
                     $redirect_url = '../dean/index.php';

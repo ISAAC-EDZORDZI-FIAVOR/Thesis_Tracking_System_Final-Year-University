@@ -258,6 +258,23 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </a>
                     </li>
 
+
+                    <!-- <li class="menu">
+                        <a href="./generate_dean_report.php" aria-expanded="false" class="dropdown-toggle">
+                            <div class="">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+
+                                <span>Generate Report</span>
+                            </div>
+                        </a>
+                    </li> -->
+
                     
                     
                     
@@ -297,15 +314,29 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             position: relative;
                                             top: -40px;
                                             float: right;
-                                            right: 5px;
+                                            right: 10px;
                                             
                                         }
                                     </style>
                               
                                    
 
-                                    <form id="filterForm" class="mb-4 ">
-                                        <div class="row  ">
+                                    
+                                    
+    
+                                </div>
+
+
+                                <!-- this is where all the display will be rendered -->
+                                <div class="table-responsive mb-2 mt-4">
+
+                                  <div class="card">
+
+                                  <div class="card-body">
+
+
+                                  <form id="filterForm" class="">
+                                        <div class="row ">
                                             <div class="col-md-4 ">
                                                 <select id="departmentFilter" name="department" class="form-control ">
                                                     <option value="">All Departments</option>
@@ -327,12 +358,12 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             </div>
                                         </div>
                                     </form>
-    
-                                </div>
+
+                                  </div>
+
+                                  </div>
 
 
-                                <!-- this is where all the display will be rendered -->
-                                <div class="table-responsive mb-2 mt-4">
                                 <div id="dashboardContent">
             <!-- Initial dashboard content will be loaded here -->
            
