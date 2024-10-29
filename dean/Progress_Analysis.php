@@ -11,63 +11,57 @@ require_once '../config.php';
 
 
 // Fetch all department data initially
-$stmt = $pdo->prepare("SELECT u.department_id, d.name as department_name, tp.status as proposal_status, 
-    c1.status as chapter_one_status, 
-    c2.status as chapter_two_status, 
-    c3.status as chapter_three_status, 
-    c4.status as chapter_four_status, 
-    c5.status as chapter_five_status 
-    FROM users u 
-    JOIN departments d ON u.department_id = d.id
-    LEFT JOIN thesis_proposals tp ON u.id = tp.student_id 
-    LEFT JOIN chapter_one c1 ON u.id = c1.student_id 
-    LEFT JOIN chapter_two c2 ON u.id = c2.student_id 
-    LEFT JOIN chapter_three c3 ON u.id = c3.student_id 
-    LEFT JOIN chapter_four c4 ON u.id = c4.student_id 
-    LEFT JOIN chapter_five c5 ON u.id = c5.student_id 
-    WHERE u.role = 'student'");
-$stmt->execute();
-$allStudents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare("SELECT 
+    u.department_id, 
+    d.name as department_name,
+    COUNT(DISTINCT u.id) as total_students,
+    SUM(CASE WHEN tp.status = 'approved' THEN 1 ELSE 0 END) as proposal_completed,
+    SUM(CASE WHEN c1.status = 'approved' THEN 1 ELSE 0 END) as chapter_one_completed,
+    SUM(CASE WHEN c2.status = 'approved' THEN 1 ELSE 0 END) as chapter_two_completed,
+    SUM(CASE WHEN c3.status = 'approved' THEN 1 ELSE 0 END) as chapter_three_completed,
+    SUM(CASE WHEN c4.status = 'approved' THEN 1 ELSE 0 END) as chapter_four_completed,
+    SUM(CASE WHEN c5.status = 'approved' THEN 1 ELSE 0 END) as chapter_five_completed
+FROM users u
+JOIN departments d ON u.department_id = d.id
+LEFT JOIN thesis_proposals tp ON u.id = tp.student_id
+LEFT JOIN chapter_one c1 ON u.id = c1.student_id
+LEFT JOIN chapter_two c2 ON u.id = c2.student_id
+LEFT JOIN chapter_three c3 ON u.id = c3.student_id
+LEFT JOIN chapter_four c4 ON u.id = c4.student_id
+LEFT JOIN chapter_five c5 ON u.id = c5.student_id
+WHERE u.role = 'student'
+GROUP BY u.department_id, d.name");
 
-$departmentData = [];
-foreach ($allStudents as $student) {
-    $dept_id = $student['department_id'];
-    if (!isset($departmentData[$dept_id])) {
-        $departmentData[$dept_id] = [
-            'name' => $student['department_name'],
-            'proposal' => 0,
-            'chapter_one' => 0,
-            'chapter_two' => 0,
-            'chapter_three' => 0,
-            'chapter_four' => 0,
-            'chapter_five' => 0,
-            'total' => 0
-        ];
-    }
-    $departmentData[$dept_id]['total']++;
-    foreach (['proposal', 'chapter_one', 'chapter_two', 'chapter_three', 'chapter_four', 'chapter_five'] as $stage) {
-        if ($student[$stage . '_status'] == 'approved') {
-            $departmentData[$dept_id][$stage]++;
-        }
-    }
-}
+$stmt->execute();
+$departmentData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $initialData = [];
-foreach ($departmentData as $dept_id => $data) {
-    $initialData[$dept_id] = [
-        'name' => $data['name'],
+foreach ($departmentData as $dept) {
+    $initialData[
+        $dept['department_id']] = [
+        'name' => $dept['department_name'],
+        'total_students' => $dept['total_students'],
+        'completed' => [
+            'proposal' => $dept['proposal_completed'],
+            'chapter_one' => $dept['chapter_one_completed'],
+            'chapter_two' => $dept['chapter_two_completed'],
+            'chapter_three' => $dept['chapter_three_completed'],
+            'chapter_four' => $dept['chapter_four_completed'],
+            'chapter_five' => $dept['chapter_five_completed']
+        ],
         'percentages' => []
     ];
+    
     foreach (['proposal', 'chapter_one', 'chapter_two', 'chapter_three', 'chapter_four', 'chapter_five'] as $stage) {
-        $initialData[$dept_id]['percentages'][$stage] = $data['total'] > 0 ? round(($data[$stage] / $data['total']) * 100, 2) : 0;
+        $initialData[$dept['department_id']]['percentages'][$stage] = 
+            $dept['total_students'] > 0 ? 
+            round(($dept[$stage . '_completed'] / $dept['total_students']) * 100, 2) : 0;
     }
 }
 
 $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'")->fetchAll(PDO::FETCH_ASSOC);
-
-
-
 ?>
+
 
 
 <!DOCTYPE html>
@@ -158,13 +152,21 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
 
             <div class="search-animated toggle-search">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <form class="form-inline search-full form-inline search" role="search">
+               
+<form class="form-inline search-full form-inline search" role="search">
                     <div class="search-bar">
-                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
+                        <input type="text" id="thesis-search" class="form-control search-form-control ml-lg-auto" placeholder="Search theses...">
+
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x search-close"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </div>
                 </form>
                 <span class="badge badge-secondary">Ctrl + /</span>
+
+
+
+
+                
+
             </div>
 
             <ul class="navbar-item flex-row ms-lg-auto ms-0">
@@ -336,7 +338,7 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
                    
 
 
-                    <!-- <li class="menu">
+                    <li class="menu">
                         <a href="./generate_dean_report.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
@@ -351,7 +353,7 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
                                 <span>Generate Report</span>
                             </div>
                         </a>
-                    </li> -->
+                    </li>
  
                     
                     
@@ -402,15 +404,15 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
                                     <div class="card-body">
                                         <form id="filterForm">
                                             <div class="row">
-                                                <div class="col-md-5">
+                                                <div class="col-md-5 mb-2">
                                                     <select id="departmentFilter" name="department" class="form-select">
                                                         <option value="">All Departments</option>
                                                         <?php foreach ($departmentData as $dept_id => $dept): ?>
-                                                            <option value="<?php echo $dept_id; ?>"><?php echo htmlspecialchars($dept['name']); ?></option>
+                                                            <option value="<?php echo $dept['department_id']; ?>"><?php echo htmlspecialchars($dept['department_name']); ?></option>
                                                         <?php endforeach; ?>
                                                     </select>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-5 mb-2">
                                                 <select id="lecturerFilter" name="lecturer" class="form-select" disabled>
                                                     <option value="">All Lecturers</option>
                                                 </select>
@@ -441,6 +443,29 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
                                                     <div class="chart-container">
                                                         <canvas id="pie-chart-<?php echo $dept_id; ?>"></canvas>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <h5>Total Students: <?php echo $dept['total_students']; ?></h5>
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Stage</th>
+                                                                <th>Completed</th>
+                                                                <th>Percentage</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php foreach (['proposal', 'chapter_one', 'chapter_two', 'chapter_three', 'chapter_four', 'chapter_five'] as $stage): ?>
+                                                                <tr>
+                                                                    <td><?php echo ucwords(str_replace('_', ' ', $stage)); ?></td>
+                                                                    <td><?php echo $dept['completed'][$stage]; ?></td>
+                                                                    <td><?php echo $dept['percentages'][$stage]; ?>%</td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
@@ -499,38 +524,34 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
     <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/custom.js"></script> -->
-    <script>
+      <script>
     var initialChartData = <?php echo json_encode($initialData); ?>;
 
     $(document).ready(function() {
-
-
         $('#departmentFilter').on('change', function() {
-        var departmentId = $(this).val();
-        if (departmentId) {
-            $.ajax({
-                url: 'get_lecturer1.php',
-                type: 'POST',
-                data: { department_id: departmentId },
-                dataType: 'json',
-                success: function(lecturers) {
-                    var options = '<option value="">All Lecturers</option>';
-                    $.each(lecturers, function(id, name) {
-                        options += '<option value="' + id + '">' + name + '</option>';
-                    });
-                    $('#lecturerFilter').html(options).prop('disabled', false);
-                },
-                error: function() {
-                    console.error("Error fetching lecturers");
-                }
-            });
-        } else {
-            $('#lecturerFilter').html('<option value="">All Lecturers</option>').prop('disabled', true);
-        }
-    });
-
-
-
+            var departmentId = $(this).val();
+            if (departmentId) {
+                $.ajax({
+                    url: 'get_lecturer1.php',
+                    type: 'POST',
+                    data: { department_id: departmentId },
+                    dataType: 'json',
+                    success: function(lecturers) {
+                        console.log("Received lecturers:", lecturers);
+                        var options = '<option value="">All Lecturers</option>';
+                        $.each(lecturers, function(id, name) {
+                            options += '<option value="' + id + '">' + name + '</option>';
+                        });
+                        $('#lecturerFilter').html(options).prop('disabled', false);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching lecturers:", error);
+                    }
+                });
+            } else {
+                $('#lecturerFilter').html('<option value="">All Lecturers</option>').prop('disabled', true);
+            }
+        });
         function initializeCharts(data) {
             Object.keys(data).forEach(function(departmentId) {
                 var departmentName = data[departmentId].name;
@@ -538,6 +559,7 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
                 var labels = ['Proposal', 'Chapter 1', 'Chapter 2', 'Chapter 3', 'Chapter 4', 'Chapter 5'];
                 var values = Object.values(percentages);
                 
+                // Bar chart initialization code
                 var barCtx = document.getElementById('bar-chart-' + departmentId).getContext('2d');
                 new Chart(barCtx, {
                     type: 'bar',
@@ -586,6 +608,7 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
                     }
                 });
 
+                // Pie chart initialization code
                 var pieCtx = document.getElementById('pie-chart-' + departmentId).getContext('2d');
                 new Chart(pieCtx, {
                     type: 'pie',
@@ -618,38 +641,39 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
         }
 
         function updateCharts(data) {
-    // Hide all department cards initially
-    $('.department-card').hide();
+            $('.department-card').hide();
 
-    Object.keys(data).forEach(function(departmentId) {
-        var barChart = Chart.getChart('bar-chart-' + departmentId);
-        var pieChart = Chart.getChart('pie-chart-' + departmentId);
-        
-        if (barChart && pieChart) {
-            var newData = Object.values(data[departmentId].percentages);
-            
-            barChart.data.datasets[0].data = newData;
-            pieChart.data.datasets[0].data = newData;
+            Object.keys(data).forEach(function(departmentId) {
+                var barChart = Chart.getChart('bar-chart-' + departmentId);
+                var pieChart = Chart.getChart('pie-chart-' + departmentId);
+                
+                if (barChart && pieChart) {
+                    var newData = Object.values(data[departmentId].percentages);
+                    
+                    barChart.data.datasets[0].data = newData;
+                    pieChart.data.datasets[0].data = newData;
 
-            barChart.options.animation = false;
-            pieChart.options.animation = false;
-            barChart.update('none');
-            pieChart.update('none');
+                    barChart.update('none');
+                    pieChart.update('none');
 
-            // Show the relevant department card
-            $('#bar-chart-' + departmentId).closest('.department-card').show();
+                    var $card = $('#bar-chart-' + departmentId).closest('.department-card');
+                    $card.find('h5').text('Total Students: ' + data[departmentId].total_students);
+                    
+                    var stages = ['proposal', 'chapter_one', 'chapter_two', 'chapter_three', 'chapter_four', 'chapter_five'];
+                    stages.forEach(function(stage, index) {
+                        var $row = $card.find('table tbody tr').eq(index);
+                        $row.find('td').eq(1).text(data[departmentId].completed[stage]);
+                        $row.find('td').eq(2).text(data[departmentId].percentages[stage] + '%');
+                    });
 
-            console.log("Charts updated for department:", departmentId);
+                    $card.show();
+                }
+            });
         }
-    });
-}
-
 
         $('#filterForm').on('submit', function(e) {
             e.preventDefault();
             var formData = $(this).serialize();
-            console.log("tsfsfssfs");
-            
             
             $.ajax({
                 url: 'fetch_filtered_data.php',
@@ -666,7 +690,6 @@ $lecturers = $pdo->query("SELECT id, fullname FROM users WHERE role = 'lecturer'
             });
         });
 
-        // Initialize charts with the initial data
         initializeCharts(initialChartData);
     });
     </script>

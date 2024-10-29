@@ -48,6 +48,8 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="../src/assets/css/dark/components/modal.css" rel="stylesheet" type="text/css">
     <link href="../src/assets/css/dark/apps/notes.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
      <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
     
 
@@ -79,13 +81,21 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <div class="search-animated toggle-search">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <form class="form-inline search-full form-inline search" role="search">
+               
+<form class="form-inline search-full form-inline search" role="search">
                     <div class="search-bar">
-                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
+                        <input type="text" id="thesis-search" class="form-control search-form-control ml-lg-auto" placeholder="Search theses...">
+
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x search-close"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </div>
                 </form>
                 <span class="badge badge-secondary">Ctrl + /</span>
+
+
+
+
+                
+
             </div>
 
             <ul class="navbar-item flex-row ms-lg-auto ms-0">
@@ -259,7 +269,7 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </li>
 
 
-                    <!-- <li class="menu">
+                    <li class="menu">
                         <a href="./generate_dean_report.php" aria-expanded="false" class="dropdown-toggle">
                             <div class="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
@@ -273,7 +283,7 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <span>Generate Report</span>
                             </div>
                         </a>
-                    </li> -->
+                    </li>
 
                     
                     
@@ -284,28 +294,7 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         </div>
         <!--  END SIDEBAR  -->
-
-        <!--  BEGIN CONTENT AREA  -->
-        <div id="content" class="main-content">
-
-           <div class="layout-px-spacing">
-
-                <div class="middle-content container-xxl p-0">
-                    
-                    <div class="row app-notes layout-top-spacing" id="cancel-row">
-                        <div class="col-lg-12">
-                            <div class="app-hamburger-container">
-                                <div class="hamburger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu chat-menu d-xl-none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>
-                            </div>
-    
-                            <div class="app-container">
-                                
-                                
-                                <div class="app-note-container">
-    
-                                    <div class="app-note-overlay"></div>
-    
-                                    <style>
+  <style>
                                             form i {
                                         
                                             cursor: pointer;
@@ -318,36 +307,34 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             
                                         }
                                     </style>
-                              
-                                   
-
-                                    
-                                    
-    
-                                </div>
-
-
-                                <!-- this is where all the display will be rendered -->
-                                <div class="table-responsive mb-2 mt-4">
-
-                                  <div class="card">
-
-                                  <div class="card-body">
-
-
-                                  <form id="filterForm" class="">
-                                        <div class="row ">
-                                            <div class="col-md-4 ">
-                                                <select id="departmentFilter" name="department" class="form-control ">
+        <!--  BEGIN CONTENT AREA  -->
+        <div id="content" class="main-content">
+    <div class="layout-px-spacing">
+        <div class="middle-content container-xxl p-0">
+            <div class="row app-notes layout-top-spacing" id="cancel-row">
+                <div class="col-lg-12">
+                    <div class="app-hamburger-container">
+                        <div class="hamburger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu chat-menu d-xl-none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div>
+                    </div>
+                    <div class="app-container">
+                        <div class="app-note-container">
+                            <div class="app-note-overlay"></div>
+                        </div>
+                        <div class="table-responsive mb-2 mt-4">
+                            <div class="card full-width-card mb-2">
+                                <div class="card-body">
+                                    <form id="filterForm" class="">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <select id="departmentFilter" name="department" class="form-control">
                                                     <option value="">All Departments</option>
                                                     <?php foreach ($departments as $dept): ?>
                                                         <option value="<?php echo $dept['id']; ?>"><?php echo $dept['name']; ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
                                                 <i class="bi bi-chevron-down"></i>
-                                                
                                             </div>
-                                            <div class="col-md-4 ">
+                                            <div class="col-md-4">
                                                 <select id="lecturerFilter" name="lecturer" class="form-control custom-select">
                                                     <option value="">All Lecturers</option>
                                                 </select>
@@ -358,158 +345,189 @@ $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                             </div>
                                         </div>
                                     </form>
-
-                                  </div>
-
-                                  </div>
-
-
-                                <div id="dashboardContent">
-            <!-- Initial dashboard content will be loaded here -->
-           
-            <?php
-                // Fetch all departments in the faculty
-                $stmt = $pdo->prepare("SELECT * FROM departments WHERE faculty_id = ?");
-                $stmt->execute([$_SESSION['faculty_id']]);
-                $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                foreach ($departments as $department) {
-                    echo "<div class='card mb-4'>";
-                    echo "<div class='card-header bg-primary  text-white'><h4 class='text-white'>{$department['name']}</h4></div>";
-                    echo "<div class='card-body'>";
-
-                    // Fetch lecturers in this department
-                    $stmt = $pdo->prepare("SELECT * FROM users WHERE role = 'lecturer' AND department_id = ?");
-                    $stmt->execute([$department['id']]);
-                    $lecturers = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                    foreach ($lecturers as $lecturer) {
-                        echo "<div class='card mb-3'>";
-                        echo "<div class='card-header bg-secondary text-white'><p class='text-white'>{$lecturer['fullname']}</p></div>";
-                        echo "<div class='card-body'>";
-                        echo "<table class='table table-striped'>";
-                        echo "<thead><tr><th>ID</th><th>Student Name</th><th>Proposal</th><th>Chapter 1</th><th>Chapter 2</th><th>Chapter 3</th><th>Chapter 4</th><th>Chapter 5</th><th>Last Interaction</th></tr></thead>";
-                        echo "<tbody>";
-                    
-                        // Updated query to fetch assigned students and last interaction
-                        $stmt = $pdo->prepare("
-                            SELECT 
-                                u.id AS student_id,
-                                u.username as student_username,
-                                u.fullname AS student_name,
-                                tp.status as proposal_status,
-                                tp.submission_date as proposal_submission_date,
-                                c1.status as chapter_one_status,
-                                c2.status as chapter_two_status,
-                                c3.status as chapter_three_status,
-                                c4.status as chapter_four_status,
-                                c5.status as chapter_five_status,
-                                GREATEST(
-                                    COALESCE(tp.submission_date, '1970-01-01'),
-                                    COALESCE(tp.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c1.submission_date, '1970-01-01'),
-                                    COALESCE(c1.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c2.submission_date, '1970-01-01'),
-                                    COALESCE(c2.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c3.submission_date, '1970-01-01'),
-                                    COALESCE(c3.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c4.submission_date, '1970-01-01'),
-                                    COALESCE(c4.lecturer_comment_time, '1970-01-01'),
-                                    COALESCE(c5.submission_date, '1970-01-01'),
-                                    COALESCE(c5.lecturer_comment_time, '1970-01-01')
-                                ) AS last_interaction_date,
-                                DATEDIFF(CURDATE(), 
-                                    GREATEST(
-                                        COALESCE(tp.submission_date, '1970-01-01'),
-                                        COALESCE(tp.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c1.submission_date, '1970-01-01'),
-                                        COALESCE(c1.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c2.submission_date, '1970-01-01'),
-                                        COALESCE(c2.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c3.submission_date, '1970-01-01'),
-                                        COALESCE(c3.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c4.submission_date, '1970-01-01'),
-                                        COALESCE(c4.lecturer_comment_time, '1970-01-01'),
-                                        COALESCE(c5.submission_date, '1970-01-01'),
-                                        COALESCE(c5.lecturer_comment_time, '1970-01-01')
-                                    )
-                                ) AS days_since_last_interaction
-                            FROM 
-                                users u
-                            LEFT JOIN thesis_proposals tp ON u.id = tp.student_id
-                            LEFT JOIN chapter_one c1 ON u.id = c1.student_id
-                            LEFT JOIN chapter_two c2 ON u.id = c2.student_id
-                            LEFT JOIN chapter_three c3 ON u.id = c3.student_id
-                            LEFT JOIN chapter_four c4 ON u.id = c4.student_id
-                            LEFT JOIN chapter_five c5 ON u.id = c5.student_id
-                            JOIN assignments a ON u.id = a.student_id
-                            WHERE 
-                                a.primary_supervisor_id = ? OR a.secondary_supervisor_id1 = ? OR a.secondary_supervisor_id2 = ?
-                        ");
-                        $stmt->execute([$lecturer['id'], $lecturer['id'], $lecturer['id']]);
-                        $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    
-                        foreach ($students as $student) {
-                            echo "<tr>";
-                            echo "<td>{$student['student_username']}</td>";
-                            echo "<td>{$student['student_name']}</td>";
-                            echo "<td>" . getStatusBadge($student['proposal_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_one_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_two_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_three_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_four_status']) . "</td>";
-                            echo "<td>" . getStatusBadge($student['chapter_five_status']) . "</td>";
-                            
-                            if ($student['proposal_submission_date']) {
-                                $interactionClass = $student['days_since_last_interaction'] > 30 ? 'text-danger' : '';
-                                echo "<td class='{$interactionClass}'>{$student['days_since_last_interaction']} days ago</td>";
-                            } else {
-                                echo "<td class='text-danger'>Proposal not submitted</td>";
-                            }
-                            
-                            echo "</tr>";
-                        }
-                        
-                    
-                        echo "</tbody></table>";
-                        echo "</div></div>";
-                    }
-
-                    echo "</div></div>";
-                }
-
-                function getStatusBadge($status) {
-                    switch ($status) {
-                        case 'approved':
-                            return '<span class="badge bg-success">Approved</span>';
-                        case 'pending':
-                            return '<span class="badge bg-warning">Pending</span>';
-                        case 'revise':
-                            return '<span class="badge bg-warning">Revise</span>';
-                        case 'rejected':
-                            return '<span class="badge bg-danger">Rejected</span>';
-                        default:
-                            return '<span class="badge bg-secondary">Not Started</span>';
-                    }
-                }
-            ?>
-
-                
-        </div>
+                                </div>
                             </div>
+                            <div id="dashboardContent">
+                                <div class="accordion custom-accordion text-white" id="departmentAccordion">
+                                    <?php
+                                    $stmt = $pdo->prepare("SELECT * FROM departments WHERE faculty_id = ?");
+                                    $stmt->execute([$_SESSION['faculty_id']]);
+                                    $departments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+                                    foreach ($departments as $index => $department) {
+                                        echo "<div class='accordion-item mb-2 text-white'>";
+                                        echo "<h2 class='accordion-header' id='heading{$department['id']}'>";
+                                        echo "<button class='accordion-button collapsed btn-primary text-white' type='button' data-bs-toggle='collapse' data-bs-target='#collapse{$department['id']}' aria-expanded='false' aria-controls='collapse{$department['id']}'>";
+                                        echo "{$department['name']} <span class='icon-wrapper'><i class='fas fa-plus'></i><i class='fas fa-minus'></i></span>";
+                                        echo "</button>";
+                                        echo "</h2>";
+                                        echo "<div id='collapse{$department['id']}' class='accordion-collapse collapse' aria-labelledby='heading{$department['id']}' data-bs-parent='#departmentAccordion'>";
+                                        echo "<div class='accordion-body'>";
 
-                           
-                            
+                                        $stmt = $pdo->prepare("SELECT * FROM users WHERE role = 'lecturer' AND department_id = ?");
+                                        $stmt->execute([$department['id']]);
+                                        $lecturers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                        echo "<div class='accordion custom-accordion' id='lecturerAccordion{$department['id']}'>";
+                                        foreach ($lecturers as $lecturer) {
+                                            echo "<div class='accordion-item'>";
+                                            echo "<h2 class='accordion-header' id='headingLecturer{$lecturer['id']}'>";
+                                            echo "<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapseLecturer{$lecturer['id']}' aria-expanded='false' aria-controls='collapseLecturer{$lecturer['id']}'>";
+                                            echo "{$lecturer['fullname']} <span class='icon-wrapper'><i class='fas fa-plus'></i><i class='fas fa-minus'></i></span>";
+                                            echo "</button>";
+                                            echo "</h2>";
+                                            echo "<div id='collapseLecturer{$lecturer['id']}' class='accordion-collapse collapse' aria-labelledby='headingLecturer{$lecturer['id']}' data-bs-parent='#lecturerAccordion{$department['id']}'>";
+                                            echo "<div class='accordion-body'>";
+                                            
+                                            echo "<div class='table-responsive'>";
+                                            echo "<table class='table table-striped'>";
+                                            echo "<thead><tr><th>ID</th><th>Student Name</th><th>Proposal</th><th>Chapter 1</th><th>Chapter 2</th><th>Chapter 3</th><th>Chapter 4</th><th>Chapter 5</th><th>Last Interaction</th></tr></thead>";
+                                            echo "<tbody>";
+                                       
+                                            $stmt = $pdo->prepare("
+                                                SELECT
+                                                    u.id AS student_id,
+                                                    u.username as student_username,
+                                                    u.fullname AS student_name,
+                                                    tp.status as proposal_status,
+                                                    tp.submission_date as proposal_submission_date,
+                                                    c1.status as chapter_one_status,
+                                                    c2.status as chapter_two_status,
+                                                    c3.status as chapter_three_status,
+                                                    c4.status as chapter_four_status,
+                                                    c5.status as chapter_five_status,
+                                                    GREATEST(
+                                                        COALESCE(tp.submission_date, '1970-01-01'),
+                                                        COALESCE(tp.lecturer_comment_time, '1970-01-01'),
+                                                        COALESCE(c1.submission_date, '1970-01-01'),
+                                                        COALESCE(c1.lecturer_comment_time, '1970-01-01'),
+                                                        COALESCE(c2.submission_date, '1970-01-01'),
+                                                        COALESCE(c2.lecturer_comment_time, '1970-01-01'),
+                                                        COALESCE(c3.submission_date, '1970-01-01'),
+                                                        COALESCE(c3.lecturer_comment_time, '1970-01-01'),
+                                                        COALESCE(c4.submission_date, '1970-01-01'),
+                                                        COALESCE(c4.lecturer_comment_time, '1970-01-01'),
+                                                        COALESCE(c5.submission_date, '1970-01-01'),
+                                                        COALESCE(c5.lecturer_comment_time, '1970-01-01')
+                                                    ) AS last_interaction_date,
+                                                    DATEDIFF(CURDATE(),
+                                                        GREATEST(
+                                                            COALESCE(tp.submission_date, '1970-01-01'),
+                                                            COALESCE(tp.lecturer_comment_time, '1970-01-01'),
+                                                            COALESCE(c1.submission_date, '1970-01-01'),
+                                                            COALESCE(c1.lecturer_comment_time, '1970-01-01'),
+                                                            COALESCE(c2.submission_date, '1970-01-01'),
+                                                            COALESCE(c2.lecturer_comment_time, '1970-01-01'),
+                                                            COALESCE(c3.submission_date, '1970-01-01'),
+                                                            COALESCE(c3.lecturer_comment_time, '1970-01-01'),
+                                                            COALESCE(c4.submission_date, '1970-01-01'),
+                                                            COALESCE(c4.lecturer_comment_time, '1970-01-01'),
+                                                            COALESCE(c5.submission_date, '1970-01-01'),
+                                                            COALESCE(c5.lecturer_comment_time, '1970-01-01')
+                                                        )
+                                                    ) AS days_since_last_interaction
+                                                FROM
+                                                    users u
+                                                LEFT JOIN thesis_proposals tp ON u.id = tp.student_id
+                                                LEFT JOIN chapter_one c1 ON u.id = c1.student_id
+                                                LEFT JOIN chapter_two c2 ON u.id = c2.student_id
+                                                LEFT JOIN chapter_three c3 ON u.id = c3.student_id
+                                                LEFT JOIN chapter_four c4 ON u.id = c4.student_id
+                                                LEFT JOIN chapter_five c5 ON u.id = c5.student_id
+                                                JOIN assignments a ON u.id = a.student_id
+                                                WHERE
+                                                    a.primary_supervisor_id = ? OR a.secondary_supervisor_id1 = ? OR a.secondary_supervisor_id2 = ?
+                                            ");
+                                            $stmt->execute([$lecturer['id'], $lecturer['id'], $lecturer['id']]);
+                                            $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                       
+                                            foreach ($students as $student) {
+                                                echo "<tr>";
+                                                echo "<td>{$student['student_username']}</td>";
+                                                echo "<td>{$student['student_name']}</td>";
+                                                echo "<td>" . getStatusBadge($student['proposal_status']) . "</td>";
+                                                echo "<td>" . getStatusBadge($student['chapter_one_status']) . "</td>";
+                                                echo "<td>" . getStatusBadge($student['chapter_two_status']) . "</td>";
+                                                echo "<td>" . getStatusBadge($student['chapter_three_status']) . "</td>";
+                                                echo "<td>" . getStatusBadge($student['chapter_four_status']) . "</td>";
+                                                echo "<td>" . getStatusBadge($student['chapter_five_status']) . "</td>";
+                                               
+                                                if ($student['proposal_submission_date']) {
+                                                    $interactionClass = $student['days_since_last_interaction'] > 30 ? 'text-danger' : '';
+                                                    echo "<td class='{$interactionClass}'>{$student['days_since_last_interaction']} days ago</td>";
+                                                } else {
+                                                    echo "<td class='text-danger'>Proposal not submitted</td>";
+                                                }
+                                               
+                                                echo "</tr>";
+                                            }
+                                           
+                                            echo "</tbody></table>";
+                                            echo "</div>";
+
+                                            echo "</div>";
+                                            echo "</div>";
+                                            echo "</div>";
+                                        }
+                                        echo "</div>";
+
+                                        echo "</div>";
+                                        echo "</div>";
+                                        echo "</div>";
+                                    }
+                                    ?>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
-                
             </div>
-            
-            
         </div>
+    </div>
+</div>
+
+<style>
+    .custom-accordion .accordion-button {
+        position: relative;
+        padding-right: 40px;
+    }
+    .custom-accordion .accordion-button .icon-wrapper {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .custom-accordion .accordion-button .fa-plus {
+        display: inline-block;
+    }
+    .custom-accordion .accordion-button .fa-minus {
+        display: none;
+    }
+    .custom-accordion .accordion-button:not(.collapsed) .fa-plus {
+        display: none;
+    }
+    .custom-accordion .accordion-button:not(.collapsed) .fa-minus {
+        display: inline-block;
+    }
+</style>
+
+<?php
+function getStatusBadge($status) {
+    switch ($status) {
+        case 'approved':
+            return '<span class="badge bg-success">Approved</span>';
+        case 'pending':
+            return '<span class="badge bg-warning">Pending</span>';
+        case 'revise':
+            return '<span class="badge bg-warning">Revise</span>';
+        case 'rejected':
+            return '<span class="badge bg-danger">Rejected</span>';
+        default:
+            return '<span class="badge bg-secondary">Not Started</span>';
+    }
+}
+?>
+
         <!--  END CONTENT AREA  -->
 
     </div>

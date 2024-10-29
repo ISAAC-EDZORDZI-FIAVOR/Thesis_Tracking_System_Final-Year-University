@@ -198,36 +198,41 @@ $pdo = null;
                                         </div>
                                     </div>
                                     
-                                    <div class="col-sm-4 col-12">
+                                    <!-- <div class="col-sm-4 col-12">
                                         <div class="mb-4">
                                             <button class="btn  btn-social-login w-100 ">
                                                 <img src="../src/assets/img/google-gmail.svg" alt="" class="img-fluid">
                                                 <span class="btn-text-inner">Google</span>
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> -->
         
-                                    <div class="col-sm-4 col-12">
+                                    <!-- <div class="col-sm-4 col-12">
                                         <div class="mb-4">
                                             <button class="btn  btn-social-login w-100">
                                                 <img src="../src/assets/img/github-icon.svg" alt="" class="img-fluid">
                                                 <span class="btn-text-inner">Github</span>
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> -->
         
-                                    <div class="col-sm-4 col-12">
+                                    <!-- <div class="col-sm-4 col-12">
                                         <div class="mb-4">
                                             <button class="btn  btn-social-login w-100">
                                                 <img src="../src/assets/img/twitter.svg" alt="" class="img-fluid">
                                                 <span class="btn-text-inner">Twitter</span>
                                             </button>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <div class="col-12">
                                         <div class="text-center">
-                                            <p class="mb-0">Dont't have an account ?   Please contact your  <a href="" class="text-warning">Administrator.</a></p>
+                                            <p class="mb-0">Dont't have an account ?   Please contact your  <a href="" class="text-warning">Administrator.</a> or</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="text-center">
+                                            <p class="mb-0">You can Reset Your <a href="./forgot-password.php" class="text-warning">Password.</a></p>
                                         </div>
                                     </div>
                                     

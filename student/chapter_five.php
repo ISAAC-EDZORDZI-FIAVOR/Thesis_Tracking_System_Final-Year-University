@@ -117,13 +117,41 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <div class="search-animated toggle-search">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <form class="form-inline search-full form-inline search" role="search">
-                    <div class="search-bar">
-                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x search-close"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </div>
-                </form>
-                <span class="badge badge-secondary">Ctrl + /</span>
+               
+<form class="form-inline search-full form-inline search" role="search" method="GET" action="search_thesis.php">
+    <div class="search-bar d-flex">
+        <input type="text" class="form-control search-form-control flex-grow-1" name="query" placeholder="Search theses...">
+        <button type="submit" class="btn btn-primary  search-submit ml-4">
+            Search
+        </button>
+    </div>
+</form>
+
+
+<style>
+    .search-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-submit svg {
+    margin-right: 5px;
+}
+
+.search-submit span {
+    display: inline-block;
+}
+
+@media (min-width: 768px) {
+    .search-submit span {
+        display: inline-block;
+    }
+}
+
+</style>
+                
+
             </div>
 
             <ul class="navbar-item flex-row ms-lg-auto ms-0">
@@ -535,6 +563,14 @@ $assigned_supervisors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                                                         <h4>Submit Compiled Thesis</h4>
                                                                                         <form action="" method="post" enctype="multipart/form-data">
                                                                                             <div class="form-group">
+                                                                                                <label for="thesis_title">Thesis Title</label>
+                                                                                                <input type="text" class="form-control" id="thesis_title" name="thesis_title" required>
+                                                                                            </div>
+                                                                                            <div class="form-group">
+                                                                                                <label for="keywords">Keywords (comma-separated)</label>
+                                                                                                <input type="text" class="form-control" id="keywords" name="keywords" required>
+                                                                                            </div>
+                                                                                            <div class="form-group">
                                                                                                 <label for="compiled_file">Upload Compiled Thesis (PDF)</label>
                                                                                                 <input type="file" class="form-control-file" id="compiled_file" name="compiled_file" accept=".pdf" required>
                                                                                             </div>
@@ -869,6 +905,8 @@ require '../config.php';
 
 if (isset($_POST['submit_Compile']))  {
     $student_id = $_SESSION['user_id'];
+    $thesis_title = $_POST['thesis_title'];
+    $keywords = $_POST['keywords'];
 
     // Check if student has already submitted
     $stmt = $pdo->prepare("SELECT id FROM compiled_thesis WHERE student_id = ?");
@@ -903,7 +941,7 @@ if (isset($_POST['submit_Compile']))  {
         
         if (move_uploaded_file($file_tmp, $upload_path . $new_file_name)) {
             try {
-                $stmt = $pdo->prepare("INSERT INTO compiled_thesis (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, file_path, faculty_id, department_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO compiled_thesis (student_id, primary_supervisor_id, secondary_supervisor_id1, secondary_supervisor_id2, file_path, faculty_id, department_id, thesis_title, keywords) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $stmt->execute([
                     $student_id,
                     $primary_supervisor_id,
@@ -911,7 +949,9 @@ if (isset($_POST['submit_Compile']))  {
                     $secondary_supervisor_id2,
                     $upload_path . $new_file_name,
                     $_SESSION['faculty_id'],
-                    $_SESSION['department_id']
+                    $_SESSION['department_id'],
+                    $thesis_title,
+                    $keywords
                 ]);
                 
                 ?>

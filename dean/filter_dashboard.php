@@ -5,7 +5,7 @@ $departmentId = $_POST['department'] ?? null;
 $lecturerId = $_POST['lecturer'] ?? null;
 
 $query = "
-    SELECT 
+    SELECT
         u.id AS student_id,
         u.username as student_username,
         u.fullname AS student_name,
@@ -32,7 +32,7 @@ $query = "
             COALESCE(c5.submission_date, '1970-01-01'),
             COALESCE(c5.lecturer_comment_time, '1970-01-01')
         ) AS last_interaction_date,
-        DATEDIFF(CURDATE(), 
+        DATEDIFF(CURDATE(),
             GREATEST(
                 COALESCE(tp.submission_date, '1970-01-01'),
                 COALESCE(tp.lecturer_comment_time, '1970-01-01'),
@@ -48,7 +48,7 @@ $query = "
                 COALESCE(c5.lecturer_comment_time, '1970-01-01')
             )
         ) AS days_since_last_interaction
-    FROM 
+    FROM
         users u
     JOIN departments d ON u.department_id = d.id
     JOIN assignments a ON u.id = a.student_id
@@ -80,23 +80,25 @@ $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Generate HTML for the filtered results
-$html = "<table class='table table-striped'>
-            <thead>
-                <tr>
-                     <th>ID</th>
-                    <th>Student</th>
-                    <th>Department</th>
-                    <th>Proposal</th>
-                    <th>Chapter 1</th>
-                    <th>Chapter 2</th>
-                    <th>Chapter 3</th>
-                    <th>Chapter 4</th>
-                    <th>Chapter 5</th>
-                    <th>Last Interaction</th>
-                </tr>
-            </thead>
-            <tbody>";
+$html = "<div class='card full-width-card'>
+            <div class='card-body'>
+                <div class='table-responsive'>
+                    <table class='table table-striped table-hover'>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Student</th>
+                                <th>Department</th>
+                                <th>Proposal</th>
+                                <th>Chapter 1</th>
+                                <th>Chapter 2</th>
+                                <th>Chapter 3</th>
+                                <th>Chapter 4</th>
+                                <th>Chapter 5</th>
+                                <th>Last Interaction</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
 
 foreach ($results as $row) {
     $html .= "<tr>
@@ -120,7 +122,11 @@ foreach ($results as $row) {
     $html .= "</tr>";
 }
 
-$html .= "</tbody></table>";
+$html .= "      </tbody>
+            </table>
+        </div>
+    </div>
+</div>";
 
 echo $html;
 

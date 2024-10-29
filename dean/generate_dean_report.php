@@ -5,199 +5,216 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "dean") {
     header("Location: ../admin/auth-signin.php");
     exit();
 }
+require '../vendor/autoload.php'; // Ensure this path is correct
+require '../vendor/setasign/fpdf/fpdf.php'; // Correct file path for FPDF
 
-require '../vendor/autoload.php';
-require '../vendor/setasign/fpdf/fpdf.php';
-require '../vendor/amenadiel/jpgraph/src/graph/Graph.php';
-
-require '../vendor/amenadiel/jpgraph/src/graph/PieGraph.php';
-
-require '../config.php';
-
-// PDF class definition
 class PDF extends FPDF
 {
     function Header()
     {
-        $this->Image('./Thesis.png', 10, 6, 30);
-        $this->SetFont('Arial', 'B', 15);
-        $this->Cell(30);
-        $this->Cell(0, 10, 'Dean\'s Comprehensive Thesis Report', 0, 0, 'C');
-        $this->Ln(20);
+        // Center the image
+        $imagePath = './Thesis.png';
+        $imageWidth = 30;
+        $imageHeight = 30; // Set the height for the image
+        $pageWidth = $this->GetPageWidth();
+        $x = ($pageWidth - $imageWidth) / 2;
+        $this->Image($imagePath, $x, 10, $imageWidth, $imageHeight);
+
+        // School name centered
+        $this->SetFont('Arial', 'B', 16);
+        $this->SetY(50);
+        $this->Cell(0, 10, 'Thesis Tracking System UEW', 0, 1, 'C');
+        $this->Ln(10);
     }
 
     function Footer()
     {
         $this->SetY(-15);
         $this->SetFont('Arial', 'I', 8);
-        $this->Cell(0, 10, 'Page ' . $this->PageNo() . '/{nb}', 0, 0, 'C');
+        $this->SetTextColor(128, 128, 128); // Gray color for footer text
+        $this->Cell(0, 10, 'Page ' . $this->PageNo(), 0, 0, 'C');
     }
 
-    function ChapterTitle($num, $label)
+    function ChapterTitle($title)
     {
-        $this->SetFont('Arial', 'B', 12);
-        $this->SetFillColor(200, 220, 255);
-        $this->Cell(0, 6, "Chapter $num : $label", 0, 1, 'L', true);
-        $this->Ln(4);
+        $this->SetFont('Arial', 'B', 14);
+        $this->SetFillColor(0, 0, 255); // Blue background for titles
+        $this->SetTextColor(255, 255, 255); // White text for titles
+        $this->Cell(0, 10, $title, 0, 1, 'C', true);
+        $this->Ln(5);
     }
 
-    function ChapterBody($txt)
+    function ChapterBody($body)
     {
         $this->SetFont('Arial', '', 12);
-        $this->MultiCell(0, 5, $txt);
+        $this->SetTextColor(0, 0, 0); // Black color for body text
+        $this->MultiCell(0, 10, $body);
         $this->Ln();
     }
 
-    function AddChart($title, $filename)
+    function CreateTable($header, $data)
     {
-        $this->AddPage();
-        $this->ChapterTitle('', $title);
-        $this->Image($filename, 10, 30, 190);
-        if (file_exists($filename)) {
-            unlink($filename);
+        $this->SetFont('Arial', 'B', 12);
+        $this->SetFillColor(0, 0, 255); // Blue background for table header
+        $this->SetTextColor(255, 255, 255); // White text for table header
+        $w = array(90, 90); // Column widths
+        $this->SetX((210 - array_sum($w)) / 2); // Center table
+        foreach ($header as $i => $col) {
+            $this->Cell($w[$i], 10, $col, 1, 0, 'C', true);
+        }
+        $this->Ln();
+        $this->SetFont('Arial', '', 12);
+        $this->SetTextColor(0, 0, 0); // Black color for table data
+        foreach ($data as $row) {
+            $this->SetX((210 - array_sum($w)) / 2); // Center each row
+            foreach ($row as $i => $col) {
+                $this->Cell($w[$i], 10, $col, 1);
+            }
+            $this->Ln();
         }
     }
-}
 
-// Function to generate charts
-function generateChart($data, $labels, $type, $filename, $title)
-{
-    switch ($type) {
-        case 'bar':
-            $graph = new Graph(600, 400);
-            $graph->SetScale("textlin");
-            $graph->SetBox(false);
-            $graph->yaxis->HideZeroLabel();
-            $graph->ygrid->SetFill(true, '#FFFFFF@0.5', '#FFFFFF@0.5');
-            $graph->xaxis->SetTickLabels($labels);
-            $graph->xaxis->SetLabelAngle(45);
-            $plot = new BarPlot($data);
-            $graph->Add($plot);
-            break;
-        case 'pie':
-            $graph = new PieGraph(400, 300);
-            $plot = new PiePlot($data);
-            $plot->SetLegends($labels);
-            $graph->Add($plot);
-            break;
-        case 'line':
-            $graph = new Graph(600, 400);
-            $graph->SetScale("textlin");
-            $graph->SetBox(false);
-            $graph->yaxis->HideZeroLabel();
-            $graph->ygrid->SetFill(true, '#FFFFFF@0.5', '#FFFFFF@0.5');
-            $graph->xaxis->SetTickLabels($labels);
-            $graph->xaxis->SetLabelAngle(45);
-            $plot = new LinePlot($data);
-            $graph->Add($plot);
-            break;
-        default:
-            throw new InvalidArgumentException("Invalid chart type: $type");
+    function CenterText($text, $fontSize = 12, $fontStyle = '', $color = [0, 0, 0])
+    {
+        $this->SetFont('Arial', $fontStyle, $fontSize);
+        $this->SetTextColor($color[0], $color[1], $color[2]); // Set text color
+        $this->Cell(0, 10, $text, 0, 1, 'C');
     }
-
-    $graph->title->Set($title);
-    $graph->Stroke($filename);
 }
 
 // Initialize PDF
 $pdf = new PDF();
-$pdf->AliasNbPages();
 $pdf->AddPage();
 
-// Fetch data
-try {
-    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'student'");
-    $totalStudents = $stmt->fetchColumn();
+// Data fetching
+require '../config.php'; // Ensure this path is correct
 
-    $stmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'lecturer'");
-    $totalLecturers = $stmt->fetchColumn();
+$faculty_id = $_SESSION['faculty_id']; // Assuming the faculty_id is stored in the session
 
-    $stmt = $pdo->query("SELECT COUNT(*) FROM faculties");
-    $totalFaculties = $stmt->fetchColumn();
+// Fetch faculty name
+$faculty_query = "SELECT name FROM faculties WHERE id = ?";
+$stmt = $pdo->prepare($faculty_query);
+$stmt->execute([$faculty_id]);
+$faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+$facultyName = $faculty['name'] ?? 'Unknown Faculty';
 
-    $stmt = $pdo->query("SELECT COUNT(*) FROM departments");
-    $totalDepartments = $stmt->fetchColumn();
+// Fetch other data
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM departments WHERE faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalDepartments = $stmt->fetchColumn();
 
-    $stmt = $pdo->query("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'approved'");
-    $totalApprovedTheses = $stmt->fetchColumn();
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role = 'lecturer' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalLecturers = $stmt->fetchColumn();
 
-    $stmt = $pdo->query("
-        SELECT f.name, 
-               COUNT(DISTINCT u.id) as student_count,
-               COUNT(DISTINCT tp.id) as approved_theses
-        FROM faculties f
-        LEFT JOIN users u ON f.id = u.faculty_id AND u.role = 'student'
-        LEFT JOIN thesis_proposals tp ON u.id = tp.student_id AND tp.status = 'approved'
-        GROUP BY f.id
-    ");
-    $facultyStats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE role = 'student' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalStudents = $stmt->fetchColumn();
 
-    $stmt = $pdo->query("
-        SELECT DATE_FORMAT(submission_date, '%Y-%m') as month, COUNT(*) as count
-        FROM thesis_proposals
-        WHERE submission_date >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
-        GROUP BY month
-        ORDER BY month
-    ");
-    $monthlySubmissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Database error: " . $e->getMessage());
+$stmt = $pdo->prepare("SELECT COUNT(DISTINCT a.student_id) FROM assignments a JOIN users u ON a.student_id = u.id WHERE u.faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalAssignedStudents = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("
+    SELECT COUNT(*)
+    FROM users
+    WHERE role = 'student'
+    AND faculty_id = ?
+    AND id NOT IN (SELECT DISTINCT student_id FROM assignments)
+");
+$stmt->execute([$faculty_id]);
+$totalUnassignedStudents = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalThesisSubmitted = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'pending' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalThesisSubmittedPending = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'approved' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalThesisSubmittedApproved = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM thesis_proposals WHERE status = 'rejected' AND faculty_id = ?");
+$stmt->execute([$faculty_id]);
+$totalThesisSubmittedRejected = $stmt->fetchColumn();
+
+// Fetch chapter data
+$chapters = ['one', 'two', 'three', 'four', 'five'];
+foreach ($chapters as $chapter) {
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_$chapter c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ?");
+    $stmt->execute([$faculty_id]);
+    ${"totalchapter_{$chapter}Submitted"} = $stmt->fetchColumn();
+
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_$chapter c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'pending'");
+    $stmt->execute([$faculty_id]);
+    ${"totalchapter_{$chapter}SubmittedPending"} = $stmt->fetchColumn();
+
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_$chapter c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'approved'");
+    $stmt->execute([$faculty_id]);
+    ${"totalchapter_{$chapter}SubmittedApproved"} = $stmt->fetchColumn();
+
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM chapter_$chapter c JOIN users u ON c.student_id = u.id WHERE u.faculty_id = ? AND c.status = 'rejected'");
+    $stmt->execute([$faculty_id]);
+    ${"totalchapter_{$chapter}SubmittedRejected"} = $stmt->fetchColumn();
 }
 
-// Generate report content
+// Report generation
 $pdf->SetFont('Arial', 'B', 16);
-$pdf->Cell(0, 10, 'Executive Summary', 0, 1, 'C');
-$pdf->Ln(5);
+$pdf->SetTextColor(0, 0, 255); // Blue color for the main title
+$pdf->CenterText('Comprehensive Dean Report');
+$pdf->Ln(10);
 
-$pdf->SetFont('Arial', '', 12);
-$pdf->MultiCell(0, 5, "This comprehensive report provides an overview of the thesis progress across all faculties. It includes statistics on student and lecturer counts, thesis submissions, and faculty-wise performance.");
-$pdf->Ln(5);
+$pdf->SetFont('Arial', 'I', 10);
+$pdf->SetTextColor(0, 0, 0); // Black color for date text
+$pdf->CenterText("Report Date: " . date('F j, Y'));
+$pdf->CenterText('Generated on: ' . date('F j, Y, g:i a'));
+$pdf->Ln(10);
 
-$pdf->ChapterTitle(1, 'Overall Statistics');
-$pdf->ChapterBody("Total Students: $totalStudents");
-$pdf->ChapterBody("Total Lecturers: $totalLecturers");
-$pdf->ChapterBody("Total Faculties: $totalFaculties");
-$pdf->ChapterBody("Total Departments: $totalDepartments");
-$pdf->ChapterBody("Total Approved Theses: $totalApprovedTheses");
+// Add Faculty Name
+$pdf->SetFont('Arial', 'B', 14);
+$pdf->SetTextColor(0, 0, 255); // Blue color for faculty name
+$pdf->CenterText("Faculty: $facultyName");
+$pdf->Ln(10);
 
-$pdf->ChapterTitle(2, 'Faculty-wise Performance');
-foreach ($facultyStats as $stat) {
-    $pdf->ChapterBody("{$stat['name']}:");
-    $pdf->ChapterBody("  Students: {$stat['student_count']}");
-    $pdf->ChapterBody("  Approved Theses: {$stat['approved_theses']}");
-    $pdf->Ln(5);
+// System Overview
+$pdf->ChapterTitle('System Overview');
+$pdf->CreateTable(
+    ['Metric', 'Value'],
+    [
+        ['Total Users', $totalStudents + $totalLecturers],
+        ['Student to Lecturer Ratio', ($totalLecturers ? round($totalStudents / $totalLecturers, 2) : 'N/A')],
+    ]
+);
+
+// Thesis Progress Overview
+$pdf->ChapterTitle('Thesis Progress Overview');
+$pdf->CreateTable(
+    ['Metric', 'Value'],
+    [
+        ['Completed Theses', $totalThesisSubmitted],
+        ['Pending Theses', $totalThesisSubmittedPending],
+        ['Approved Theses', $totalThesisSubmittedApproved],
+        ['Rejected Theses', $totalThesisSubmittedRejected],
+    ]
+);
+
+// Chapter Statistics
+foreach ($chapters as $chapter) {
+    $pdf->ChapterTitle("Chapter " . ucfirst($chapter) . " Statistics");
+    $pdf->CreateTable(
+        ['Metric', 'Value'],
+        [
+            ["Total Submitted", ${"totalchapter_{$chapter}Submitted"}],
+            ["Pending", ${"totalchapter_{$chapter}SubmittedPending"}],
+            ["Approved", ${"totalchapter_{$chapter}SubmittedApproved"}],
+            ["Rejected", ${"totalchapter_{$chapter}SubmittedRejected"}],
+        ]
+    );
 }
 
-// Generate charts
-try {
-    // Bar chart for faculty-wise student count
-    $data = array_column($facultyStats, 'student_count');
-    $labels = array_column($facultyStats, 'name');
-    generateChart($data, $labels, 'bar', 'faculty_students.png', 'Students per Faculty');
-    $pdf->AddChart("Students per Faculty", "faculty_students.png");
-
-    // Pie chart for approved theses distribution
-    $data = array_column($facultyStats, 'approved_theses');
-    $labels = array_column($facultyStats, 'name');
-    generateChart($data, $labels, 'pie', 'approved_theses_distribution.png', 'Approved Theses Distribution');
-    $pdf->AddChart("Approved Theses Distribution", "approved_theses_distribution.png");
-
-    // Line chart for monthly thesis submissions
-    $data = array_column($monthlySubmissions, 'count');
-    $labels = array_column($monthlySubmissions, 'month');
-    generateChart($data, $labels, 'line', 'monthly_submissions.png', 'Monthly Thesis Submissions (Last 12 Months)');
-    $pdf->AddChart("Monthly Thesis Submissions", "monthly_submissions.png");
-} catch (Exception $e) {
-    die("Chart generation error: " . $e->getMessage());
-}
-
-$pdf->ChapterTitle(3, 'Key Findings and Recommendations');
-$pdf->ChapterBody("1. The faculty with the highest number of students is " . $facultyStats[array_search(max(array_column($facultyStats, 'student_count')), array_column($facultyStats, 'student_count'))]['name'] . ".");
-$pdf->ChapterBody("2. The faculty with the most approved theses is " . $facultyStats[array_search(max(array_column($facultyStats, 'approved_theses')), array_column($facultyStats, 'approved_theses'))]['name'] . ".");
-$pdf->ChapterBody("3. The overall thesis approval rate is " . round(($totalApprovedTheses / $totalStudents) * 100, 2) . "%.");
-$pdf->ChapterBody("4. Recommendation: Focus on improving thesis completion rates in faculties with lower performance.");
-$pdf->ChapterBody("5. Recommendation: Investigate and replicate best practices from high-performing faculties.");
-$pdf->ChapterBody("6. Recommendation: Implement a mentorship program pairing experienced thesis supervisors with new faculty members.");
-
-$pdf->Output('D', 'Dean_Comprehensive_Report.pdf');
+// Output the PDF
+$pdf->Output('D', 'Dean_Report.pdf');
 ?>

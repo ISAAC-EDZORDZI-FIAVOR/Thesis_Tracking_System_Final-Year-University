@@ -117,6 +117,7 @@ function displayUsersTable($pdo)
     <link href="../src/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/light/plugins.css" rel="stylesheet" type="text/css" />
     <link href="../layouts/vertical-dark-menu/css/dark/plugins.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- END GLOBAL MANDATORY STYLES -->
 
     
@@ -159,7 +160,8 @@ function displayUsersTable($pdo)
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <form class="form-inline search-full form-inline search" role="search">
                     <div class="search-bar">
-                        <input type="text" class="form-control search-form-control  ml-lg-auto" placeholder="Search...">
+                        <input type="text" id="thesis-search" class="form-control search-form-control ml-lg-auto" placeholder="Search theses...">
+
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x search-close"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </div>
                 </form>
@@ -548,6 +550,28 @@ function displayUsersTable($pdo)
                                     </div>
                                 </div>
                             </div>
+
+
+                            <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="searchModalLabel">Search Results</h5>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">    -->
+                                        <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body" id="searchResults">
+                                        <!-- Search results will be displayed here -->
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
     
                             <!--Add User Modal -->
                             <div class="modal fade" id="notesMailModal" tabindex="-1" role="dialog" aria-labelledby="notesMailModalTitle" aria-hidden="true">
@@ -696,6 +720,29 @@ function displayUsersTable($pdo)
         <!--  END CONTENT AREA  -->
 
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('thesis-search');
+    const searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        if (query.length > 2) {
+            fetch(`search_thesis.php?query=${encodeURIComponent(query)}`)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('searchResults').innerHTML = data;
+                    searchModal.show();
+                })
+                .catch(error => console.error('Error:', error));
+        } else {
+            searchModal.hide();
+        }
+    });
+});
+
+    </script>
     <!-- END MAIN CONTAINER -->
      <script>
         const togglePassword = document.querySelector('#togglePassword');
@@ -714,12 +761,12 @@ function displayUsersTable($pdo)
 
 
     <script>
-        const togglePassword = document.querySelector('#togglePassword1');
-        const password = document.querySelector('#edit_password');
-        togglePassword.addEventListener('click', () => {
+        const togglePassword1 = document.querySelector('#togglePassword1');
+        const password1 = document.querySelector('#edit_password');
+        togglePassword1.addEventListener('click', () => {
             // Toggle the type attribute using
             // getAttribure() method
-            const type = password
+            const type = password1
                 .getAttribute('type') === 'password' ?
                 'text' : 'password';
             password.setAttribute('type', type);
